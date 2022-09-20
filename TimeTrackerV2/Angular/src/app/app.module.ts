@@ -9,12 +9,14 @@ import { HttpClientModule } from '@angular/common/http';
 
 
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AdminDashComponent } from './admin-dash/admin-dash.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RoutingComponents,
-    LoginComponent
+    LoginComponent,
+    AdminDashComponent
   ],
   imports: [
     BrowserModule,

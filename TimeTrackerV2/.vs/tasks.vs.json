@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-admin-dash.component",
+      "appliesTo": "Angular/src/app/admin-dash/admin-dash.component.html",
+      "type": "launch"
+    }
+  ]
+}
