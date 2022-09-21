@@ -1,12 +1,15 @@
 {
   "ExpandedNodes": [
     "",
+    "\\Angular",
     "\\Angular\\src",
     "\\Angular\\src\\app",
-    "\\Angular\\src\\assets",
+    "\\Angular\\src\\app\\admin-dash",
+    "\\Angular\\src\\app\\interfaces",
+    "\\Angular\\src\\app\\services",
     "\\NodeAPI",
     "\\NodeAPI\\database"
   ],
-  "SelectedNode": "\\NodeAPI\\Dockerfile",
+  "SelectedNode": "\\Angular\\src\\app\\admin-dash\\admin-dash.component.ts",
   "PreviewInSolutionExplorer": false
 }

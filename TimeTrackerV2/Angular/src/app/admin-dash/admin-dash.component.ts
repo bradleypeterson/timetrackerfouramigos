@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
 import { HttpService } from '../services/http.service';
-import { User_Interface } from '../interfaces/User_Interface';
-import { map } from 'rxjs/operators';
+import { IUser } from '../interfaces/IUser';
 
 @Component({
   selector: 'app-admin-dash',
@@ -12,17 +10,14 @@ import { map } from 'rxjs/operators';
 
 export class AdminDashComponent implements OnInit {
 
-  users:User_Interface[] = []
+  users:IUser[] = []
 
   constructor(private httpService:HttpService) { }
 
   ngOnInit(): void {
 
-    //this.httpService.getUsers().subscribe((_users: any) => (this.users = _users));
-    this.httpService.getUsers().subscribe((_users) => { this.users = _users; console.log(this.users); });
+    this.httpService.getUsers().subscribe((_users: any) => { this.users = _users});
 
-    //console.log(typeof (this.users));
-    //console.log(this.users);
   }
 
 }
