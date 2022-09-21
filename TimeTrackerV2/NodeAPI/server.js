@@ -93,7 +93,7 @@ app.post('/register', async (req, res, next) => {
     data[2] = req.body["firstName"];
     data[3] = req.body["lastName"];
     data[4] = "Basic";
-    data[5] = false;
+    data[5] = true;
     data[6] = salt;
 
     db.run(`INSERT INTO Users(username, password, firstName, lastName, type, isActive, salt) VALUES(?, ?, ?, ?, ?, ?, ?)`, data, function(err, rows) {
