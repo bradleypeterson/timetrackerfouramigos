@@ -10,13 +10,15 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminDashComponent } from './admin-dash/admin-dash.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RoutingComponents,
     LoginComponent,
-    AdminDashComponent
+    AdminDashComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,
