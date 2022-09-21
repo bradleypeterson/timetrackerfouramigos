@@ -46,6 +46,9 @@ db.run(`CREATE TABLE IF NOT EXISTS Projects(projectID INTEGER PRIMARY KEY,
                             isActive BOOL NOT NULL,
                             courseID INTEGER NOT NULL,
                             description TEXT);`);
+
+// add super user to database for default admin functions
+// username: Admin pass: admin
 db.run(
     `INSERT INTO Users (username,
                         password,
