@@ -42,3 +42,20 @@ db.run(`CREATE TABLE IF NOT EXISTS Projects(projectID INTEGER PRIMARY KEY,
                             isActive BOOL NOT NULL,
                             courseID INTEGER NOT NULL,
                             description TEXT);`)
+                            db.run(
+                                `INSERT INTO Users (username,
+                                                    password,
+                                                    firstName,
+                                                    lastName,
+                                                    type,
+                                                    isActive,
+                                                    salt)
+                                    SELECT 'Admin', 
+                                            '063f475a51d8795c71e0c5ed5e8eda09a2294825a3c4ba24221be06e8d1e9a07c74d693372ad8c7ad7f13bbdbf9da924a7bd77e71bc28ea82335a5f08214513b', 
+                                            'Sudo',
+                                            'Admin',
+                                            'Admin',
+                                            true, 
+                                            '0dc02b66b207ebf3b6a789af5e835007'
+                                            WHERE NOT EXISTS(SELECT 1 FROM Users WHERE username = 'Admin')`
+                            );
