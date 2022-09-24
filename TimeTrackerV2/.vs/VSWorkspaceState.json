@@ -1,12 +1,13 @@
 {
   "ExpandedNodes": [
     "",
+    "\\Angular",
     "\\Angular\\src",
     "\\Angular\\src\\app",
     "\\Angular\\src\\assets",
     "\\NodeAPI",
     "\\NodeAPI\\database"
   ],
-  "SelectedNode": "\\NodeAPI\\Dockerfile",
+  "SelectedNode": "\\Angular\\src\\app\\comms.service.ts",
   "PreviewInSolutionExplorer": false
 }
