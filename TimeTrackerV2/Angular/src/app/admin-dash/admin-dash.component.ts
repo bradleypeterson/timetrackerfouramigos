@@ -17,7 +17,7 @@ export class AdminDashComponent implements OnInit {
   ngOnInit(): void {
 
     this.httpService.getUsers().subscribe((_users: any) => { this.users = _users});
-
+    
   }
 
 }

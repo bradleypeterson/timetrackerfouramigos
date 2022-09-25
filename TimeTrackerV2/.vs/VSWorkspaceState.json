@@ -2,14 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\Angular",
-    "\\Angular\\src",
-    "\\Angular\\src\\app",
     "\\Angular\\src\\app\\admin-dash",
-    "\\Angular\\src\\app\\interfaces",
-    "\\Angular\\src\\app\\services",
     "\\NodeAPI",
     "\\NodeAPI\\database"
   ],
-  "SelectedNode": "\\Angular\\src\\app\\admin-dash\\admin-dash.component.ts",
+  "SelectedNode": "\\Angular\\package.json",
   "PreviewInSolutionExplorer": false
 }
