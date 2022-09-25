@@ -1,4 +1,15 @@
 {
-  "ExpandedNodes": [],
+  "ExpandedNodes": [
+    "",
+    "\\TimeTrackerV2",
+    "\\TimeTrackerV2\\Angular",
+    "\\TimeTrackerV2\\Angular\\dist",
+    "\\TimeTrackerV2\\Angular\\dist\\TimeTrackerV2",
+    "\\TimeTrackerV2\\Angular\\src",
+    "\\TimeTrackerV2\\Angular\\src\\environments",
+    "\\TimeTrackerV2\\Angular\\TimeTrackerV2",
+    "\\TimeTrackerV2\\NodeAPI"
+  ],
+  "SelectedNode": "\\TimeTrackerV2\\NodeAPI\\server.js",
   "PreviewInSolutionExplorer": false
 }

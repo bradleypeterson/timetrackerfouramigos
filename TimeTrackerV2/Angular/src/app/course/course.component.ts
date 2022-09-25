@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormBuilder } from '@angular/forms';
 import {Router} from '@angular/router';
 
 @Component({
@@ -14,8 +15,10 @@ export class CourseComponent implements OnInit {
   private item;
   public courseName;
   public courseDescription;
+    //formBuilder: any;
 
   constructor(
+    private formBuilder: FormBuilder,
     private http: HttpClient,
     private router: Router,
   ) { 
@@ -29,6 +32,34 @@ export class CourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  CourseForm = this.formBuilder.group({
+    courseName: '',
+    isActive: '',
+    instructorID: '',
+    description: '',
+  });
+
+  // creates courses -- automatically gives the course ID
+  // it worked once, but it's not working anymore...
+  onSubmit(): void {
+    let payload = {
+      courseName: this.CourseForm.value['courseName'],
+      isActive: this.CourseForm.value['isActive'],
+      instructorID: this.CourseForm.value['instructorID'],
+      description: this.CourseForm.value['description'],
+    }
+
+    this.http.post<any>('http://localhost:8080/course/', payload, { headers: new HttpHeaders({ "Access-Control-Allow-Headers": "Content-Type" }) }).subscribe({
+      next: data => {
+        this.errMsg = "";
+        this.router.navigate(['./']);
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
   }
 
   createProject(): void {
