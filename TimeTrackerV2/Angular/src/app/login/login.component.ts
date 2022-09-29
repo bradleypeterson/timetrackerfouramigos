@@ -2,25 +2,30 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { CommsService } from '../comms.service';
 import { HttpService } from '../services/http.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
 
   public errMsg = '';
+  userName!: string;
 
-  constructor(
+  constructor(private data: CommsService,
     private formBuilder: FormBuilder,
     private http: HttpClient,
     private router: Router,
     private httpService: HttpService,
   ) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void 
+  {
+    //Subscribes to the CommsService for username updates
+    this.data.currentUserName.subscribe(userName => this.userName = userName);
   }
 
   checkoutForm = this.formBuilder.group({
@@ -43,6 +48,11 @@ export class LoginComponent implements OnInit {
       next: data => {
         this.errMsg = "";
         localStorage.setItem('currentUser', JSON.stringify(data['user']));
+
+        //Updates the current username/login on the nav bar
+        this.data.changeUserName(JSON.parse(localStorage.getItem('currentUser') || "{}").username);
+        this.data.changeLogin("Logout");
+
         this.router.navigate(['./dashboard']);
       },
       error: error => {
