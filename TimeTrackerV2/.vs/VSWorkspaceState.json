@@ -5,10 +5,12 @@
     "\\Angular\\src",
     "\\Angular\\src\\app",
     "\\Angular\\src\\app\\admin-dash",
-    "\\Angular\\src\\app\\course",
     "\\Angular\\src\\app\\courses",
+    "\\Angular\\src\\app\\interfaces",
+    "\\Angular\\src\\app\\login",
+    "\\NodeAPI",
     "\\NodeAPI\\database"
   ],
-  "SelectedNode": "\\Angular\\src\\app\\course\\course.component.ts",
+  "SelectedNode": "\\Angular\\src\\app\\courses\\courses.component.ts",
   "PreviewInSolutionExplorer": false
 }
