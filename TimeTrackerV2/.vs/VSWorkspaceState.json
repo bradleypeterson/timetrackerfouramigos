@@ -2,12 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\Angular",
-    "\\Angular\\src",
-    "\\Angular\\src\\app",
-    "\\Angular\\src\\assets",
+    "\\Angular\\src\\app\\admin-dash",
     "\\NodeAPI",
     "\\NodeAPI\\database"
   ],
-  "SelectedNode": "\\Angular\\src\\app\\comms.service.ts",
+  "SelectedNode": "\\Angular\\package.json",
   "PreviewInSolutionExplorer": false
 }

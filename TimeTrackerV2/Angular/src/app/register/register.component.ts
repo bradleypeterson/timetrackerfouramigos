@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {Router} from '@angular/router';
+import { HttpClient} from '@angular/common/http';
+import { Router } from '@angular/router';
+import { HttpService } from '../services/http.service';
 
 @Component({
   selector: 'app-register',
@@ -14,8 +15,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private http: HttpClient,
     private router: Router,
+    private httpService: HttpService,
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +39,8 @@ export class RegisterComponent implements OnInit {
       repeatPassword: this.registrationForm.value['repeatPassword'],
     }
 
-    this.http.post<any>('http://localhost:8080/register/', payload, {headers: new HttpHeaders({"Access-Control-Allow-Headers": "Content-Type"})}).subscribe({
+
+    this.httpService.login(payload).subscribe({
       next: data => {
         this.errMsg = "";
         this.router.navigate(['./']);
