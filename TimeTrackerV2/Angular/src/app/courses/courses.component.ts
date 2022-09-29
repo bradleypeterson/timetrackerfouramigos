@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
+import { ICourse } from '../interfaces/ICourse';
 
 
 @Component({
@@ -14,6 +15,7 @@ export class CoursesComponent implements OnInit {
   public pageTitle = 'TimeTrackerV2 | Courses'
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
+  public courses: ICourse[] = [];
   
 
   constructor(
@@ -24,6 +26,7 @@ export class CoursesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
   }
 
   createCourse(): void {
