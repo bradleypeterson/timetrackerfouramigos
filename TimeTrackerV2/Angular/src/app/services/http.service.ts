@@ -40,5 +40,9 @@ export class HttpService {
 
   }
 
+  createCourse(payload: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'createCourse', payload, this.httpOptions);
+  }
+
   
 }

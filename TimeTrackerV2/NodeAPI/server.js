@@ -178,8 +178,8 @@ app.post('/createCourse', async (req, res, next) => {
   // Can't use dictionaries for queries so order matters!
   data[0] = req.body["courseName"];
   data[1] = req.body["isActive"];
-  data[2] = 1;
-  data[3] = "This is your new course";
+  data[2] = req.body["instructorID"]; //Edited by Tage for course creation
+  data[3] = req.body["description"]; //Edited by Tage for course creation
 
   console.log(data);
 
