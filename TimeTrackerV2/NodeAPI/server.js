@@ -27,6 +27,28 @@ app.get('/', (req, res) => {
   return res.send('Hello World');
 });
 
+
+//Testing for admin stuff! ------------------------------
+
+//Retrieves a list of all users from the database
+app.get('/getusers', async (req, res, next) => {
+
+    let sql = `SELECT userID, username, firstName, lastName, type, isActive FROM Users`;
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            res.status(400).json({ "error": err.message });
+        }
+
+        res.send(JSON.stringify(rows));
+
+    });
+
+});
+
+
+//-------------------------------------------------------
+
 app.post('/register', async (req, res, next) => {
 
   function isEmpty(str) {
@@ -71,7 +93,7 @@ app.post('/register', async (req, res, next) => {
     data[2] = req.body["firstName"];
     data[3] = req.body["lastName"];
     data[4] = "Basic";
-    data[5] = false;
+    data[5] = true;
     data[6] = salt;
 
     db.run(`INSERT INTO Users(username, password, firstName, lastName, type, isActive, salt) VALUES(?, ?, ?, ?, ?, ?, ?)`, data, function(err, rows) {

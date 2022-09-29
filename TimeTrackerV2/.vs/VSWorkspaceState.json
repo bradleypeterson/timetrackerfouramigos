@@ -1,12 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Angular\\src",
-    "\\Angular\\src\\app",
-    "\\Angular\\src\\assets",
+    "\\Angular",
+    "\\Angular\\src\\app\\admin-dash",
     "\\NodeAPI",
     "\\NodeAPI\\database"
   ],
-  "SelectedNode": "\\NodeAPI\\Dockerfile",
+  "SelectedNode": "\\Angular\\package.json",
   "PreviewInSolutionExplorer": false
 }
