@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IUser } from '../interfaces/IUser';
+import { ICourse } from '../interfaces/ICourse';
 
 
 //A service for making http requests to and from the server
@@ -44,5 +45,9 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + 'createCourse', payload, this.httpOptions);
   }
 
+  //Returns courses from server db
+  getCourses(): Observable<ICourse[]> {
+    return this.http.get<ICourse[]>(this.apiUrl + 'getcourses');
+  }
   
 }

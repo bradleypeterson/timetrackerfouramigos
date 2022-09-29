@@ -46,6 +46,21 @@ app.get('/getusers', async (req, res, next) => {
 
 });
 
+//Gets all courses from the database and sends them to the caller
+app.get('/getcourses', async (req, res) => {
+    let sql = `SELECT * FROM Courses`;
+
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            res.status(400).json({ "error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+
+    });
+});
+
 
 //-------------------------------------------------------
 
