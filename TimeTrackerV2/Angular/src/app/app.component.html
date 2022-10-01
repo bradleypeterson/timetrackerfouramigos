@@ -26,15 +26,13 @@
       </div>
       
       <div class="navbar-nav ml-auto">
-        <a class="nav-item nav-link active" href="#">Username</a>
+        <div class="nav-item nav-link active">{{ userName }}</div>
+        <form class="form-inline my-2 my-lg-0">
+          <button class="btn btn-primary my-2 my-sm-0 btn1" (click)="onLogin()">{{ login }}</button>
+        </form>
       </div>
-
-      <form class="form-inline my-2 my-lg-0">
-        <button class="btn btn-primary my-2 my-sm-0 btn1" type="submit" routerLink="./login">Login</button>
-      </form>
     </div>
   </div>
-
 <div class="container mt-6">
   <router-outlet></router-outlet>
 </div>
