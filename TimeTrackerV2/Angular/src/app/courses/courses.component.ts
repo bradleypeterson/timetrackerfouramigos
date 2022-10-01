@@ -26,7 +26,7 @@ export class CoursesComponent implements OnInit {
     private httpService: HttpService,
 
     // variable to show if course creation is visible
-    public vis = false,
+    //public vis = false,
     
   ) {}
 
@@ -36,7 +36,8 @@ export class CoursesComponent implements OnInit {
 
   createCourse(): void {
 
-    this.vis = true;
+    // changed to true so that 
+    //this.vis = true;
 
     //Payload for the server to accept.
     //Change the fields to get data from the form
