@@ -40,7 +40,7 @@ export class RegisterComponent implements OnInit {
     }
 
 
-    this.httpService.login(payload).subscribe({
+    this.httpService.register(payload).subscribe({
       next: data => {
         this.errMsg = "";
         this.router.navigate(['./']);

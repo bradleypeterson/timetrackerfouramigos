@@ -29,10 +29,10 @@
     </thead>
     <tbody>
       <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
-      <tr>
-        <td><a href="#">Course Name</a></td>
-        <td>Instructor First Name, Instructor Last Name</td>
-      </tr>
+        <tr *ngFor="let course of courses">
+          <td>{{course.courseName}}</td>
+          <td>{{course.instructorID}}</td>
+        </tr>
     </tbody>
   </table>
 </div>
