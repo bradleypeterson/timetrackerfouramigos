@@ -16,12 +16,17 @@ export class CoursesComponent implements OnInit {
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
+
+  
   
 
   constructor(
     private http: HttpClient,
     private router: Router,
     private httpService: HttpService,
+
+    // variable to show if course creation is visible
+    public vis = false,
     
   ) {}
 
@@ -31,6 +36,7 @@ export class CoursesComponent implements OnInit {
 
   createCourse(): void {
 
+    this.vis = true;
 
     //Payload for the server to accept.
     //Change the fields to get data from the form
