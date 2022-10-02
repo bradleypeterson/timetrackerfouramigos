@@ -41,44 +41,33 @@ export class CoursesComponent implements OnInit {
     description: '',
   });
 
+  // changes the value of bvis to show the hidden form
   revealForm(): void {
     this.bvis = true;
   }
 
+  // hide form when clicking cancel?
+  hideForm(): void {
+    this.bvis = false; // set to false, just in case
+    location.reload(); // refresh the page
+  }
+
   createCourse(): void {
-
-
     //Payload for the server to accept.
     //Change the fields to get data from the form
     //check the register.component.ts page for an example of
     //how to do this.
     //Double check the database with vscode to make sure that it is working 
 
-    /*let payload = {
-      courseName: 'New Course',
-      isActive: true,
-      instructorID: this.user['userID'],
-      description: "This is for testing again",
-    }*/
-
+    // gets the values from the form,
+    // the instructor ID is the current user ID,
+    // is active is automatically set to true
     let payload = {
       courseName: this.courseForm.value['courseName'],
       isActive: true,
       instructorID: this.user['userID'],
       description: this.courseForm.value['description'],
     }
-
-    // this directs the user to the course page..?
-    /*this.httpService.createCourse(payload).subscribe({
-      next: data => {
-        this.errMsg = "";
-        //localStorage.setItem('currentCourse', JSON.stringify(data['course']));
-        //this.router.navigate(['./course']);
-      },
-      error: error => {
-        this.errMsg = error['error']['message'];
-      }
-    });*/
 
     this.httpService.createCourse(payload).subscribe({
       next: data => {
