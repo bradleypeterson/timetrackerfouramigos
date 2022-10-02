@@ -48,8 +48,8 @@ export class CoursesComponent implements OnInit {
 
   // hide form when clicking cancel?
   hideForm(): void {
-    this.bvis = false; // set to false, just in case
-    location.reload(); // refresh the page
+    this.bvis = false; // set to false
+    //location.reload(); // refresh the page
   }
 
   createCourse(): void {
