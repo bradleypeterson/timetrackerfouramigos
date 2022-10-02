@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
 import { ICourse } from '../interfaces/ICourse';
@@ -17,16 +18,17 @@ export class CoursesComponent implements OnInit {
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
 
+  public bvis = false;
+
   
   
 
   constructor(
     private http: HttpClient,
+    private formBuilder: FormBuilder,
     private router: Router,
     private httpService: HttpService,
 
-    // variable to show if course creation is visible
-    //public vis = false,
     
   ) {}
 
@@ -34,10 +36,17 @@ export class CoursesComponent implements OnInit {
     this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
   }
 
+  courseForm = this.formBuilder.group({
+    courseName: '',
+    description: '',
+  });
+
+  revealForm(): void {
+    this.bvis = true;
+  }
+
   createCourse(): void {
 
-    // changed to true so that 
-    //this.vis = true;
 
     //Payload for the server to accept.
     //Change the fields to get data from the form
@@ -45,18 +54,37 @@ export class CoursesComponent implements OnInit {
     //how to do this.
     //Double check the database with vscode to make sure that it is working 
 
-    let payload = {
+    /*let payload = {
       courseName: 'New Course',
       isActive: true,
       instructorID: this.user['userID'],
       description: "This is for testing again",
+    }*/
+
+    let payload = {
+      courseName: this.courseForm.value['courseName'],
+      isActive: true,
+      instructorID: this.user['userID'],
+      description: this.courseForm.value['description'],
     }
+
+    // this directs the user to the course page..?
+    /*this.httpService.createCourse(payload).subscribe({
+      next: data => {
+        this.errMsg = "";
+        //localStorage.setItem('currentCourse', JSON.stringify(data['course']));
+        //this.router.navigate(['./course']);
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });*/
 
     this.httpService.createCourse(payload).subscribe({
       next: data => {
         this.errMsg = "";
-        //localStorage.setItem('currentCourse', JSON.stringify(data['course']));
-        this.router.navigate(['./course']);
+        //this.router.navigate(['./']);
+        location.reload(); // refresh the page
       },
       error: error => {
         this.errMsg = error['error']['message'];

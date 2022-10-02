@@ -1,0 +1,7 @@
+.ng-hide {
+    visibility: hidden;
+}
+
+.ng-show {
+    visibility: visible;
+}
