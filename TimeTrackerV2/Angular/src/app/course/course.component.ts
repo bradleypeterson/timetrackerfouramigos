@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Router} from '@angular/router';
+import {ICourse} from "../interfaces/ICourse";
 
 @Component({
   selector: 'app-course',
@@ -11,24 +12,28 @@ import {Router} from '@angular/router';
 export class CourseComponent implements OnInit {
   public pageTitle = 'TimeTrackerV2 | Course'
   public errMsg = '';
-  private item;
+  /*private item;
   public courseName;
   public courseDescription;
+*/
+  public course: ICourse;
+
 
   constructor(
     private http: HttpClient,
     private router: Router,
-  ) { 
-    this.item = localStorage.getItem('currentCourse');
-    console.log("The current course is: " + this.item);
-    if(this.item) {
+  ) {
+    this.course = JSON.parse(localStorage.getItem('currentcourse') as string);
+
+/*    if(this.course) {
       this.item = JSON.parse(this.item);
       this.courseName = this.item[0];
       this.courseDescription = this.item[3];
-    }
+    }*/
   }
 
   ngOnInit(): void {
+
   }
 
   createProject(): void {

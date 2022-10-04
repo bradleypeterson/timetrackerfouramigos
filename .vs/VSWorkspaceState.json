@@ -1,4 +1,9 @@
 {
-  "ExpandedNodes": [],
+  "ExpandedNodes": [
+    "",
+    "\\TimeTrackerV2",
+    "\\TimeTrackerV2\\Angular"
+  ],
+  "SelectedNode": "\\TimeTrackerV2\\docker-compose.yml",
   "PreviewInSolutionExplorer": false
 }

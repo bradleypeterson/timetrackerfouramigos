@@ -10,14 +10,14 @@ import { IUser } from '../interfaces/IUser';
 
 export class AdminDashComponent implements OnInit {
 
-  users:IUser[] = []
+  users: IUser[] = []
 
   constructor(private httpService:HttpService) { }
 
   ngOnInit(): void {
 
     this.httpService.getUsers().subscribe((_users: any) => { this.users = _users});
-    
+
   }
 
 }

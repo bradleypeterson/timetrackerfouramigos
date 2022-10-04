@@ -20,16 +20,12 @@ export class CoursesComponent implements OnInit {
 
   public bvis = false;
 
-  
-  
 
   constructor(
     private http: HttpClient,
     private formBuilder: FormBuilder,
     private router: Router,
     private httpService: HttpService,
-
-    
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +53,7 @@ export class CoursesComponent implements OnInit {
     //Change the fields to get data from the form
     //check the register.component.ts page for an example of
     //how to do this.
-    //Double check the database with vscode to make sure that it is working 
+    //Double check the database with vscode to make sure that it is working
 
     // gets the values from the form,
     // the instructor ID is the current user ID,
@@ -92,4 +88,9 @@ export class CoursesComponent implements OnInit {
     //});
   }
 
+  //Sets the current course in localstorage and navigates the user to the course page
+  setCourseAndMove(course: ICourse) {
+    localStorage.setItem("currentcourse", JSON.stringify(course));
+    this.router.navigate(['./course']);
+  }
 }

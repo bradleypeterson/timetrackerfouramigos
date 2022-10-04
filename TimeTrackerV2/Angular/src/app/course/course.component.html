@@ -1,7 +1,8 @@
 <div id="course" ng-cloak>
   <div class="row position-relative">
     <!-- ng-model-options="{debounce: 750}" ng-change="saveCourse()" ng-model="course.courseName" ng-readonly="$parent.user.type !== 'A' && $parent.user.userID !== course.instructorId" -->
-    <h4 class="mt-3 col-sm-9 col-12 float-left"><input class="input-header" type="text" name="courseName" [(ngModel)]="courseName"/></h4>
+<!--   <h4 class="mt-3 col-sm-9 col-12 float-left"><input class="input-header" type="text" name="courseName" [(ngModel)]="{{course.}}"/></h4>-->
+    <h3 class="mt-3 col-sm-9 col-12 float-left">{{course.courseName}}</h3>
     <!-- ng-if="$parent.user.type === 'A' || $parent.user.userID === course.instructorId" -->
     <div class="mt-3 pretty p-switch p-slim col-sm-2 col-12 header-checkbox">
       <!--  ng-model="course.isActive" ng-change="saveCourse()" -->
