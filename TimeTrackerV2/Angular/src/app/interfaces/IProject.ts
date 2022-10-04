@@ -4,6 +4,7 @@ export interface IProject {
   isActive?: boolean;
   courseID?: number;
   description?: string;
+  courseName?: string;
 }
 
 //Interface for holding project data for each project

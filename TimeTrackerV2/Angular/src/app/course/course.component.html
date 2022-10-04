@@ -79,5 +79,24 @@
 
   </div>
 
-  <p *ngFor="let project of projects" >{{project.projectName}}</p>
+  <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Project Name</th>
+          <th>Project Description</th>
+          <th>Course</th>
+          <th>Active</th>
+        </tr>
+      </thead>
+    <tbody>
+    <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
+    <tr *ngFor="let project of projects">
+      <td>{{project.projectName}}</td>
+      <td >{{project.description}}</td>
+      <td >{{project.courseName}}</td>
+      <td *ngIf="project.isActive">Active</td>
+      <td *ngIf="!project.isActive">Not Active</td>
+    </tr>
+    </tbody>
+  </table>
 </div>
