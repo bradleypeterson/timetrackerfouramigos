@@ -29,9 +29,15 @@ export class CoursesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getCourses();
+  }
+
+  //Gets all the courses from the database, can be called to update the list of courses without reloading the page
+  getCourses(): void {
     this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
   }
 
+  //Forms for creating a new course
   courseForm = this.formBuilder.group({
     courseName: '',
     description: '',
@@ -69,7 +75,9 @@ export class CoursesComponent implements OnInit {
       next: data => {
         this.errMsg = "";
         //this.router.navigate(['./']);
-        location.reload(); // refresh the page
+        //location.reload(); // refresh the page
+        this.courseForm.reset(); //Clears the form data after submitting the data.
+        this.getCourses();
       },
       error: error => {
         this.errMsg = error['error']['message'];
@@ -91,6 +99,8 @@ export class CoursesComponent implements OnInit {
   //Sets the current course in localstorage and navigates the user to the course page
   setCourseAndMove(course: ICourse) {
     localStorage.setItem("currentcourse", JSON.stringify(course));
+    //let c = JSON.parse(localStorage.getItem('currentcourse') as string);
+    //console.log(c);
     this.router.navigate(['./course']);
   }
 }

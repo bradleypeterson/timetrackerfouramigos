@@ -61,6 +61,18 @@ app.get('/getcourses', async (req, res) => {
     });
 });
 
+app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
+    let sql = `SELECT * FROM Projects WHERE courseID = ${req.params.courseid}`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({"error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
+});
+
 
 //-------------------------------------------------------
 
@@ -219,8 +231,8 @@ app.post('/createProject', async (req, res, next) => {
   // Can't use dictionaries for queries so order matters!
   data[0] = req.body["projectName"];
   data[1] = req.body["isActive"];
-  data[2] = 1;
-  data[3] = "This is your new project";
+  data[2] = req.body['courseID'];
+  data[3] = req.body['description']
 
   console.log(data);
 
