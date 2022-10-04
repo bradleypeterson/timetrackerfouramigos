@@ -9,6 +9,7 @@ services:
             dockerfile: Dockerfile
         ports:
             - '4200:4200'
+            - '49153:49153'
         volumes:
             - ./Angular:/usr/src/app
             - /usr/src/app/node_modules
