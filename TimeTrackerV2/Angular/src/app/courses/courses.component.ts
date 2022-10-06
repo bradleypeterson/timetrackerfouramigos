@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
@@ -22,7 +21,6 @@ export class CoursesComponent implements OnInit {
 
 
   constructor(
-    private http: HttpClient,
     private formBuilder: FormBuilder,
     private router: Router,
     private httpService: HttpService,
@@ -98,9 +96,6 @@ export class CoursesComponent implements OnInit {
 
   //Sets the current course in localstorage and navigates the user to the course page
   setCourseAndMove(course: ICourse) {
-    localStorage.setItem("currentcourse", JSON.stringify(course));
-    //let c = JSON.parse(localStorage.getItem('currentcourse') as string);
-    //console.log(c);
-    this.router.navigate(['./course']);
+    this.router.navigate(['./course'], {state:{data: course}});
   }
 }

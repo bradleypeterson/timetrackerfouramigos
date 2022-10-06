@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../services/http.service';
 import { IUser } from '../interfaces/IUser';
+import { FormBuilder } from "@angular/forms";
 
 @Component({
   selector: 'app-admin-dash',
@@ -12,7 +13,15 @@ export class AdminDashComponent implements OnInit {
 
   users: IUser[] = []
 
-  constructor(private httpService:HttpService) { }
+  constructor(
+    private httpService:HttpService,
+    private formBuilder: FormBuilder,
+  )
+  { }
+
+  searchForm = this.formBuilder.group({
+    searchTerm: '',
+  });
 
   ngOnInit(): void {
 
@@ -20,4 +29,7 @@ export class AdminDashComponent implements OnInit {
 
   }
 
+  onSubmit() {
+
+  }
 }

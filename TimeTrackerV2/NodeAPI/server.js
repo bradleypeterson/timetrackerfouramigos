@@ -81,6 +81,24 @@ app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
 });
 
 
+app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
+    //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
+
+    let sql = `SELECT Groups.*, Projects.projectName
+               FROM Groups
+               LEFT JOIN Projects on Groups.projectID = Projects.projectID
+               WHERE ${req.params.projectid}`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({"error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
+});
+
+
 //-------------------------------------------------------
 
 app.post('/register', async (req, res, next) => {
@@ -199,6 +217,8 @@ app.post('/createGroup', async (req, res, next) => {
         }
     });
 });
+
+app.get
 
 app.post('/createCourse', async (req, res, next) => {
   function isEmpty(str) {
