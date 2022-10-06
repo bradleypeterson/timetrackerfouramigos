@@ -18,10 +18,10 @@
       <button (click)="revealForm()">
         <div class="fa fa-plus mr-2 big-button align-bottom" title="Create a new course."></div>
       </button>
-     
+
     </div>
     <div [hidden]="bvis == false">
-    
+
      <div class="card-body">
       <form [formGroup]="courseForm" (ngSubmit)="createCourse()">
         <div>
@@ -41,9 +41,9 @@
         </div>
 
       </form>
-    </div> 
+    </div>
   </div>
-    
+
   </div>
 
   <table class="table table-hover">
@@ -55,9 +55,9 @@
     </thead>
     <tbody>
       <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
-        <tr *ngFor="let course of courses">
+        <tr *ngFor="let course of courses" (click)="setCourseAndMove(course)">
           <td>{{course.courseName}}</td>
-          <td>{{course.instructorID}}</td>
+          <td >{{course.lastName}}, {{course.firstName}}</td>
         </tr>
     </tbody>
   </table>

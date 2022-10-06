@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
@@ -20,22 +19,23 @@ export class CoursesComponent implements OnInit {
 
   public bvis = false;
 
-  
-  
 
   constructor(
-    private http: HttpClient,
     private formBuilder: FormBuilder,
     private router: Router,
     private httpService: HttpService,
-
-    
   ) {}
 
   ngOnInit(): void {
+    this.getCourses();
+  }
+
+  //Gets all the courses from the database, can be called to update the list of courses without reloading the page
+  getCourses(): void {
     this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
   }
 
+  //Forms for creating a new course
   courseForm = this.formBuilder.group({
     courseName: '',
     description: '',
@@ -57,7 +57,7 @@ export class CoursesComponent implements OnInit {
     //Change the fields to get data from the form
     //check the register.component.ts page for an example of
     //how to do this.
-    //Double check the database with vscode to make sure that it is working 
+    //Double check the database with vscode to make sure that it is working
 
     // gets the values from the form,
     // the instructor ID is the current user ID,
@@ -73,7 +73,9 @@ export class CoursesComponent implements OnInit {
       next: data => {
         this.errMsg = "";
         //this.router.navigate(['./']);
-        location.reload(); // refresh the page
+        //location.reload(); // refresh the page
+        this.courseForm.reset(); //Clears the form data after submitting the data.
+        this.getCourses();
       },
       error: error => {
         this.errMsg = error['error']['message'];
@@ -92,4 +94,8 @@ export class CoursesComponent implements OnInit {
     //});
   }
 
+  //Sets the current course in localstorage and navigates the user to the course page
+  setCourseAndMove(course: ICourse) {
+    this.router.navigate(['./course'], {state:{data: course}});
+  }
 }

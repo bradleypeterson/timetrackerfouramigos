@@ -1,0 +1,30 @@
+.container {
+  border: black solid 2px;
+  height: 100vh;
+}
+
+.btn {
+  margin-left: 10px;
+}
+
+input[type="radio"] {
+  margin-right: 5px;
+}
+
+.red {
+  border: red solid 2px;
+}
+
+.col-auto label {
+  font-size: 18pt;
+}
+
+#searchTerm {
+  height: 100%;
+}
+
+.x2 {
+  width: 100%;
+  border: solid blue 2px;
+}
+
