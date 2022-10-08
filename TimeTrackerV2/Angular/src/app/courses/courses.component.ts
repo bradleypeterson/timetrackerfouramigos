@@ -4,6 +4,7 @@ import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
 import { ICourse } from '../interfaces/ICourse';
+import {IUser} from "../interfaces/IUser";
 
 
 @Component({
@@ -17,23 +18,52 @@ export class CoursesComponent implements OnInit {
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
+  public userTypeHolder: IUser;
 
   public bvis = false;
-
-  
-  
+  //Allow course creation if the user is an Instructor
+  public isInstructor: boolean = false;
 
   constructor(
     private http: HttpClient,
     private formBuilder: FormBuilder,
     private router: Router,
-    private httpService: HttpService,
-
-    
-  ) {}
+    private httpService: HttpService,)
+  {
+    this.userTypeHolder = new class implements IUser
+    {
+      firstName?: string;
+      id?: number;
+      isActive?: boolean;
+      lastName?: string;
+      password?: string;
+      salt?: string;
+      type?: string;
+      username?: string;
+    }
+  }
 
   ngOnInit(): void {
     this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
+
+    let payload = {
+      username: this.user.username,
+    }
+    //Gets user from database
+    this.httpService.getUser(payload).subscribe((_user: any) =>
+    {
+      this.userTypeHolder = _user
+      //Allow user to create courses if they are an instructor
+      if(this.userTypeHolder.type == "Instructor")
+      {
+        this.isInstructor = true;
+      }
+      else
+      {
+        this.isInstructor = false;
+      }
+    });
+
   }
 
   courseForm = this.formBuilder.group({
@@ -57,7 +87,7 @@ export class CoursesComponent implements OnInit {
     //Change the fields to get data from the form
     //check the register.component.ts page for an example of
     //how to do this.
-    //Double check the database with vscode to make sure that it is working 
+    //Double check the database with vscode to make sure that it is working
 
     // gets the values from the form,
     // the instructor ID is the current user ID,

@@ -27,6 +27,18 @@ app.get('/', (req, res) => {
   return res.send('Hello World');
 });
 
+//Get users info based on username
+app.post('/getuser', async (req, res, next) => {
+    let sql = `SELECT userID, username, firstName, lastName, type, isActive FROM Users WHERE username = ?`;
+    db.get(sql, [req.body["username"]], (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+
+});
 
 //Testing for admin stuff! ------------------------------
 
@@ -107,7 +119,8 @@ app.post('/register', async (req, res, next) => {
     data[1] = hash;
     data[2] = req.body["firstName"];
     data[3] = req.body["lastName"];
-    data[4] = "Basic";
+    //Temporary to create an Instructor user
+    data[4] = req.body["userType"];
     data[5] = true;
     data[6] = salt;
 

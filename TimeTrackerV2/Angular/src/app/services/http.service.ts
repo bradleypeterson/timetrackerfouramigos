@@ -26,8 +26,14 @@ export class HttpService {
   getUsers(): Observable<IUser[]> {
     return this.http.get<IUser[]>(this.apiUrl + 'getusers');
   }
+  //Returns user from server db
+  getUser(payload: any): Observable<any>
+  {
+    return this.http.post<IUser>(this.apiUrl + 'getuser', payload, this.httpOptions)
 
-  //Request login authorization from the server
+  }
+
+    //Request login authorization from the server
   login(payload: any): Observable<any> {
 
     return this.http.post<any>(this.apiUrl + 'login', payload, this.httpOptions);
@@ -49,5 +55,5 @@ export class HttpService {
   getCourses(): Observable<ICourse[]> {
     return this.http.get<ICourse[]>(this.apiUrl + 'getcourses');
   }
-  
+
 }
