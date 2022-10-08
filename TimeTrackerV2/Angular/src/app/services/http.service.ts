@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IUser } from '../interfaces/IUser';
 import { ICourse } from '../interfaces/ICourse';
+import {ICourseRequest} from "../interfaces/ICourseRequest";
 
 
 //A service for making http requests to and from the server
@@ -31,6 +32,11 @@ export class HttpService {
   {
     return this.http.post<IUser>(this.apiUrl + 'getuser', payload, this.httpOptions)
 
+  }
+  //Returns all course requests
+  getCourseRequests(): Observable<ICourseRequest[]>
+  {
+    return this.http.get<ICourseRequest[]>(this.apiUrl + 'getcourserequests');
   }
 
     //Request login authorization from the server

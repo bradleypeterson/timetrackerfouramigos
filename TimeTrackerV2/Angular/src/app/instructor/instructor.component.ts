@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ICourseRequest} from "../interfaces/ICourseRequest";
 
 @Component({
   selector: 'app-instructor',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InstructorComponent implements OnInit {
 
+  public courseRequests?: ICourseRequest[] = [];
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit(): void
+  {
+
   }
 
 }

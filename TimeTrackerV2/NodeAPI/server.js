@@ -39,6 +39,17 @@ app.post('/getuser', async (req, res, next) => {
     });
 
 });
+//Retrieves a list of all course requests
+app.get('/getcourserequests', async (req, res, next) => {
+    let sql = `SELECT * FROM CourseRequest`;
+    db.all(sql, [], (err, rows) => {
+        if(err)
+        {
+            res.status(400).json({ "error": err.message });
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
 
 //Testing for admin stuff! ------------------------------
 

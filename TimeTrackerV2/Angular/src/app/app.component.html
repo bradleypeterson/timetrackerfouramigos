@@ -21,7 +21,7 @@
         <a class="nav-item nav-link active" routerLink="./users">Users</a>
         <a class="nav-item nav-link active" routerLink="./view-eval">View Eval</a>
         <a class="nav-item nav-link active" routerLink="./view-evals">View Evals</a>
-        <a class="nav-item nav-link active" routerLink="./instructor">Instructor</a>
+        <a [hidden]="isInstructor == false" class="nav-item nav-link active" routerLink="./instructor">Instructor</a>
         <a class="nav-item nav-link active" routerLink="./admin-dash">Admin</a>
 
       </div>
