@@ -9,6 +9,9 @@ import { ICourseRequest} from "../interfaces/ICourseRequest";
 export class InstructorComponent implements OnInit {
 
   public courseRequests?: ICourseRequest[] = [];
+  public isGreen : boolean = false;
+  public one : string = "one";
+  public two : string = "two";
   constructor() { }
 
   ngOnInit(): void
