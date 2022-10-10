@@ -3,6 +3,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IUser } from '../interfaces/IUser';
 import { ICourse } from '../interfaces/ICourse';
+import {IProject } from '../interfaces/IProject';
+import {IGroup} from "../interfaces/IGroup";
+
 
 
 //A service for making http requests to and from the server
@@ -41,6 +44,7 @@ export class HttpService {
 
   }
 
+  //Creates a course for the user
   createCourse(payload: any): Observable<any> {
     return this.http.post<any>(this.apiUrl + 'createCourse', payload, this.httpOptions);
   }
@@ -49,5 +53,21 @@ export class HttpService {
   getCourses(): Observable<ICourse[]> {
     return this.http.get<ICourse[]>(this.apiUrl + 'getcourses');
   }
-  
+
+  //Gets all the projects from a course based on course id
+  getProjectsByCourseID(id: number): Observable<IProject[]> {
+    return this.http.get<IProject[]>(this.apiUrl + `getprojectsbycourseid/${id}`);
+  }
+
+  //Creates a project for a course
+  createProject(payload: any): Observable<any> {
+    console.log("We are here");
+    return this.http.post<any>(this.apiUrl + 'createProject', payload, this.httpOptions);
+  }
+
+  getGroups(id: number){
+    console.log(this.apiUrl + `getgroupsbyprojectid/${id}`);
+    return this.http.get<IGroup[]>(this.apiUrl + `getgroupsbyprojectid/${id}`);
+  }
+
 }

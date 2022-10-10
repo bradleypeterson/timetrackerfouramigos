@@ -4,4 +4,6 @@ export interface ICourse {
   isActive?: boolean;
   instructorID?: number;
   description?: string;
+  firstName?: string;
+  lastName?: string;
 }
