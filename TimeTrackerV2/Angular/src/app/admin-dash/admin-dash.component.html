@@ -66,6 +66,10 @@
     <div class="col-lg-4">
         <div class="container">
 
+          <button class="btn btn-danger" (click)="showModal()"></button>
+          <div *ngIf="modal == true">
+            <app-admin-modal></app-admin-modal>
+          </div>
 
         </div>
     </div>

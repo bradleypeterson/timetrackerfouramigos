@@ -12,6 +12,7 @@ import { FormBuilder } from "@angular/forms";
 export class AdminDashComponent implements OnInit {
 
   users: IUser[] = []
+  modal: boolean = false;
 
   constructor(
     private httpService:HttpService,
@@ -31,5 +32,9 @@ export class AdminDashComponent implements OnInit {
 
   onSubmit() {
 
+  }
+
+  showModal(){
+    this.modal = !this.modal;
   }
 }
