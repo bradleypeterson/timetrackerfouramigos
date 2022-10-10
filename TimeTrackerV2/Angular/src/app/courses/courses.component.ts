@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
 import { ICourse } from '../interfaces/ICourse';
@@ -44,6 +44,11 @@ export class CoursesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getCourses();
+  }
+
+  //Gets all the courses from the database, can be called to update the list of courses without reloading the page
+  getCourses(): void {
     this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
 
     let payload = {
@@ -66,6 +71,7 @@ export class CoursesComponent implements OnInit {
 
   }
 
+  //Forms for creating a new course
   courseForm = this.formBuilder.group({
     courseName: '',
     description: '',
@@ -103,7 +109,9 @@ export class CoursesComponent implements OnInit {
       next: data => {
         this.errMsg = "";
         //this.router.navigate(['./']);
-        location.reload(); // refresh the page
+        //location.reload(); // refresh the page
+        this.courseForm.reset(); //Clears the form data after submitting the data.
+        this.getCourses();
       },
       error: error => {
         this.errMsg = error['error']['message'];
@@ -122,4 +130,8 @@ export class CoursesComponent implements OnInit {
     //});
   }
 
+  //Sets the current course in localstorage and navigates the user to the course page
+  setCourseAndMove(course: ICourse) {
+    this.router.navigate(['./course'], {state:{data: course}});
+  }
 }

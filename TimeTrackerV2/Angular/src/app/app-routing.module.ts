@@ -17,6 +17,7 @@ import { ViewEvalComponent } from './view-eval/view-eval.component';
 import { ViewEvalsComponent } from './view-evals/view-evals.component';
 import { AdminDashComponent } from './admin-dash/admin-dash.component';
 import { InstructorComponent} from "./instructor/instructor.component";
+import {GroupsComponent} from "./groups/groups.component";
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -36,6 +37,8 @@ const routes: Routes = [
   { path: 'view-evals', component: ViewEvalsComponent },
   { path: 'admin-dash', component: AdminDashComponent },
   { path: 'instructor', component: InstructorComponent }
+  { path: 'admin-dash', component: AdminDashComponent },
+  { path: 'groups', component: GroupsComponent}
 ];
 
 @NgModule({
@@ -52,6 +55,7 @@ export const RoutingComponents = [
   EvalComponent,
   AssignEvalsComponent,
   GroupComponent,
+  GroupsComponent,
   LoginComponent,
   ManageEvalsComponent,
   ProjectComponent,

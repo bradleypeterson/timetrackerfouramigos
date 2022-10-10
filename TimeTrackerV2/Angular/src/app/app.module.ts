@@ -12,6 +12,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminDashComponent } from './admin-dash/admin-dash.component';
 import { RegisterComponent } from './register/register.component';
 import { InstructorComponent } from './instructor/instructor.component';
+import { GroupsComponent } from './groups/groups.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { InstructorComponent } from './instructor/instructor.component';
     LoginComponent,
     AdminDashComponent,
     RegisterComponent,
+    GroupsComponent,
     InstructorComponent,
   ],
   imports: [

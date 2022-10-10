@@ -115,7 +115,9 @@ app.get('/getusers', async (req, res, next) => {
 
 //Gets all courses from the database and sends them to the caller
 app.get('/getcourses', async (req, res) => {
-    let sql = `SELECT * FROM Courses`;
+    let sql = `SELECT Courses.*, Users.firstName, Users.lastName
+    FROM Courses
+    LEFT JOIN Users ON Courses.instructorID = Users.userID`;
 
     db.all(sql, [], (err, rows) => {
 
@@ -125,6 +127,41 @@ app.get('/getcourses', async (req, res) => {
             res.send(JSON.stringify(rows));
         }
 
+    });
+});
+
+app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
+    //let sql = `SELECT * FROM Projects WHERE courseID = ${req.params.courseid}`;
+
+    let sql = `SELECT Projects.*, Courses.courseName
+    FROM Projects
+    LEFT JOIN Courses on Courses.courseID = Projects.courseID
+    WHERE Projects.courseID = ${req.params.courseid}`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({"error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
+});
+
+
+app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
+    //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
+
+    let sql = `SELECT Groups.*, Projects.projectName
+               FROM Groups
+               LEFT JOIN Projects on Groups.projectID = Projects.projectID
+               WHERE ${req.params.projectid}`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({"error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
     });
 });
 
@@ -249,6 +286,8 @@ app.post('/createGroup', async (req, res, next) => {
     });
 });
 
+app.get
+
 app.post('/createCourse', async (req, res, next) => {
   function isEmpty(str) {
       return (!str || str.length === 0);
@@ -287,8 +326,8 @@ app.post('/createProject', async (req, res, next) => {
   // Can't use dictionaries for queries so order matters!
   data[0] = req.body["projectName"];
   data[1] = req.body["isActive"];
-  data[2] = 1;
-  data[3] = "This is your new project";
+  data[2] = req.body['courseID'];
+  data[3] = req.body['description']
 
   console.log(data);
 
