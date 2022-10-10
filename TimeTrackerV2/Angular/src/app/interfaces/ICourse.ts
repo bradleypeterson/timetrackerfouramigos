@@ -1,5 +1,5 @@
 export interface ICourse {
-  courseid?: number;
+  courseID?: number;
   courseName?: string;
   isActive?: boolean;
   instructorID?: number;

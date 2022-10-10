@@ -130,6 +130,42 @@ app.get('/getcourses', async (req, res) => {
     });
 });
 
+// get courses without user data
+app.get('/getcoursesonly', async (req, res) => {
+  let sql = `SELECT *
+  FROM Courses`;
+
+  db.all(sql, [], (err, rows) => {
+
+      if (err) {
+          res.status(400).json({ "error": err.message });
+      } else {
+          res.send(JSON.stringify(rows));
+      }
+
+  });
+});
+
+// get a course from the course table using the course ID
+app.get('/getcourse', async (req, res) => {
+  let sql = `SELECT *
+  FROM Courses
+  WHERE courseId = ?`;
+
+  let data = [];
+    data[0] = req.body["courseID"];
+
+  db.all(sql, data, (err, rows) => {
+
+      if (err) {
+          res.status(400).json({ "error": err.message });
+      } else {
+          res.send(JSON.stringify(rows));
+      }
+
+  });
+});
+
 app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
     //let sql = `SELECT * FROM Projects WHERE courseID = ${req.params.courseid}`;
 
@@ -145,6 +181,32 @@ app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
             res.send(JSON.stringify(rows));
         }
     });
+});
+
+// insert course request into table
+app.post('/insertcourserequest', async (req, res, next) => {
+  let sql = `INSERT INTO
+  CourseRequest (userID, courseID, instructorID, isActive, reviewerID, status) VALUES (?, ?, ?, ?, ?, ?)` ;
+
+  let data = [];
+    data[0] = req.body["userID"];
+    data[1] = req.body["courseID"];
+    data[2] = req.body["instructorID"];
+    data[3] = req.body["isActive"];
+    data[4] = req.body["reviewerID"];
+    data[5] = req.body["status"];
+
+
+  db.run(sql, data, function (err, rows) {
+
+      if (err) {
+          res.status(400).json({ "error": err.message });
+      } else {
+          res.send(JSON.stringify(rows));
+      }
+
+  });
+
 });
 
 

@@ -47,6 +47,24 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + 'updatecourserequest', payload, this.httpOptions);
   }
 
+  // add entry to course request table
+  insertCourseRequest(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'insertcourserequest', payload, this.httpOptions);
+    
+  }
+
+  // return single course
+  returnCourse(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'getcourse', payload, this.httpOptions);
+  }
+
+  getCoursesOnly(): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + 'getcoursesonly');
+  }
+
     //Request login authorization from the server
   login(payload: any): Observable<any> {
 

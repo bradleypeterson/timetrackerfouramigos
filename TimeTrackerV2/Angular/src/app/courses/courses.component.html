@@ -59,8 +59,8 @@
       <tr *ngFor="let course of courses">
         <td><a href="../course">{{course.courseName}}</a></td>
         <td>{{course.instructorID}}</td>
-        <td><button class="btn btn-primary mr-1">Join Course</button>
-        <button class="btn btn-danger mr-1">Leave Course</button></td>
+        <td><button (click)="joinCourse(course)" class="btn btn-primary mr-1">Join Course</button>
+        <button  class="btn btn-danger mr-1">Leave Course</button></td>
     </tbody>
   </table>
 </div>

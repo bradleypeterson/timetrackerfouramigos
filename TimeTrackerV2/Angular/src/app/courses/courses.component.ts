@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
 import { ICourse } from '../interfaces/ICourse';
 import {IUser} from "../interfaces/IUser";
+import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
 @Component({
@@ -19,8 +20,12 @@ export class CoursesComponent implements OnInit {
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
   public userTypeHolder: IUser;
+  
+  // for getting the course that was clicked on
+  public currCourse?: ICourse;
 
   public bvis = false;
+
   //Allow course creation if the user is an Instructor
   public isInstructor: boolean = false;
 
@@ -49,7 +54,7 @@ export class CoursesComponent implements OnInit {
 
   //Gets all the courses from the database, can be called to update the list of courses without reloading the page
   getCourses(): void {
-    this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
+    this.httpService.getCoursesOnly().subscribe((_courses: any) => { this.courses = _courses });
 
     let payload = {
       username: this.user.username,
@@ -88,13 +93,31 @@ export class CoursesComponent implements OnInit {
     //location.reload(); // refresh the page
   }
 
-  joinCourse(): void {
-    //this.cID = this.courses.findIndex(cId);
-    //console.log(this.cID);
+  // pass in the course that was clicked on
+  joinCourse(cId : any): void {
 
-    //this.cID = this.courses[cId].courseid?
-    // get the current user's id as the student ID
+    // create payload to hold courseRequest data
+    let payload2 = {
+      userID: this.user['userID'],
+      courseID: cId.courseID,
+      instructorID: cId.instructorID,
+      isActive: true,
+      reviewerID: null,
+      status: true,
 
+    }
+
+    // insert the data into the course request table
+    this.httpService.insertCourseRequest(payload2).subscribe({
+      next: data => {
+        this.errMsg = "";
+        //this.router.navigate(['./']);
+        //location.reload(); // refresh the page
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
 
   }
 
