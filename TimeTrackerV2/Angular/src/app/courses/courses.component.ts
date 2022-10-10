@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
 import { ICourse } from '../interfaces/ICourse';
+import {IUser} from "../interfaces/IUser";
 
 
 @Component({
@@ -16,15 +18,30 @@ export class CoursesComponent implements OnInit {
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
+  public userTypeHolder: IUser;
 
   public bvis = false;
-
+  //Allow course creation if the user is an Instructor
+  public isInstructor: boolean = false;
 
   constructor(
+    private http: HttpClient,
     private formBuilder: FormBuilder,
     private router: Router,
-    private httpService: HttpService,
-  ) {}
+    private httpService: HttpService,)
+  {
+    this.userTypeHolder = new class implements IUser
+    {
+      firstName?: string;
+      id?: number;
+      isActive?: boolean;
+      lastName?: string;
+      password?: string;
+      salt?: string;
+      type?: string;
+      username?: string;
+    }
+  }
 
   ngOnInit(): void {
     this.getCourses();
@@ -33,6 +50,25 @@ export class CoursesComponent implements OnInit {
   //Gets all the courses from the database, can be called to update the list of courses without reloading the page
   getCourses(): void {
     this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
+
+    let payload = {
+      username: this.user.username,
+    }
+    //Gets user from database
+    this.httpService.getUser(payload).subscribe((_user: any) =>
+    {
+      this.userTypeHolder = _user
+      //Allow user to create courses if they are an instructor
+      if(this.userTypeHolder.type == "Instructor")
+      {
+        this.isInstructor = true;
+      }
+      else
+      {
+        this.isInstructor = false;
+      }
+    });
+
   }
 
   //Forms for creating a new course

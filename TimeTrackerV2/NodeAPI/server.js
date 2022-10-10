@@ -27,6 +27,73 @@ app.get('/', (req, res) => {
   return res.send('Hello World');
 });
 
+//Get users info based on username
+app.post('/getuser', async (req, res, next) => {
+    let sql = `SELECT userID, username, firstName, lastName, type, isActive FROM Users WHERE username = ?`;
+    db.get(sql, [req.body["username"]], (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+
+});
+//Retrieves a list of all course requests
+app.get('/getcourserequests', async (req, res, next) => {
+    let sql = `SELECT
+                   CR.requestID,
+                   C.courseName,
+                   U.firstName || ' ' || U.lastName as studentName,
+                   UI.firstName || ' ' || UI.lastName as instructorName,
+                   CR.status,
+                   UR.firstName || ' ' || UR.lastName as reviewerName,
+                   CR.isActive
+               FROM CourseRequest as CR
+                        LEFT JOIN Courses C on CR.courseID = C.courseID
+                        LEFT JOIN Users U on CR.userID = U.userID
+                        LEFT JOIN Users UI on CR.instructorID = UI.userID
+                        LEFT JOIN Users UR on CR.reviewerID = UR.userID
+               WHERE CR.isActive = 1`;
+    db.all(sql, [], (err, rows) => {
+        if(err)
+        {
+            res.status(400).json({ "error": err.message });
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+//Updates passed course request
+app.post('/updatecourserequest', async (req, res, next) => {
+    console.log("Running update course request");
+
+    let sql = `UPDATE CourseRequest
+               SET
+
+                   status = ?,
+                   isActive = ?,
+                   reviewerID = ?
+               WHERE
+                   requestID = ?`;
+
+    let data = [];
+    data[0] = req.body["status"];
+    data[1] = req.body["isActive"];
+    data[2] = req.body["reviewerID"];
+    data[3] = req.body["requestID"];
+    db.run(sql, data, function(err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        else
+        {
+            return res.status(200).json({message: 'User registered'});
+        }
+    });
+
+});
 
 //Testing for admin stuff! ------------------------------
 
@@ -144,7 +211,8 @@ app.post('/register', async (req, res, next) => {
     data[1] = hash;
     data[2] = req.body["firstName"];
     data[3] = req.body["lastName"];
-    data[4] = "Basic";
+    //Temporary to create an Instructor user
+    data[4] = req.body["userType"];
     data[5] = true;
     data[6] = salt;
 

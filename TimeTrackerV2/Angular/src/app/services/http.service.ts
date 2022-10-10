@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IUser } from '../interfaces/IUser';
 import { ICourse } from '../interfaces/ICourse';
+import {ICourseRequest} from "../interfaces/ICourseRequest";
 import {IProject } from '../interfaces/IProject';
 import {IGroup} from "../interfaces/IGroup";
 
@@ -29,8 +30,24 @@ export class HttpService {
   getUsers(): Observable<IUser[]> {
     return this.http.get<IUser[]>(this.apiUrl + 'getusers');
   }
+  //Returns user from server db
+  getUser(payload: any): Observable<any>
+  {
+    return this.http.post<IUser>(this.apiUrl + 'getuser', payload, this.httpOptions)
 
-  //Request login authorization from the server
+  }
+  //Returns all course requests
+  getCourseRequests(): Observable<ICourseRequest[]>
+  {
+    return this.http.get<ICourseRequest[]>(this.apiUrl + 'getcourserequests');
+  }
+  //Updates passed course request
+  updateCourseRequest(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'updatecourserequest', payload, this.httpOptions);
+  }
+
+    //Request login authorization from the server
   login(payload: any): Observable<any> {
 
     return this.http.post<any>(this.apiUrl + 'login', payload, this.httpOptions);
