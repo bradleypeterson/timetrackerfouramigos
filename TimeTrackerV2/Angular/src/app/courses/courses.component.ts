@@ -54,7 +54,7 @@ export class CoursesComponent implements OnInit {
     //location.reload(); // refresh the page
   }
 
-  joinCourse(cId : any): void {
+  joinCourse(): void {
     //this.cID = this.courses.findIndex(cId);
     //console.log(this.cID);
 
