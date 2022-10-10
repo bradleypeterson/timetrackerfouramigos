@@ -36,7 +36,7 @@ const routes: Routes = [
   { path: 'view-eval', component: ViewEvalComponent },
   { path: 'view-evals', component: ViewEvalsComponent },
   { path: 'admin-dash', component: AdminDashComponent },
-  { path: 'instructor', component: InstructorComponent }
+  { path: 'instructor', component: InstructorComponent },
   { path: 'admin-dash', component: AdminDashComponent },
   { path: 'groups', component: GroupsComponent}
 ];
