@@ -38,6 +38,11 @@ export class HttpService {
   {
     return this.http.get<ICourseRequest[]>(this.apiUrl + 'getcourserequests');
   }
+  //Updates passed course request
+  updateCourseRequest(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'updatecourserequest', payload, this.httpOptions);
+  }
 
     //Request login authorization from the server
   login(payload: any): Observable<any> {
