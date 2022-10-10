@@ -56,10 +56,11 @@
     </thead>
     <tbody>
       <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
-        <tr *ngFor="let course of courses" (click)="setCourseAndMove(course)">
-          <td>{{course.courseName}}</td>
-          <td >{{course.lastName}}, {{course.firstName}}</td>
-        </tr>
+      <tr *ngFor="let course of courses">
+        <td><a href="../course">{{course.courseName}}</a></td>
+        <td>{{course.instructorID}}</td>
+        <td><button class="btn btn-primary mr-1">Join Course</button>
+        <button (click)="joinCourse(3)" class="btn btn-danger mr-1">Leave Course</button></td>
     </tbody>
   </table>
 </div>

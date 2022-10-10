@@ -55,7 +55,8 @@ export class CoursesComponent implements OnInit {
   }
 
   joinCourse(cId : any): void {
-    this.cID = this.courses.findIndex(cId);
+    //this.cID = this.courses.findIndex(cId);
+    //console.log(this.cID);
 
     //this.cID = this.courses[cId].courseid?
     // get the current user's id as the student ID
