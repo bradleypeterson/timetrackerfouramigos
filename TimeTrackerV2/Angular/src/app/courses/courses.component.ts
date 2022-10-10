@@ -19,6 +19,8 @@ export class CoursesComponent implements OnInit {
   public courses: ICourse[] = [];
 
   public bvis = false;
+  private cID = 0;
+  
 
   
   
@@ -50,6 +52,15 @@ export class CoursesComponent implements OnInit {
   hideForm(): void {
     this.bvis = false; // set to false
     //location.reload(); // refresh the page
+  }
+
+  joinCourse(cId : any): void {
+    this.cID = this.courses.findIndex(cId);
+
+    //this.cID = this.courses[cId].courseid?
+    // get the current user's id as the student ID
+
+
   }
 
   createCourse(): void {

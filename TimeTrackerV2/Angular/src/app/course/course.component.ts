@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Router} from '@angular/router';
+import { ICourse } from '../interfaces/ICourse';
+import { HttpService } from '../services/http.service';
 
 @Component({
   selector: 'app-course',
@@ -14,10 +16,12 @@ export class CourseComponent implements OnInit {
   private item;
   public courseName;
   public courseDescription;
+  public courses: ICourse[] = [];
 
   constructor(
     private http: HttpClient,
     private router: Router,
+    private httpService: HttpService,
   ) { 
     this.item = localStorage.getItem('currentCourse');
     console.log("The current course is: " + this.item);
@@ -29,6 +33,7 @@ export class CourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
   }
 
   createProject(): void {
