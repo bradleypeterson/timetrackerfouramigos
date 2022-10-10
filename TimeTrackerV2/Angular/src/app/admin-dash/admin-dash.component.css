@@ -23,8 +23,7 @@ input[type="radio"] {
   height: 100%;
 }
 
-.x2 {
-  width: 100%;
-  border: solid blue 2px;
+table tr td{
+  cursor: pointer;
+  font-size: 18pt;
 }
-

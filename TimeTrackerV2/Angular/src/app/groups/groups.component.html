@@ -1,0 +1,23 @@
+<h1>Groups</h1>
+<div class="container">
+  <table class="table table-sm table-hover table-striped">
+    <thead>
+    <tr>
+      <th>Group ID</th>
+      <th>Group Name</th>
+      <th>Is Active</th>
+      <th>Project</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
+    <tr *ngFor="let group of groups">
+      <td >{{group.groupID}}</td>
+      <td >{{group.groupName}}</td>
+      <td *ngIf="group.isActive">Active</td>
+      <td *ngIf="!group.isActive">Not Active</td>
+      <td >{{group.projectName}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
