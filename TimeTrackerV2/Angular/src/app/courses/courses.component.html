@@ -15,7 +15,7 @@
       </div>
       <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" ng-click="createCourse()" -->
       <!-- (click)="createCourse()" -->
-      <button (click)="revealForm()">
+      <button (click)="revealForm()" [hidden]="isInstructor == false">
         <div class="fa fa-plus mr-2 big-button align-bottom" title="Create a new course."></div>
       </button>
 
