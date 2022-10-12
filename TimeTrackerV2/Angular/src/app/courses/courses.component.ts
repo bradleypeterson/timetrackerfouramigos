@@ -54,7 +54,7 @@ export class CoursesComponent implements OnInit {
 
   //Gets all the courses from the database, can be called to update the list of courses without reloading the page
   getCourses(): void {
-    this.httpService.getCoursesOnly().subscribe((_courses: any) => { this.courses = _courses });
+    this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
 
     let payload = {
       username: this.user.username,
@@ -96,28 +96,33 @@ export class CoursesComponent implements OnInit {
   // pass in the course that was clicked on
   joinCourse(cId : any): void {
 
-    // create payload to hold courseRequest data
-    let payload2 = {
-      userID: this.user['userID'],
-      courseID: cId.courseID,
-      instructorID: cId.instructorID,
-      isActive: true,
-      reviewerID: null,
-      status: true,
+    // make sure they aren't an instructor
+    if(this.isInstructor == false) {
+      // create payload to hold courseRequest data
+      let payload2 = {
+        userID: this.user['userID'],
+        courseID: cId.courseID,
+        instructorID: cId.instructorID,
+        isActive: true,
+        reviewerID: null,
+        status: true,
 
+      }
+
+      // insert the data into the course request table
+      this.httpService.insertCourseRequest(payload2).subscribe({
+        next: data => {
+          this.errMsg = "";
+          //this.router.navigate(['./']);
+          //location.reload(); // refresh the page
+        },
+        error: error => {
+          this.errMsg = error['error']['message'];
+        }
+      });
     }
 
-    // insert the data into the course request table
-    this.httpService.insertCourseRequest(payload2).subscribe({
-      next: data => {
-        this.errMsg = "";
-        //this.router.navigate(['./']);
-        //location.reload(); // refresh the page
-      },
-      error: error => {
-        this.errMsg = error['error']['message'];
-      }
-    });
+    
 
   }
 
