@@ -105,7 +105,7 @@ export class CoursesComponent implements OnInit {
         instructorID: cId.instructorID,
         isActive: true,
         reviewerID: null,
-        status: true,
+        status: false,
 
       }
 
