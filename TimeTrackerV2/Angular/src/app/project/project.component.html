@@ -25,9 +25,36 @@
       <div class="position-relative">
         <h5>Groups</h5>
         <!-- ng-click="createGroup()" -->
-        <button (click)="createGroup()">
+
+
+        <button (click)="revealForm()" [hidden]="isInstructor == false">
           <i class="fa fa-plus mt-2 mr-2 my-auto small-button" title="Create a new group."></i>
         </button>
+
+        <div [hidden]="bvis == false">
+
+        <div class="card-body">
+          <form [formGroup]="groupForm" (ngSubmit)="createGroup()">
+            <div>
+              <p style="color: red;">{{ errMsg }}</p>
+            </div>
+            <div class="input-group">
+              <input id="groupName" formControlName="groupName" type="text" class="form-control bg-light" style="border: none; border-bottom-right-radius: 0;" name="groupName" placeholder="Group Name" ng-model="groupName">
+            </div>
+            <div class="row mt-2 pl-3 pr-3">
+    
+              <button (click)="hideForm()" type="button" class="btn btn-danger col mr-1" >Cancel</button>
+    
+              <button type="submit" class="btn btn-primary col ml-1">Create Group</button>
+            </div>
+    
+          </form>
+        </div>
+
+        </div>
+
+
+
           <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" -->
           <div class="float-right mt-4 mr-5 pretty p-switch p-slim top-right-checkbox">
             <!-- ng-model="config.showInactiveGroups" ng-change="updateChart()" -->
@@ -38,12 +65,25 @@
           </div>
       </div>
 
-      <div class="card">
-        <ul class="list-group list-group-flush">
-          <!-- ng-repeat="g in project.groups | orderObjectBy :'groupName'" ng-if="g.isActive || config.showInactiveGroups" -->
-          <li class="list-group-item p-0"><a class="card-list-link p-2" href="#">Group Name</a></li>
-        </ul>
-      </div>
+      
     </div>
+
+    <div class="card">
+      <table class="table table-hover"  id="divTable">
+        <thead>
+          <tr>
+            <th>Group Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let group of groups">
+            <td><a href="../groups/">{{group.groupName}}</a></td>
+            <td><button [hidden]="isInstructor == true" class="btn btn-primary mr-1">Join Group</button>
+            <button [hidden]="isInstructor == true" class="btn btn-danger mr-1">Leave Group</button></td>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </div>
