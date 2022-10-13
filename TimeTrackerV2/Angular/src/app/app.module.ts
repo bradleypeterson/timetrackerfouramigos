@@ -12,6 +12,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminDashComponent } from './admin-dash/admin-dash.component';
 import { RegisterComponent } from './register/register.component';
 import { GroupsComponent } from './groups/groups.component';
+import { AdminModalComponent } from './modals/admin-modal/admin-modal.component';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { GroupsComponent } from './groups/groups.component';
     AdminDashComponent,
     RegisterComponent,
     GroupsComponent,
+    AdminModalComponent,
   ],
   imports: [
     BrowserModule,

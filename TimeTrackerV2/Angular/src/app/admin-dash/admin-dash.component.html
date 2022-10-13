@@ -12,7 +12,7 @@
 
                   <div class="col-auto">
                     <input id="searchTerm" formControlName="searchTerm" type="text" name="searchTerm" placeholder="Search...">
-                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button type="submit" class="btn btn-primary" id="searchBtn">Search</button>
                   </div>
 
                   <div class="col-auto">
@@ -65,12 +65,8 @@
 
     <div class="col-lg-4">
         <div class="container">
-
-          <button class="btn btn-danger" (click)="showModal()"></button>
-          <div *ngIf="modal == true">
-            <app-admin-modal></app-admin-modal>
-          </div>
-
+          <button type="button" class="btn btn-danger" (click)="modalService.showModal()">Modal</button>
+            <app-admin-modal *ngIf="modalService.modalDisplay"></app-admin-modal>
         </div>
     </div>
 

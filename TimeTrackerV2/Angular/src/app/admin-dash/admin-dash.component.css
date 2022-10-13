@@ -27,3 +27,7 @@ table tr td{
   cursor: pointer;
   font-size: 18pt;
 }
+
+#searchBtn {
+  z-index: -1;
+}
