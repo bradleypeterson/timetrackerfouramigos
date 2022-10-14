@@ -84,12 +84,19 @@ export class CoursesComponent implements OnInit {
 
   // changes the value of bvis to show the hidden form
   revealForm(): void {
-    this.bvis = true;
+    if (this.bvis == true) {
+      this.bvis = false;
+      this.courseForm.reset(); //Clears the form data
+    }
+    else {
+      this.bvis = true;
+    }
   }
 
   // hide form when clicking cancel?
   hideForm(): void {
     this.bvis = false; // set to false
+    this.courseForm.reset(); //Clears the form data
     //location.reload(); // refresh the page
   }
 
@@ -149,6 +156,7 @@ export class CoursesComponent implements OnInit {
         //this.router.navigate(['./']);
         //location.reload(); // refresh the page
         this.courseForm.reset(); //Clears the form data after submitting the data.
+        this.bvis = false; // hide the form again
         this.getCourses();
       },
       error: error => {

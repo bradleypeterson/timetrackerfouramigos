@@ -55,11 +55,11 @@ db.run(`CREATE TABLE IF NOT EXISTS CourseRequest(requestID INTEGER PRIMARY KEY,
                                 reviewerID INTEGER,
                                 status BOOL NOT NULL);`);
 
-db.run(`CREATE TABLE IF NOT EXISTS GroupAssignment(
+/*db.run(`CREATE TABLE IF NOT EXISTS GroupAssignment(
                                     userID INTEGER NOT NULL, 
                                     groupID INTEGER NOT NULL,
                                     );
-                                `);
+                                `);*/
 
 // add super user to database for default admin functions
 // username: Admin pass: admin

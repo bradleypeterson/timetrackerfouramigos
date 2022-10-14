@@ -105,4 +105,8 @@ export class HttpService {
     return this.http.get<IGroup[]>(this.apiUrl + `getgroupsbyprojectid/${id}`);
   }
 
+  createGroup(payload: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl + `createGroup`, payload, this.httpOptions);
+  }
+
 }

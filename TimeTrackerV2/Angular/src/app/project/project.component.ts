@@ -67,7 +67,7 @@ export class ProjectComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.httpService.getGroups(1).subscribe((_groups: any) => { this.groups = _groups });
+    this.getGroups();
 
 
     let payload = {
@@ -89,16 +89,27 @@ export class ProjectComponent implements OnInit {
     });
   }
 
-    // changes the value of bvis to show the hidden form
-    revealForm(): void {
+  getGroups() {
+    this.httpService.getGroups(1).subscribe((_groups: any) => { this.groups = _groups });
+  }
+
+  // changes the value of bvis to show the hidden form
+  revealForm(): void {
+    if (this.bvis == true) {
+      this.bvis = false;
+      this.groupForm.reset(); //Clears the form data
+    }
+    else {
       this.bvis = true;
     }
-  
-    // hide form when clicking cancel?
-    hideForm(): void {
-      this.bvis = false; // set to false
-      //location.reload(); // refresh the page
-    }
+  }
+
+  // hide form when clicking cancel?
+  hideForm(): void {
+    this.bvis = false; // set to false
+    this.groupForm.reset(); //Clears the form data
+    //location.reload(); // refresh the page
+  }
 
   createGroup(): void {
 // need to get the current project...
@@ -118,12 +129,14 @@ export class ProjectComponent implements OnInit {
     }
     console.log(payload);*/
 
-    this.http.post<any>('http://localhost:8080/createGroup/', payload, { headers: new HttpHeaders({ "Access-Control-Allow-Headers": "Content-Type" }) }).subscribe({
+    this.httpService.createGroup(payload).subscribe({
       next: data => {
         this.errMsg = "";
-        localStorage.setItem('currentGroup', JSON.stringify(data['group']));
-        //this.router.navigate(['./group']);
+        //this.router.navigate(['./']);
+        //location.reload(); // refresh the page
         this.groupForm.reset(); //Clears the form data after submitting the data.
+        this.bvis = false; // hide the form again
+        this.getGroups();
       },
       error: error => {
         this.errMsg = error['error']['message'];

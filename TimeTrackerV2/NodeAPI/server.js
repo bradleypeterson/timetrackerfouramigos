@@ -334,7 +334,7 @@ app.post('/createGroup', async (req, res, next) => {
     // Can't use dictionaries for queries so order matters!
     data[0] = req.body["groupName"];
     data[1] = req.body["isActive"];
-    data[2] = 1;
+    data[2] = req.body["projectID"];
 
     console.log(data);
 
