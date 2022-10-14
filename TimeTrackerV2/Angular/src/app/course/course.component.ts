@@ -80,7 +80,7 @@ export class CourseComponent implements OnInit {
 
   //Moves the page to the groups page and passes it the current project
   setProjectAndMove(project: IProject) {
-    this.router.navigate(['./groups'], {state:{data: project}});
+    this.router.navigate(['./project'], {state:{data: project}});
 
   }
 

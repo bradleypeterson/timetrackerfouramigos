@@ -7,6 +7,7 @@ import { ICourse } from '../interfaces/ICourse';
 import {IUser} from "../interfaces/IUser";
 import {IGroup} from "../interfaces/IGroup";
 import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
+import {IProject} from "../interfaces/IProject";
 
 @Component({
   selector: 'app-project',
@@ -21,6 +22,8 @@ export class ProjectComponent implements OnInit {
   public projectDescription;
   public userTypeHolder: IUser;
   public groups: IGroup[] = [];
+  
+  private project: IProject = history.state.data; // holds the current project data
   
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
 
@@ -90,7 +93,7 @@ export class ProjectComponent implements OnInit {
   }
 
   getGroups() {
-    this.httpService.getGroups(1).subscribe((_groups: any) => { this.groups = _groups });
+    this.httpService.getGroups(this.project['projectID'] as number).subscribe((_groups: any) => { this.groups = _groups });
   }
 
   // changes the value of bvis to show the hidden form
@@ -112,15 +115,15 @@ export class ProjectComponent implements OnInit {
   }
 
   createGroup(): void {
-// need to get the current project...
+  // need to get the current project...
 
-// gets the values from the form,
+  // gets the values from the form,
     // the instructor ID is the current user ID,
     // is active is automatically set to true
     let payload = {
       groupName: this.groupForm.value['groupName'],
       isActive: true,
-      projectID: 1, // PLACEHOLDER...
+      projectID: this.project['projectID'] as number, // PLACEHOLDER...
     }
 
     /*let payload = {
@@ -143,4 +146,13 @@ export class ProjectComponent implements OnInit {
       }
     });
   }
+
+
+  //Moves the page to the group page and passes it the current group
+  setProjectAndMove(group: IGroup) {
+    this.router.navigate(['./group'], {state:{data: group}});
+
+  }
+
+
 }

@@ -57,10 +57,11 @@
     <tbody>
       <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
       <tr *ngFor="let course of courses">
-        <td><a href="../course">{{course.courseName}}</a></td>
+        <td (click)="setCourseAndMove(course)">{{course.courseName}}</td>
         <td>{{course.firstName}} {{course.lastName}}</td>
-        <td><button [hidden]="isInstructor == true" (click)="joinCourse(course)" class="btn btn-primary mr-1">Join Course</button>
-        <button [hidden]="isInstructor == true" class="btn btn-danger mr-1">Leave Course</button></td>
+          <td><button id="joinbtn" [hidden]="isInstructor == true" (click)="joinCourse(course)" class="btn btn-primary mr-1">Join Course</button>
+          <button id="leavebtn" [hidden]="isInstructor == true" class="btn btn-danger mr-1">Leave Course</button></td>
+        
     </tbody>
   </table>
 </div>

@@ -78,7 +78,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let group of groups">
-            <td><a href="../groups/">{{group.groupName}}</a></td>
+            <td>{{group.groupName}}</td>
             <td><button [hidden]="isInstructor == true" class="btn btn-primary mr-1">Join Group</button>
             <button [hidden]="isInstructor == true" class="btn btn-danger mr-1">Leave Group</button></td>
         </tbody>

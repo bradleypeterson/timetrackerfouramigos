@@ -6,6 +6,7 @@ import { HttpService } from '../services/http.service';
 import { ICourse } from '../interfaces/ICourse';
 import {IUser} from "../interfaces/IUser";
 import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
+import { ICourseRequest } from '../interfaces/ICourseRequest';
 
 
 @Component({
@@ -19,12 +20,17 @@ export class CoursesComponent implements OnInit {
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
+  public activeCR: ICourseRequest[] = [];
+  public acceptedCR: ICourseRequest[] = [];
   public userTypeHolder: IUser;
   
   // for getting the course that was clicked on
   public currCourse?: ICourse;
 
-  public bvis = false;
+  public bvis = false; // for form visibility
+  public bjoin = false; // for join button visibility
+  public bleave = false; // for leave button visibility
+
 
   //Allow course creation if the user is an Instructor
   public isInstructor: boolean = false;
@@ -75,6 +81,16 @@ export class CoursesComponent implements OnInit {
     });
 
   }
+
+  getUserRequests() {
+    // get course requests that the user is in and that are active
+    this.httpService.getActiveCourseRequests().subscribe((_courseRequests: any) => { this.activeCR = _courseRequests });
+
+    // get courses that the user has been accepted into
+    this.httpService.getAcceptedCourseRequests().subscribe((_courseRequests: any) => { this.acceptedCR = _courseRequests });
+  }
+
+
 
   //Forms for creating a new course
   courseForm = this.formBuilder.group({
