@@ -284,7 +284,7 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
     let sql = `SELECT Groups.*, Projects.projectName
                FROM Groups
                LEFT JOIN Projects on Groups.projectID = Projects.projectID
-               WHERE ${req.params.projectid}`;
+               WHERE Groups.projectID = ${req.params.projectid}`;
 
     db.all(sql, [], (err, rows) => {
         if (err) {
