@@ -41,6 +41,21 @@ export class HttpService {
   {
     return this.http.get<ICourseRequest[]>(this.apiUrl + 'getcourserequests');
   }
+
+  // returns all course requests, given a user ID, which are still active
+  getActiveCourseRequests(): Observable<ICourseRequest[]>
+  {
+    return this.http.get<ICourseRequest[]>(this.apiUrl + 'getactivecourserequests');
+  }
+
+  // returns all course requests, given a user ID, which are accepted
+  getAcceptedCourseRequests(): Observable<ICourseRequest[]>
+  {
+    return this.http.get<ICourseRequest[]>(this.apiUrl + 'getacceptedcourserequests');
+  }
+
+
+
   //Updates passed course request
   updateCourseRequest(payload: any): Observable<any>
   {
@@ -89,6 +104,11 @@ export class HttpService {
     return this.http.get<ICourse[]>(this.apiUrl + 'getcourses');
   }
 
+  //Returns courses and course requests from server db
+  getCourseAndRequests(): Observable<ICourse[]> {
+    return this.http.get<ICourse[]>(this.apiUrl + 'getcoursesandrequests');
+  }
+
   //Gets all the projects from a course based on course id
   getProjectsByCourseID(id: number): Observable<IProject[]> {
     return this.http.get<IProject[]>(this.apiUrl + `getprojectsbycourseid/${id}`);
@@ -103,6 +123,10 @@ export class HttpService {
   getGroups(id: number){
     console.log(this.apiUrl + `getgroupsbyprojectid/${id}`);
     return this.http.get<IGroup[]>(this.apiUrl + `getgroupsbyprojectid/${id}`);
+  }
+
+  createGroup(payload: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl + `createGroup`, payload, this.httpOptions);
   }
 
 }
