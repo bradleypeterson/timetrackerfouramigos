@@ -22,9 +22,9 @@ export class ProjectComponent implements OnInit {
   public projectDescription;
   public userTypeHolder: IUser;
   public groups: IGroup[] = [];
-  
+
   private project: IProject = history.state.data; // holds the current project data
-  
+
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
 
   // reveals the create group form
@@ -39,7 +39,7 @@ export class ProjectComponent implements OnInit {
     private router: Router,
     private httpService: HttpService,
 
-    
+
   ) {
     this.item = localStorage.getItem('currentProject');
     console.log("The current project is: " + this.item);
@@ -62,7 +62,7 @@ export class ProjectComponent implements OnInit {
     }
   }
 
-  
+
 
   //Forms for creating a new group
   groupForm = this.formBuilder.group({
@@ -130,16 +130,49 @@ export class ProjectComponent implements OnInit {
       groupName: 'New Group',
       isActive: true,
     }
-    console.log(payload);*/
+    */
 
     this.httpService.createGroup(payload).subscribe({
       next: data => {
         this.errMsg = "";
         //this.router.navigate(['./']);
         //location.reload(); // refresh the page
+        console.log("Creating a group");
         this.groupForm.reset(); //Clears the form data after submitting the data.
         this.bvis = false; // hide the form again
         this.getGroups();
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
+  }
+  //Joins the selected group
+  joinGroup(group: IGroup): void
+  {
+    let payload = {
+      userID: this.userTypeHolder.userID,
+      groupID: group.groupID,
+    }
+    this.httpService.joinGroup(payload).subscribe({
+      next: data => {
+        this.errMsg = "";
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
+  }
+  //Leaves the selected group
+  leaveGroup(group: IGroup): void
+  {
+    let payload = {
+      userID: this.userTypeHolder.userID,
+      groupID: group.groupID,
+    }
+    this.httpService.leaveGroup(payload).subscribe({
+      next: data => {
+        this.errMsg = "";
       },
       error: error => {
         this.errMsg = error['error']['message'];

@@ -27,6 +27,42 @@ app.get('/', (req, res) => {
   return res.send('Hello World');
 });
 
+//Joins a group based on user id and group id
+app.post('/joingroup', async (req, res, next) => {
+    let sql = `INSERT INTO GroupAssignment (userID, groupID)
+                VALUES (?, ?)`;
+
+    let data = [];
+    data[0] = req.body["userID"];
+    data[1] = req.body["groupID"];
+
+    db.run(sql, data, function(err, rows) {
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+//Leaves a group based on user id and group id
+app.post('/leavegroup', async (req, res, next) => {
+    let sql = `DELETE   
+                FROM
+                    GroupAssignment AS GA
+               WHERE
+                   GA.userID = ? AND GA.groupID = ?`;
+
+    let data = [];
+    data[0] = req.body["userID"];
+    data[1] = req.body["groupID"];
+
+    db.run(sql, data, function(err, rows) {
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
 //Get users info based on username
 app.post('/getuser', async (req, res, next) => {
     let sql = `SELECT userID, username, firstName, lastName, type, isActive FROM Users WHERE username = ?`;

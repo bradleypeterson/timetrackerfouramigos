@@ -56,6 +56,7 @@ db.run(`CREATE TABLE IF NOT EXISTS CourseRequest(requestID INTEGER PRIMARY KEY,
                                 status BOOL NOT NULL);`);
 
 db.run(`CREATE TABLE IF NOT EXISTS GroupAssignment(
+                                    groupAssignmentID INTEGER PRIMARY KEY,
                                     userID INTEGER NOT NULL, 
                                     groupID INTEGER NOT NULL
                                     );

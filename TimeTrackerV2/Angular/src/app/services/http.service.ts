@@ -54,7 +54,17 @@ export class HttpService {
     return this.http.get<ICourseRequest[]>(this.apiUrl + 'getacceptedcourserequests');
   }
 
+  //Joins group based on userID and groupID
+  joinGroup(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'joingroup', payload, this.httpOptions);
+  }
 
+  //Leaves group based on userID and groupID
+  leaveGroup(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'leavegroup', payload, this.httpOptions);
+  }
 
   //Updates passed course request
   updateCourseRequest(payload: any): Observable<any>
@@ -66,7 +76,7 @@ export class HttpService {
   insertCourseRequest(payload: any): Observable<any>
   {
     return this.http.post<any>(this.apiUrl + 'insertcourserequest', payload, this.httpOptions);
-    
+
   }
 
   // return single course
