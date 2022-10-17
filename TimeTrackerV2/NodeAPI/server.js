@@ -63,6 +63,50 @@ app.get('/getcourserequests', async (req, res, next) => {
         res.send(JSON.stringify(rows));
     });
 });
+
+// get all course requests for a student, which are active
+app.get('/getactivecourserequests', async (req, res, next) => {
+  let sql = `SELECT
+                 CR.requestID,
+                 C.courseName,
+                 U.firstName || ' ' || U.lastName as studentName,
+                 CR.status,
+                 CR.isActive
+             FROM CourseRequest as CR
+                      LEFT JOIN Users U on CR.userID = U.userID
+             WHERE CR.status = 1`;
+  db.all(sql, [], (err, rows) => {
+      if(err)
+      {
+          res.status(400).json({ "error": err.message });
+      }
+      res.send(JSON.stringify(rows));
+  });
+});
+
+
+// get all course requests for a student, which are accepted
+app.get('/getacceptedcourserequests', async (req, res, next) => {
+  let sql = `SELECT
+                 CR.requestID,
+                 C.courseName,
+                 U.firstName || ' ' || U.lastName as studentName,
+                 CR.status,
+                 CR.isActive
+             FROM CourseRequest as CR
+                      LEFT JOIN Users U on CR.userID = U.userID
+             WHERE CR.status = 1`;
+  db.all(sql, [], (err, rows) => {
+      if(err)
+      {
+          res.status(400).json({ "error": err.message });
+      }
+      res.send(JSON.stringify(rows));
+  });
+});
+
+
+
 //Updates passed course request
 app.post('/updatecourserequest', async (req, res, next) => {
     console.log("Running update course request");
@@ -129,6 +173,30 @@ app.get('/getcourses', async (req, res) => {
 
     });
 });
+
+// where instructor ID = user id
+// where current user = user id in course request
+
+
+//Gets all courses and course requests where the user id is the current user and status is accepted
+app.get('/getcoursesandrequests', async (req, res) => {
+  let sql = `SELECT Courses.*, CR.*, Users.firstName, Users.lastName
+  FROM Courses, CourseRequest as CR
+    LEFT JOIN Users U ON Courses.instructorID = U.userID
+    LEFT JOIN Users UI ON UI.userID = CR.userID
+  WHERE CR.status = 1`;
+
+  db.all(sql, [], (err, rows) => {
+
+      if (err) {
+          res.status(400).json({ "error": err.message });
+      } else {
+          res.send(JSON.stringify(rows));
+      }
+
+  });
+});
+
 
 // get courses without user data
 app.get('/getcoursesonly', async (req, res) => {
@@ -215,8 +283,8 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
 
     let sql = `SELECT Groups.*, Projects.projectName
                FROM Groups
-               LEFT JOIN Projects on Groups.projectID = Projects.projectID
-               WHERE ${req.params.projectid}`;
+               LEFT JOIN Projects on Projects.projectID = Groups.projectID
+               WHERE Groups.projectID = ${req.params.projectid}`;
 
     db.all(sql, [], (err, rows) => {
         if (err) {
@@ -334,7 +402,7 @@ app.post('/createGroup', async (req, res, next) => {
     // Can't use dictionaries for queries so order matters!
     data[0] = req.body["groupName"];
     data[1] = req.body["isActive"];
-    data[2] = 1;
+    data[2] = req.body["projectID"];
 
     console.log(data);
 
