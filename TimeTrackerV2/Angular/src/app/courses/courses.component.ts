@@ -20,7 +20,7 @@ export class CoursesComponent implements OnInit {
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
   public userTypeHolder: IUser;
-  
+
   // for getting the course that was clicked on
   public currCourse?: ICourse;
 
@@ -105,8 +105,7 @@ export class CoursesComponent implements OnInit {
         instructorID: cId.instructorID,
         isActive: true,
         reviewerID: null,
-        status: true,
-
+        status: false,
       }
 
       // insert the data into the course request table
@@ -122,7 +121,7 @@ export class CoursesComponent implements OnInit {
       });
     }
 
-    
+
 
   }
 
