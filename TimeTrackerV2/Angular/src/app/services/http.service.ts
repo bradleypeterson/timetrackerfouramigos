@@ -151,4 +151,10 @@ export class HttpService {
   {
     return this.http.get<IGroup[]>(this.apiUrl + `getusergroups/${id}`);
   }
+
+  //Returns a list of all users in a group
+  getGroupUsers(id: number): Observable<IUser[]>
+  {
+    return this.http.get<IUser[]>(this.apiUrl + `getgroupusers/${id}`);
+  }
 }

@@ -24,7 +24,6 @@ export class ProjectComponent implements OnInit {
   public userTypeHolder: IUser;
   public groups: IGroup[] = [];
   public joinedGroups: IGroupAssignment[] = [];
-  public temp: IGroupAssignment[] = [];
 
   private project: IProject = history.state.data; // holds the current project data
 
@@ -209,9 +208,9 @@ export class ProjectComponent implements OnInit {
       }
     });
   }
-
   //Moves the page to the group page and passes it the current group
-  setProjectAndMove(group: IGroup) {
+  setGroupAndMove(group: IGroup)
+  {
     this.router.navigate(['./group'], {state:{data: group}});
 
   }

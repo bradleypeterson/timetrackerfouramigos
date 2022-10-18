@@ -20,34 +20,35 @@
            height="400" />
     </div>
 
-    <!-- leave or join group  -->
+    <!-- leave group  -->
     <div class="col-sm col-12">
       <div class="position-relative">
-        <h5>Users</h5>
+        <h5>Group Members</h5>
         <!-- ng-if="!($parent.user.type === 'A')" -->
         <div class="float-right top-right-buttons">
           <!-- ng-click="leaveGroup()", ng-if="userInGroup() && group.users[$parent.user.userID].isActive" -->
-          <button class="btn btn-danger">Leave Group</button>
+          <button (click)="leaveGroup()" class="btn btn-danger">Leave Group</button>
         </div>
       </div>
       <!-- list the users -->
 
       <div class="card">
-        <ul class="list-group list-group-flush">
-          <!-- ng-repeat="u in group.users"
-  ng-if="userInGroup() && u.userID === $parent.user.userID" -->
-          <li class="list-group-item p-2">
-            User First Name, User Last Name
-            <!-- ng-if="!u.isActive" -->
-            <span class="text-danger">(Left Group)</span>
-          </li>
-          <!-- ng-repeat="u in group.users | orderObjectBy :'firstName'" ng-if="u.userID !== $parent.user.userID || !userInGroup()" -->
-          <li class="list-group-item p-2">
-            User First Name, User Last Name
-            <!-- ng-if="!u.isActive"  -->
-            <span class="text-danger">(Left Group)</span>
-          </li>
-        </ul>
+        <table class="table table-sm table-hover table-striped">
+          <thead>
+          <tr>
+            <th>Username</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{user.username}}</td>
+            <td>{{user.firstName}}</td>
+            <td>{{user.lastName}}</td>
+          </tr>
+          </tbody>
+        </table>
 
       </div>
 

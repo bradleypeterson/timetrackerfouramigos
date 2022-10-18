@@ -645,6 +645,29 @@ app.get('/getusergroups/:userID', async (req, res) => {
 
 });
 
+//Gets a list of all users in a group
+app.get('/getgroupusers/:groupID', async (req, res) => {
+    let sql = `SELECT
+                   U.userID,
+                   U.username,
+                   U.firstName,
+                   U.lastName
+               FROM
+                   GroupAssignment AS GA
+                       LEFT JOIN Groups G on GA.groupID = G.groupID
+                       LEFT JOIN Users U on GA.userID = U.userID
+               WHERE
+                   GA.groupID = ${req.params.groupID}`;
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+
+});
+
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
 require('./database/seed.js');

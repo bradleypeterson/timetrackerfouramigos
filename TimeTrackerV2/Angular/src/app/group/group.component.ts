@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Router} from '@angular/router';
 import { User } from '../user.model';
+import { HttpService} from "../services/http.service";
+import {IUser} from "../interfaces/IUser";
+import {group} from "@angular/animations";
+import {IGroup} from "../interfaces/IGroup";
 
 @Component({
   selector: 'app-group',
@@ -12,24 +16,82 @@ import { User } from '../user.model';
 export class GroupComponent implements OnInit {
   public pageTitle = 'TimeTrackerV2 | Group'
   public errMsg = '';
-  private user!: User;
+  public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   private item;
   public groupName;
+  public currUser: IUser;
   public group: any = history.state.data;
+  public users: IUser[] = [];
 
   constructor(
     private http: HttpClient,
     private router: Router,
-  ) {
+    private httpService: HttpService
+  )
+  {
     this.item = localStorage.getItem('currentGroup');
     console.log("The current group is: " + this.item);
     if (this.item) {
       this.item = JSON.parse(this.item);
       this.groupName = this.item[0];
     }
+
+    this.currUser = new class implements IUser
+    {
+      firstName?: string;
+      id?: number;
+      isActive?: boolean;
+      lastName?: string;
+      password?: string;
+      salt?: string;
+      type?: string;
+      username?: string;
+    }
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void
+  {
+    this.getUser()
+    this.getGroupUsers();
+  }
+
+  //Get all users info based on local storage username
+  getUser(): void
+  {
+    let payload = {
+      username: this.user.username,
+    }
+    this.httpService.getUser(payload).subscribe((_user: any) =>
+    {
+      this.currUser = _user;
+    });
+  }
+
+  //Gets all users in the group
+  getGroupUsers(): void
+  {
+    this.httpService.getGroupUsers(this.group.groupID as number).subscribe((_users: any) =>
+    {
+      this.users = _users;
+    })
+  }
+
+  //Leave the current group
+  leaveGroup(): void
+  {
+    let payload = {
+      userID: this.currUser.userID,
+      groupID: this.group.groupID,
+    }
+    this.httpService.leaveGroup(payload).subscribe({
+      next: data => {
+        this.errMsg = "";
+        this.router.navigate(['./groups']);
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
   }
 
   clockIn(): void {
