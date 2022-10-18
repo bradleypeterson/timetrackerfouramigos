@@ -15,11 +15,12 @@ export class GroupComponent implements OnInit {
   private user!: User;
   private item;
   public groupName;
+  public group: any = history.state.data;
 
   constructor(
     private http: HttpClient,
     private router: Router,
-  ) { 
+  ) {
     this.item = localStorage.getItem('currentGroup');
     console.log("The current group is: " + this.item);
     if (this.item) {
@@ -33,12 +34,12 @@ export class GroupComponent implements OnInit {
 
   clockIn(): void {
     var item = localStorage.getItem('currentUser');
-    
+
     if (typeof item === 'string')
     {
       this.user = JSON.parse(item) as User
     }
-    
+
     if (this.user !== null)
     {
         let req = {
@@ -48,9 +49,9 @@ export class GroupComponent implements OnInit {
           userID: this.user.userID,
           description: null /// pull description from the HTML
         };
-      
+
         console.log(req);
-        
+
       if (req !== null)
       {
         this.http.post<any>('http://localhost:8080/clock/', req, {headers: new HttpHeaders({"Access-Control-Allow-Headers": "Content-Type"})}).subscribe({
@@ -63,13 +64,13 @@ export class GroupComponent implements OnInit {
             this.errMsg = error['error']['message'];
           }
         });
-      } 
+      }
     }
   }
 
   clockOut(): void {
     var item = localStorage.getItem('currentUser');
-    
+
     if (typeof item === 'string')
     {
       this.user = JSON.parse(item) as User
@@ -78,13 +79,13 @@ export class GroupComponent implements OnInit {
     if (this.user !== null )
     {
         let req = {
-          timeIn: null, 
+          timeIn: null,
           timeOut: Date.now(), /// pull date from the HTML
           createdOn: null,
           userID: this.user.userID,
           description: null /// pull description from the HTML
         };
-      
+
 
       if (req !== null)
       {

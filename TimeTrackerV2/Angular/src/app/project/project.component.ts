@@ -75,8 +75,6 @@ export class ProjectComponent implements OnInit {
   ngOnInit(): void
   {
     this.getUser();
-    this.getGroups();
-
   }
 
   getUser()
@@ -97,6 +95,7 @@ export class ProjectComponent implements OnInit {
       {
         this.isInstructor = false;
       }
+      this.getGroups();
     });
   }
 

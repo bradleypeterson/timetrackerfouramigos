@@ -1,12 +1,6 @@
 <div id="group" ng-cloak>
   <div class="row position-relative">
-    <h4 class="mt-3 col-sm-9 col-12 float-left">
-      <!-- ng-model-options="{debounce: 750}",
-    ng-change="saveGroup()" ng-model="group.groupName",
-    ng-class="{'input-header-admin': ($parent.user.type === 'A' || userInGroup() || $parent.user.type === 'I')}",
-    ng-readonly="$parent.user.type !== 'A' && $parent.user.type !== 'I'"-->
-      <input id="group_name" class="input-header" type="text" name="groupName" [(ngModel)]="groupName"/>
-    </h4>
+    <h4 class="mt-3 col-sm-9 col-12 float-left">{{group.groupName}}</h4>
 
     <!-- if you are an admin or instructor decide if group is active -->
     <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" -->
@@ -32,15 +26,8 @@
         <h5>Users</h5>
         <!-- ng-if="!($parent.user.type === 'A')" -->
         <div class="float-right top-right-buttons">
-          <!-- ng-click="joinGroup()", ng-if="(!userInGroup() || !group.users[$parent.user.userID].isActive) && $parent.user.userID !== course.instructorId"  -->
-          <button class="btn btn-primary">
-            Join
-            Group
-          </button>
           <!-- ng-click="leaveGroup()", ng-if="userInGroup() && group.users[$parent.user.userID].isActive" -->
-          <button class="btn btn-danger">
-            Leave Group
-          </button>
+          <button class="btn btn-danger">Leave Group</button>
         </div>
       </div>
       <!-- list the users -->

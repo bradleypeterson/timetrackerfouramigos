@@ -145,4 +145,10 @@ export class HttpService {
   {
     return this.http.get<IGroupAssignment[]>(this.apiUrl + `getgroupassignments/${id}`);
   }
+
+  //Returns a list of all groups a user is in
+  getUserGroups(id: number): Observable<IGroup[]>
+  {
+    return this.http.get<IGroup[]>(this.apiUrl + `getusergroups/${id}`);
+  }
 }
