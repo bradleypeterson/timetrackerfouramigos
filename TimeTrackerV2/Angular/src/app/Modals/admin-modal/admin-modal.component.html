@@ -1,0 +1,147 @@
+
+<div id="modal-container">
+
+    <header>
+      <div id="header-container">
+        <div id="username">
+            <h1>Username</h1>
+        </div>
+
+        <div id="closeBtnTop">
+            <h1 id="close" (click)="modalService.showModal()">X</h1>
+        </div>
+
+      </div>
+
+    </header>
+
+  <main>
+    <div id="main-container">
+
+      <div id="content-left">
+
+        <div id="user-data-table-container" class="user-info-table-container">
+          <table class="table table-sm table-hover table-borderless user-info-table" id="user-data-table">
+            <thead>
+            <tr>
+              <th>Info</th>
+              <th>Edit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
+            <tr>
+              <td >First name</td>
+              <td> Add text box</td>
+            </tr>
+
+            <tr>
+              <td >Last name</td>
+              <td> Add text box</td>
+            </tr>
+
+            <tr>
+              <td >Username</td>
+              <td> Add text box</td>
+            </tr>
+
+            <tr>
+              <td >Email</td>
+              <td> Add text box</td>
+            </tr>
+
+            <tr>
+              <td >Phone</td>
+              <td> Add text box</td>
+            </tr>
+
+            <tr>
+              <td >Type</td>
+              <td> Add text box</td>
+            </tr>
+
+            <tr>
+              <td >Active</td>
+              <td> Add text box</td>
+            </tr>
+
+
+            </tbody>
+          </table>
+        </div>
+
+
+<!--        Table for stats of user if the user is a student-->
+        <div id="user-stats-table-container" class="user-info-table-container">
+          <table class="table table-sm table-hover table-borderless user-info-table" id="user-stats-table">
+            <tbody>
+            <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
+            <tr>
+              <td >Number of Courses: </td>
+              <td> Courses number</td>
+            </tr>
+
+            <tr>
+              <td >Number of Projects:</td>
+              <td> Projects number</td>
+            </tr>
+
+            <tr>
+              <td >Number of Groups: </td>
+              <td> Groups number</td>
+            </tr>
+
+
+
+            </tbody>
+          </table>
+        </div>
+
+        <div id="eval-info">
+          <p>Number of Evals Assigned: 1 Number of Evals Completed: 1</p>
+        </div>
+
+      </div>
+
+
+
+      <div id="content-right">
+        <p>right content</p>
+
+      </div>
+
+
+    </div>
+  </main>
+
+  <footer>
+    <div id="footer-container">
+
+      <div id="footer-left">
+          <button id="editBtn" type="button" class="btn btn-dark">Edit</button>
+
+        <div class="pretty p-switch p-slim mr-1">
+          <!-- ng-model="config.showInactiveCourses" -->
+          <input type="checkbox" />
+          <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" -->
+          <div class="float-left mr-2 mt-2 state">
+            <label>Enable Editing</label>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="footer-right">
+        <button id="resetPassword" type="button" class="btn btn-success">Reset Password</button>
+        <button id="closeBtnBottom" type="button" class="btn btn-danger">Close</button>
+      </div>
+
+    </div>
+  </footer>
+
+
+</div>
+
+
+
