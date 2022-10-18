@@ -586,6 +586,41 @@ app.post('/clock', async (req, res, next) => {
   });  
 });
 
+app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
+    //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
+
+    let sql = `SELECT Groups.*, Projects.projectName
+               FROM Groups
+               LEFT JOIN Projects on Projects.projectID = Groups.projectID
+               WHERE Groups.projectID = ${req.params.projectid}`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({"error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
+});
+
+//Gets a list of all group assignments for a user
+app.get('/getgroupassignments/:userID', async (req, res) => {
+    let sql = `SELECT 
+                   userID, groupID
+               FROM 
+                   GroupAssignment
+               WHERE 
+                   userID = ${req.params.userID}`;
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+
+});
+
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
 require('./database/seed.js');

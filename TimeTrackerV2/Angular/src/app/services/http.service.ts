@@ -6,6 +6,7 @@ import { ICourse } from '../interfaces/ICourse';
 import {ICourseRequest} from "../interfaces/ICourseRequest";
 import {IProject } from '../interfaces/IProject';
 import {IGroup} from "../interfaces/IGroup";
+import {IGroupAssignment} from "../interfaces/IGroupAssignment";
 
 
 
@@ -139,4 +140,9 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + `createGroup`, payload, this.httpOptions);
   }
 
+  //Return a list of all group assignments for a user
+  getGroupAssignments(id: number): Observable<IGroupAssignment[]>
+  {
+    return this.http.get<IGroupAssignment[]>(this.apiUrl + `getgroupassignments/${id}`);
+  }
 }

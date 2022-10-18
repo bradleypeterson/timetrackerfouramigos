@@ -79,8 +79,8 @@
         <tbody>
           <tr *ngFor="let group of groups">
             <td>{{group.groupName}}</td>
-            <td><button (click)="joinGroup(group)" [hidden]="isInstructor == true" class="btn btn-primary mr-1">Join Group</button>
-            <button (click)="leaveGroup(group)" [hidden]="isInstructor == true" class="btn btn-danger mr-1">Leave Group</button></td>
+            <td><button (click)="joinGroup(group)" [hidden]="isInstructor == true || group.display" class="btn btn-primary mr-1">Join Group</button>
+            <button (click)="leaveGroup(group)" [hidden]="isInstructor == true || !group.display" class="btn btn-danger mr-1">Leave Group</button></td>
         </tbody>
       </table>
     </div>

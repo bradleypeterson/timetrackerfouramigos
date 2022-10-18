@@ -8,6 +8,7 @@ import {IUser} from "../interfaces/IUser";
 import {IGroup} from "../interfaces/IGroup";
 import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 import {IProject} from "../interfaces/IProject";
+import {IGroupAssignment} from "../interfaces/IGroupAssignment";
 
 @Component({
   selector: 'app-project',
@@ -22,6 +23,8 @@ export class ProjectComponent implements OnInit {
   public projectDescription;
   public userTypeHolder: IUser;
   public groups: IGroup[] = [];
+  public joinedGroups: IGroupAssignment[] = [];
+  public temp: IGroupAssignment[] = [];
 
   private project: IProject = history.state.data; // holds the current project data
 
@@ -69,17 +72,22 @@ export class ProjectComponent implements OnInit {
     groupName: '',
   });
 
-  ngOnInit(): void {
+  ngOnInit(): void
+  {
+    this.getUser();
     this.getGroups();
 
+  }
 
+  getUser()
+  {
     let payload = {
       username: this.user.username,
     }
     //Gets user from database
     this.httpService.getUser(payload).subscribe((_user: any) =>
     {
-      this.userTypeHolder = _user
+      this.userTypeHolder = _user;
       //Allow user to create courses if they are an instructor
       if(this.userTypeHolder.type == "Instructor")
       {
@@ -92,8 +100,29 @@ export class ProjectComponent implements OnInit {
     });
   }
 
-  getGroups() {
-    this.httpService.getGroups(this.project['projectID'] as number).subscribe((_groups: any) => { this.groups = _groups });
+  getGroups()
+  {
+    this.httpService.getGroups(this.project['projectID'] as number).subscribe((_groups: any) =>
+    {
+      this.groups = _groups
+
+      //Gets a list of all group assignments the user has and sets the visibility
+      this.httpService.getGroupAssignments(this.userTypeHolder.userID as number).subscribe((_groupAssignment: IGroupAssignment[]) =>
+      {
+        this.joinedGroups = _groupAssignment;
+        this.groups.forEach(value =>
+        {
+          if(this.joinedGroups.some(x => x.groupID === value.groupID))
+          {
+            value.display = true;
+          }
+          else
+          {
+            value.display = false;
+          }
+        });
+      });
+    });
   }
 
   // changes the value of bvis to show the hidden form
@@ -157,6 +186,7 @@ export class ProjectComponent implements OnInit {
     this.httpService.joinGroup(payload).subscribe({
       next: data => {
         this.errMsg = "";
+        this.getGroups()
       },
       error: error => {
         this.errMsg = error['error']['message'];
@@ -173,13 +203,13 @@ export class ProjectComponent implements OnInit {
     this.httpService.leaveGroup(payload).subscribe({
       next: data => {
         this.errMsg = "";
+        this.getGroups();
       },
       error: error => {
         this.errMsg = error['error']['message'];
       }
     });
   }
-
 
   //Moves the page to the group page and passes it the current group
   setProjectAndMove(group: IGroup) {
