@@ -6,6 +6,7 @@ import { HttpService} from "../services/http.service";
 import {IUser} from "../interfaces/IUser";
 import {group} from "@angular/animations";
 import {IGroup} from "../interfaces/IGroup";
+import {FormBuilder} from "@angular/forms";
 
 @Component({
   selector: 'app-group',
@@ -22,13 +23,19 @@ export class GroupComponent implements OnInit {
   public currUser: IUser;
   public group: any = history.state.data;
   public users: IUser[] = [];
+  public startTime: any;
+  public endTime: any;
+  public description: any;
+  public isClocked: any;
 
   constructor(
     private http: HttpClient,
     private router: Router,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private formBuilder: FormBuilder
   )
   {
+    this.isClocked = false;
     this.item = localStorage.getItem('currentGroup');
     console.log("The current group is: " + this.item);
     if (this.item) {
@@ -48,6 +55,12 @@ export class GroupComponent implements OnInit {
       username?: string;
     }
   }
+
+  //Forms for creating a new time clock
+  timeForm = this.formBuilder.group({
+    startTime: '',
+    endTime: ''
+  });
 
   ngOnInit(): void
   {
@@ -94,9 +107,17 @@ export class GroupComponent implements OnInit {
     });
   }
 
-  clockIn(): void {
-    var item = localStorage.getItem('currentUser');
+  //Adds a new clock time to the database
+  submitTime(): void
+  {
+    let tempStart = new Date(this.startTime);
+    let tempEnd = new Date(this.endTime);
+  }
 
+  clockIn(): void
+  {
+    var item = localStorage.getItem('currentUser');
+    this.isClocked = true;
     if (typeof item === 'string')
     {
       this.user = JSON.parse(item) as User
@@ -130,9 +151,10 @@ export class GroupComponent implements OnInit {
     }
   }
 
-  clockOut(): void {
+  clockOut(): void
+  {
     var item = localStorage.getItem('currentUser');
-
+    this.isClocked = false;
     if (typeof item === 'string')
     {
       this.user = JSON.parse(item) as User
