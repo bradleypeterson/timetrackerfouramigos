@@ -28,7 +28,8 @@ db.run(`CREATE TABLE IF NOT EXISTS TimeCard(timeslotID INTEGER PRIMARY KEY,
                             isEdited bool NOT NULL,
                             createdOn TEXT NOT NULL,
                             userID INTEGER NOT NULL,
-                            description TEXT);`);
+                            description TEXT, 
+                            groupID INTEGER NOT NULL);`);
 
 db.run(`CREATE TABLE IF NOT EXISTS Groups(groupID INTEGER PRIMARY KEY,
                             groupName TEXT NOT NULL,

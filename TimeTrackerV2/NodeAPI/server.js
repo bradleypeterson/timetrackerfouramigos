@@ -538,8 +538,9 @@ app.post('/clock', async (req, res, next) => {
       data[2] = req.body["createdOn"];
       data[3] = req.body["userID"];
       data[4] = req.body["description"];
+      data[5] = req.body["groupID"];
 
-      db.run(`INSERT INTO TimeCard(timeIn, isEdited, createdOn, userID, description) VALUES(?, ?, ?, ?, ?)`, data, function(err,value){
+      db.run(`INSERT INTO TimeCard(timeIn, isEdited, createdOn, userID, description, groupID) VALUES(?, ?, ?, ?, ?, ?)`, data, function(err,value){
         if(err){
           console.log(err)
           return res.status(500).json({message: 'Something went wrong. Please try again later.'});
@@ -667,6 +668,59 @@ app.get('/getgroupusers/:groupID', async (req, res) => {
     });
 
 });
+
+//Gets a list of all time cards for a users group
+app.post('/getusergrouptimecards', async (req, res) => {
+    console.log("groupID: " + req.body["groupID"] + " userID: " + req.body["userID"]);
+    let sql = `SELECT
+                   *
+               FROM
+                   TimeCard
+               WHERE
+                   userID = ? AND groupID = ?`;
+    let data = [];
+    data[0] = req.body["userID"];
+    data[1] = req.body["groupID"];
+
+    db.all(sql, data, (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
+//Creates a new time card
+app.post('/createtimecard', async (req, res, next) => {
+    function isEmpty(str) {
+        return (!str || str.length === 0);
+    }
+
+    let data = [];
+
+    // Can't use dictionaries for queries so order matters!
+    data[0] = req.body["timeIn"];
+    data[1] = req.body["timeOut"];
+    data[2] = 0;
+    data[3] = req.body['createdOn'];
+    data[4] = req.body['userID'];
+    data[5] = req.body['description'];
+    data[6] = req.body['groupID'];
+
+    console.log(data);
+
+    db.run(`INSERT INTO TimeCard(timeIn, timeOut, isEdited, createdOn, userID, description, groupID) VALUES(?, ?, ?, ?, ?, ?, ?)`, data, function (err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
+
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

@@ -7,6 +7,7 @@ import {ICourseRequest} from "../interfaces/ICourseRequest";
 import {IProject } from '../interfaces/IProject';
 import {IGroup} from "../interfaces/IGroup";
 import {IGroupAssignment} from "../interfaces/IGroupAssignment";
+import {animate} from "@angular/animations";
 
 
 
@@ -153,8 +154,20 @@ export class HttpService {
   }
 
   //Returns a list of all users in a group
-  getGroupUsers(id: number): Observable<IUser[]>
+  getGroupUsers(groupID: number): Observable<IUser[]>
   {
-    return this.http.get<IUser[]>(this.apiUrl + `getgroupusers/${id}`);
+    return this.http.get<IUser[]>(this.apiUrl + `getgroupusers/${groupID}`);
+  }
+
+  //Returns a list of all time cards for a users group
+  getTimeCards(payload: any): Observable<IUser[]>
+  {
+    return this.http.post<IUser[]>(this.apiUrl + `getusergrouptimecards`, payload, this.httpOptions);
+  }
+
+  //Creates a new time card
+  createTimeCard(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + `createtimecard`, payload, this.httpOptions);
   }
 }

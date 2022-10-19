@@ -119,13 +119,17 @@
           <tr>
             <th>Time In</th>
             <th>Time Out</th>
+            <th>Total Time</th>
             <th>Description</th>
             <th></th>
           </tr>
           </thead>
           <tbody>
-          <tr>
-
+          <tr *ngFor="let date of dateTime">
+            <td>{{date.timeIn}}</td>
+            <td>{{date.timeOut}}</td>
+            <td>{{date.hours}}</td>
+            <td>{{date.description}}</td>
           </tr>
           </tbody>
         </table>
