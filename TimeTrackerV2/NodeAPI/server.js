@@ -720,6 +720,27 @@ app.post('/createtimecard', async (req, res, next) => {
     });
 });
 
+//Delete specified time card
+app.post('/deletetimecard', async (req, res, next) => {
+    function isEmpty(str) {
+        return (!str || str.length === 0);
+    }
+
+    let data = [];
+
+    // Can't use dictionaries for queries so order matters!
+    data[0] = req.body["timeslotID"];
+
+    db.run(`DELETE FROM TimeCard WHERE timeslotID = ?`, data, function (err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
 
 
 app.listen(PORT, HOST);

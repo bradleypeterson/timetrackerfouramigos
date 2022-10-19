@@ -21,6 +21,21 @@
            height="400" />
     </div>
 
+  </div>
+  <!-- Clock in/Clock out  -->
+  <div class="row mt-4">
+    <div class="col-12 mb-2">
+      <div class="input-group mb-3">
+        <button (click)="clockIn()" [disabled]="isClocked" class="btn btn-success">
+          Clock In
+        </button>
+        <input type="text" class="input-group-text" placeholder="Description" aria-label="Description" aria-describedby="basic-addon2" [(ngModel)]="descriptionAuto">
+        <div class="input-group-append">
+          <button [disabled]="!isClocked" class="btn btn-warning " type="button" (click)="clockOut()">Clock Out</button>
+        </div>
+      </div>
+    </div>
+
     <!-- leave group  -->
     <div class="col-sm col-12">
       <div class="position-relative">
@@ -66,21 +81,7 @@
 <!--        </button>-->
 <!--      </div>-->
     </div>
-  </div>
-  <!-- start or end time  -->
-  <div class="row mt-4">
-    <div class="col-12 mb-2">
-      <!-- ng-click="startTime()"
-    ng-if="userActiveInGroup() && !hasUnfinishedBusiness()" -->
-      <button (click)="clockIn()" class="btn btn-success m-2">
-        Clock In
-      </button>
-      <!-- ng-click="endTime()"
-      ng-if="userActiveInGroup() && hasUnfinishedBusiness()" -->
-      <button (click)="clockOut()" class="btn btn-warning m-2">
-        Clock Out
-      </button>
-    </div>
+    <!--        Enter new clock times-->
     <h5>Manual Time Enter</h5>
     <div class="card m-2">
       <table class="table table-sm table-hover table-striped">
@@ -93,18 +94,18 @@
         </tr>
         </thead>
         <tbody>
-        <!--        Enter new clock times-->
         <tr>
           <td>
-            <input type="datetime-local" placeholder="start date" [(ngModel)]="startTime">
+            <input type="datetime-local" class="input-group-text" placeholder="start date" [(ngModel)]="startTime">
           </td>
           <td>
-            <input type="datetime-local" placeholder="start date" [(ngModel)]="endTime">
+            <input type="datetime-local" class="input-group-text" placeholder="start date" [(ngModel)]="endTime">
           </td>
           <td>
-            <input type="text" [(ngModel)]="description">
+            <input type="text" class="input-group-text" placeholder="Description" [(ngModel)]="description">
           </td>
           <td>
+            <label [hidden]="isNegative" class="text-danger m-1">Enter a valid time</label>
             <button type="submit" class="btn btn-success" (click)="submitTime()">Submit</button>
           </td>
         </tr>
@@ -122,6 +123,7 @@
             <th>Total Time</th>
             <th>Description</th>
             <th></th>
+            <th></th>
           </tr>
           </thead>
           <tbody>
@@ -130,6 +132,7 @@
             <td>{{date.timeOut}}</td>
             <td>{{date.hours}}</td>
             <td>{{date.description}}</td>
+            <td><button class="btn btn-danger" (click)="deleteTime(date)">Delete</button></td>
           </tr>
           </tbody>
         </table>

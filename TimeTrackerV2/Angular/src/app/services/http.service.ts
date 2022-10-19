@@ -170,4 +170,10 @@ export class HttpService {
   {
     return this.http.post<any>(this.apiUrl + `createtimecard`, payload, this.httpOptions);
   }
+
+  //Delete selected time card
+  deleteTimeCard(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + `deletetimecard`, payload, this.httpOptions);
+  }
 }

@@ -42,7 +42,9 @@ export class GroupComponent implements OnInit {
   public startTime: any;
   public endTime: any;
   public description: any;
+  public descriptionAuto: any;
   public isClocked: any;
+  public isNegative: any;
 
   constructor(
     private http: HttpClient,
@@ -52,6 +54,7 @@ export class GroupComponent implements OnInit {
   )
   {
     this.isClocked = false;
+    this.isNegative = true;
     this.item = localStorage.getItem('currentGroup');
     console.log("The current group is: " + this.item);
     if (this.item) {
@@ -121,7 +124,7 @@ export class GroupComponent implements OnInit {
         let newOut = new Date(parseInt(time.timeOut as string));
         let newCreate = new Date(parseInt(time.createdOn as string));
         //Convert milliseconds to hours
-        let hours = new Date(parseInt(time.timeOut as string) - parseInt(time.timeIn as string)).toISOString().slice(11,19);
+        //let hours = new Date(parseInt(time.timeOut as string) - parseInt(time.timeIn as string)).toISOString().slice(11,19);
 
 
         //Assign new values to tempDate
@@ -133,7 +136,8 @@ export class GroupComponent implements OnInit {
         tempDate.description = time.description;
         tempDate.isEdited = time.isEdited;
         tempDate.timeslotID = time.timeslotID;
-        tempDate.hours = hours;
+        //tempDate.hours = hours;
+        tempDate.hours = this.getTime(parseInt(time.timeOut as string) - parseInt(time.timeIn as string));
         //Add to array
         this.dateTime.push(tempDate);
       });
@@ -160,20 +164,13 @@ export class GroupComponent implements OnInit {
     });
   }
 
-  //Adds a new clock time to the database
-  submitTime(): void
+  //Deletes selected time stamp from database
+  deleteTime(date: any): void
   {
-    let tempStart = new Date(this.startTime);
-    let tempEnd = new Date(this.endTime);
     let payload = {
-      timeIn: tempStart.getTime(),
-      timeOut: tempEnd.getTime(),
-      createdOn: Date.now(),
-      userID: this.currUser.userID,
-      description: this.description,
-      groupID: this.group.groupID
-    }
-    this.httpService.createTimeCard(payload).subscribe({
+        timeslotID: date.timeslotID,
+      }
+    this.httpService.deleteTimeCard(payload).subscribe({
       next: data => {
         this.errMsg = "";
         this.getTimeCards();
@@ -182,6 +179,81 @@ export class GroupComponent implements OnInit {
         this.errMsg = error['error']['message'];
       }
     });
+
+  }
+
+  //Adds a new clock time to the database
+  submitTime(): void
+  {
+    //Format dates
+    let tempStart = new Date(this.startTime);
+    let tempEnd = new Date(this.endTime);
+    let time = tempEnd.getTime() - tempStart.getTime();
+
+    //check for accepted times
+    if(time < 0 || isNaN(tempStart.getTime()) || isNaN(tempEnd.getTime()))
+    {
+      this.isNegative = false;
+      //Clear fields
+      this.startTime = "";
+      this.endTime = "";
+      this.description = "";
+    }
+    else
+    {
+      this.isNegative = true;
+      let payload = {
+        timeIn: tempStart.getTime(),
+        timeOut: tempEnd.getTime(),
+        createdOn: Date.now(),
+        userID: this.currUser.userID,
+        description: this.description,
+        groupID: this.group.groupID
+      }
+      this.httpService.createTimeCard(payload).subscribe({
+        next: data => {
+          this.errMsg = "";
+          this.getTimeCards();
+          //Clear fields
+          this.startTime = "";
+          this.endTime = "";
+          this.description = "";
+        },
+        error: error => {
+          this.errMsg = error['error']['message'];
+        }
+      });
+    }
+  }
+
+  //Get time to display based on milliseconds
+  getTime(time: any): string
+  {
+    const portions: string[] = [];
+
+    const msInHour = 1000 * 60 * 60;
+    const hours = Math.trunc(time / msInHour);
+    if (hours > 0)
+    {
+      portions.push(hours + 'h');
+      time = time - (hours * msInHour);
+    }
+
+    const msInMinute = 1000 * 60;
+    const minutes = Math.trunc(time / msInMinute);
+    if (minutes > 0)
+    {
+      portions.push(minutes + 'm');
+      time = time - (minutes * msInMinute);
+    }
+
+    const seconds = Math.trunc(time / 1000);
+    if (seconds > 0)
+    {
+      portions.push(seconds + 's');
+    }
+
+    return portions.join(' ');
   }
 
   clockIn(): void
@@ -197,19 +269,15 @@ export class GroupComponent implements OnInit {
           timeOut: null,
           createdOn: Date.now(),
           userID: this.currUser.userID,
-          description: null, /// pull description from the HTML
+          description: null,
           groupID: this.group.groupID
         };
-
-        console.log(req);
 
       if (req !== null)
       {
         this.http.post<any>('http://localhost:8080/clock/', req, {headers: new HttpHeaders({"Access-Control-Allow-Headers": "Content-Type"})}).subscribe({
           next: data => {
             this.errMsg = "";
-            console.log("user clocked in: " + this.currUser.username);
-            /// populate a label to inform the user that they successfully clocked in, maybe with the time.
           },
           error: error => {
             this.errMsg = error['error']['message'];
@@ -231,7 +299,7 @@ export class GroupComponent implements OnInit {
           timeOut: Date.now(), /// pull date from the HTML
           createdOn: null,
           userID: this.currUser.userID,
-          description: null /// pull description from the HTML
+          description: this.descriptionAuto
         };
 
 
@@ -242,6 +310,7 @@ export class GroupComponent implements OnInit {
             this.errMsg = "";
             /// populate a label to inform the user that they successfully clocked out, maybe with the time.
             this.getTimeCards();
+            this.descriptionAuto = "";
           },
           error: error => {
             this.errMsg = error['error']['message'];
