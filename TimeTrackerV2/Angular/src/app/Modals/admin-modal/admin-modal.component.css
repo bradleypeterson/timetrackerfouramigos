@@ -41,6 +41,7 @@
   text-align: end;
   margin-right: 2.5%;
   color: darkgrey;
+  font-size: 32pt;
 }
 
 main {
@@ -55,13 +56,15 @@ main {
 
 }
 
+
+/*Content left stuff*/
 #content-left{
   width: 100%;
   height: 100%;
   border-right: 1px solid black;
 }
 
-/*Content left stuff*/
+
 .user-info-table-container{
   padding-left: 20%;
   padding-right: 25px;
@@ -91,10 +94,32 @@ main {
 
 /*=================================================*/
 
+
+/*Content left stuff*/
 #content-right {
   width: 100%;
   height: 100%;
 }
+
+#course-table-container {
+  padding-left: 20%;
+  padding-right: 25px;
+  padding-top: 25px;
+  height: 35%;
+}
+
+#user-course-table {
+  display: block;
+  height: 100%;
+  overflow-y: scroll;
+  width: fit-content;
+}
+
+
+
+
+
+/*=================================================*/
 
 #footer-container{
   display: flex;

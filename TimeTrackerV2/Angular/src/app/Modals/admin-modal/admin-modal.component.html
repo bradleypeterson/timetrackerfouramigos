@@ -8,7 +8,7 @@
         </div>
 
         <div id="closeBtnTop">
-            <h1 id="close" (click)="modalService.showModal()">X</h1>
+            <i id="close" (click)="modalService.showModal()">X</i>
         </div>
 
       </div>
@@ -106,7 +106,29 @@
 
 
       <div id="content-right">
-        <p>right content</p>
+
+        <div id="course-table-container">
+          <table class="table table-sm table-hover table-borderless user-info-table" id="user-course-table">
+            <thead>
+            <tr>
+              <th>Course</th>
+              <th>Instructor</th>
+            </tr>
+            </thead>
+            <tbody>
+
+<!--            wrap in a for loop to display all of the courses-->
+              <tr>
+                <td>test course name</td>
+                <td>test instructor name</td>
+              </tr>
+
+            </tbody>
+          </table>
+
+
+
+        </div>
 
       </div>
 
