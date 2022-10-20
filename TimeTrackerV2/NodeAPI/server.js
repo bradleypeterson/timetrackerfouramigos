@@ -27,6 +27,42 @@ app.get('/', (req, res) => {
   return res.send('Hello World');
 });
 
+//Joins a group based on user id and group id
+app.post('/joingroup', async (req, res, next) => {
+    let sql = `INSERT INTO GroupAssignment (userID, groupID)
+                VALUES (?, ?)`;
+
+    let data = [];
+    data[0] = req.body["userID"];
+    data[1] = req.body["groupID"];
+
+    db.run(sql, data, function(err, rows) {
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+//Leaves a group based on user id and group id
+app.post('/leavegroup', async (req, res, next) => {
+    let sql = `DELETE   
+                FROM
+                    GroupAssignment AS GA
+               WHERE
+                   GA.userID = ? AND GA.groupID = ?`;
+
+    let data = [];
+    data[0] = req.body["userID"];
+    data[1] = req.body["groupID"];
+
+    db.run(sql, data, function(err, rows) {
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
 //Get users info based on username
 app.post('/getuser', async (req, res, next) => {
     let sql = `SELECT userID, username, firstName, lastName, type, isActive FROM Users WHERE username = ?`;
@@ -502,8 +538,9 @@ app.post('/clock', async (req, res, next) => {
       data[2] = req.body["createdOn"];
       data[3] = req.body["userID"];
       data[4] = req.body["description"];
+      data[5] = req.body["groupID"];
 
-      db.run(`INSERT INTO TimeCard(timeIn, isEdited, createdOn, userID, description) VALUES(?, ?, ?, ?, ?)`, data, function(err,value){
+      db.run(`INSERT INTO TimeCard(timeIn, isEdited, createdOn, userID, description, groupID) VALUES(?, ?, ?, ?, ?, ?)`, data, function(err,value){
         if(err){
           console.log(err)
           return res.status(500).json({message: 'Something went wrong. Please try again later.'});
@@ -549,6 +586,162 @@ app.post('/clock', async (req, res, next) => {
     }
   });  
 });
+
+app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
+    //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
+
+    let sql = `SELECT Groups.*, Projects.projectName
+               FROM Groups
+               LEFT JOIN Projects on Projects.projectID = Groups.projectID
+               WHERE Groups.projectID = ${req.params.projectid}`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({"error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
+});
+
+//Gets a list of all group assignments for a user
+app.get('/getgroupassignments/:userID', async (req, res) => {
+    let sql = `SELECT 
+                   userID, groupID
+               FROM 
+                   GroupAssignment
+               WHERE 
+                   userID = ${req.params.userID}`;
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+
+});
+
+//Gets a list of all groups a user is in
+app.get('/getusergroups/:userID', async (req, res) => {
+    let sql = `SELECT
+                   G.groupID,
+                   G.groupName,
+                   G.isActive,
+                   P.projectID,
+                   P.projectName
+               FROM
+                   GroupAssignment AS GA
+                       LEFT JOIN Groups G on GA.groupID = G.groupID
+                       LEFT JOIN Projects P on G.projectID = P.projectID
+               WHERE
+                   GA.userID = ${req.params.userID}`;
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+
+});
+
+//Gets a list of all users in a group
+app.get('/getgroupusers/:groupID', async (req, res) => {
+    let sql = `SELECT
+                   U.userID,
+                   U.username,
+                   U.firstName,
+                   U.lastName
+               FROM
+                   GroupAssignment AS GA
+                       LEFT JOIN Groups G on GA.groupID = G.groupID
+                       LEFT JOIN Users U on GA.userID = U.userID
+               WHERE
+                   GA.groupID = ${req.params.groupID}`;
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+
+});
+
+//Gets a list of all time cards for a users group
+app.post('/getusergrouptimecards', async (req, res) => {
+    console.log("groupID: " + req.body["groupID"] + " userID: " + req.body["userID"]);
+    let sql = `SELECT
+                   *
+               FROM
+                   TimeCard
+               WHERE
+                   userID = ? AND groupID = ?`;
+    let data = [];
+    data[0] = req.body["userID"];
+    data[1] = req.body["groupID"];
+
+    db.all(sql, data, (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
+//Creates a new time card
+app.post('/createtimecard', async (req, res, next) => {
+    function isEmpty(str) {
+        return (!str || str.length === 0);
+    }
+
+    let data = [];
+
+    // Can't use dictionaries for queries so order matters!
+    data[0] = req.body["timeIn"];
+    data[1] = req.body["timeOut"];
+    data[2] = 0;
+    data[3] = req.body['createdOn'];
+    data[4] = req.body['userID'];
+    data[5] = req.body['description'];
+    data[6] = req.body['groupID'];
+
+    console.log(data);
+
+    db.run(`INSERT INTO TimeCard(timeIn, timeOut, isEdited, createdOn, userID, description, groupID) VALUES(?, ?, ?, ?, ?, ?, ?)`, data, function (err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
+//Delete specified time card
+app.post('/deletetimecard', async (req, res, next) => {
+    function isEmpty(str) {
+        return (!str || str.length === 0);
+    }
+
+    let data = [];
+
+    // Can't use dictionaries for queries so order matters!
+    data[0] = req.body["timeslotID"];
+
+    db.run(`DELETE FROM TimeCard WHERE timeslotID = ?`, data, function (err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
+
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

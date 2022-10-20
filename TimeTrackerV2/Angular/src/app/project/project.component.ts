@@ -8,6 +8,7 @@ import {IUser} from "../interfaces/IUser";
 import {IGroup} from "../interfaces/IGroup";
 import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 import {IProject} from "../interfaces/IProject";
+import {IGroupAssignment} from "../interfaces/IGroupAssignment";
 
 @Component({
   selector: 'app-project',
@@ -22,9 +23,10 @@ export class ProjectComponent implements OnInit {
   public projectDescription;
   public userTypeHolder: IUser;
   public groups: IGroup[] = [];
-  
+  public joinedGroups: IGroupAssignment[] = [];
+
   private project: IProject = history.state.data; // holds the current project data
-  
+
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
 
   // reveals the create group form
@@ -39,7 +41,7 @@ export class ProjectComponent implements OnInit {
     private router: Router,
     private httpService: HttpService,
 
-    
+
   ) {
     this.item = localStorage.getItem('currentProject');
     console.log("The current project is: " + this.item);
@@ -62,24 +64,27 @@ export class ProjectComponent implements OnInit {
     }
   }
 
-  
+
 
   //Forms for creating a new group
   groupForm = this.formBuilder.group({
     groupName: '',
   });
 
-  ngOnInit(): void {
-    this.getGroups();
+  ngOnInit(): void
+  {
+    this.getUser();
+  }
 
-
+  getUser()
+  {
     let payload = {
       username: this.user.username,
     }
     //Gets user from database
     this.httpService.getUser(payload).subscribe((_user: any) =>
     {
-      this.userTypeHolder = _user
+      this.userTypeHolder = _user;
       //Allow user to create courses if they are an instructor
       if(this.userTypeHolder.type == "Instructor")
       {
@@ -89,11 +94,33 @@ export class ProjectComponent implements OnInit {
       {
         this.isInstructor = false;
       }
+      this.getGroups();
     });
   }
 
-  getGroups() {
-    this.httpService.getGroups(this.project['projectID'] as number).subscribe((_groups: any) => { this.groups = _groups });
+  getGroups()
+  {
+    this.httpService.getGroups(this.project['projectID'] as number).subscribe((_groups: any) =>
+    {
+      this.groups = _groups
+
+      //Gets a list of all group assignments the user has and sets the visibility
+      this.httpService.getGroupAssignments(this.userTypeHolder.userID as number).subscribe((_groupAssignment: IGroupAssignment[]) =>
+      {
+        this.joinedGroups = _groupAssignment;
+        this.groups.forEach(value =>
+        {
+          if(this.joinedGroups.some(x => x.groupID === value.groupID))
+          {
+            value.display = true;
+          }
+          else
+          {
+            value.display = false;
+          }
+        });
+      });
+    });
   }
 
   // changes the value of bvis to show the hidden form
@@ -130,13 +157,14 @@ export class ProjectComponent implements OnInit {
       groupName: 'New Group',
       isActive: true,
     }
-    console.log(payload);*/
+    */
 
     this.httpService.createGroup(payload).subscribe({
       next: data => {
         this.errMsg = "";
         //this.router.navigate(['./']);
         //location.reload(); // refresh the page
+        console.log("Creating a group");
         this.groupForm.reset(); //Clears the form data after submitting the data.
         this.bvis = false; // hide the form again
         this.getGroups();
@@ -146,10 +174,43 @@ export class ProjectComponent implements OnInit {
       }
     });
   }
-
-
+  //Joins the selected group
+  joinGroup(group: IGroup): void
+  {
+    let payload = {
+      userID: this.userTypeHolder.userID,
+      groupID: group.groupID,
+    }
+    this.httpService.joinGroup(payload).subscribe({
+      next: data => {
+        this.errMsg = "";
+        this.getGroups()
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
+  }
+  //Leaves the selected group
+  leaveGroup(group: IGroup): void
+  {
+    let payload = {
+      userID: this.userTypeHolder.userID,
+      groupID: group.groupID,
+    }
+    this.httpService.leaveGroup(payload).subscribe({
+      next: data => {
+        this.errMsg = "";
+        this.getGroups();
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
+  }
   //Moves the page to the group page and passes it the current group
-  setProjectAndMove(group: IGroup) {
+  setGroupAndMove(group: IGroup)
+  {
     this.router.navigate(['./group'], {state:{data: group}});
 
   }

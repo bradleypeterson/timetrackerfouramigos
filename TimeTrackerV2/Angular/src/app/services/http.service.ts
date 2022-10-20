@@ -6,6 +6,8 @@ import { ICourse } from '../interfaces/ICourse';
 import {ICourseRequest} from "../interfaces/ICourseRequest";
 import {IProject } from '../interfaces/IProject';
 import {IGroup} from "../interfaces/IGroup";
+import {IGroupAssignment} from "../interfaces/IGroupAssignment";
+import {animate} from "@angular/animations";
 
 
 
@@ -54,7 +56,17 @@ export class HttpService {
     return this.http.get<ICourseRequest[]>(this.apiUrl + 'getacceptedcourserequests');
   }
 
+  //Joins group based on userID and groupID
+  joinGroup(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'joingroup', payload, this.httpOptions);
+  }
 
+  //Leaves group based on userID and groupID
+  leaveGroup(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'leavegroup', payload, this.httpOptions);
+  }
 
   //Updates passed course request
   updateCourseRequest(payload: any): Observable<any>
@@ -66,7 +78,7 @@ export class HttpService {
   insertCourseRequest(payload: any): Observable<any>
   {
     return this.http.post<any>(this.apiUrl + 'insertcourserequest', payload, this.httpOptions);
-    
+
   }
 
   // return single course
@@ -129,4 +141,39 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + `createGroup`, payload, this.httpOptions);
   }
 
+  //Return a list of all group assignments for a user
+  getGroupAssignments(id: number): Observable<IGroupAssignment[]>
+  {
+    return this.http.get<IGroupAssignment[]>(this.apiUrl + `getgroupassignments/${id}`);
+  }
+
+  //Returns a list of all groups a user is in
+  getUserGroups(id: number): Observable<IGroup[]>
+  {
+    return this.http.get<IGroup[]>(this.apiUrl + `getusergroups/${id}`);
+  }
+
+  //Returns a list of all users in a group
+  getGroupUsers(groupID: number): Observable<IUser[]>
+  {
+    return this.http.get<IUser[]>(this.apiUrl + `getgroupusers/${groupID}`);
+  }
+
+  //Returns a list of all time cards for a users group
+  getTimeCards(payload: any): Observable<IUser[]>
+  {
+    return this.http.post<IUser[]>(this.apiUrl + `getusergrouptimecards`, payload, this.httpOptions);
+  }
+
+  //Creates a new time card
+  createTimeCard(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + `createtimecard`, payload, this.httpOptions);
+  }
+
+  //Delete selected time card
+  deleteTimeCard(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + `deletetimecard`, payload, this.httpOptions);
+  }
 }

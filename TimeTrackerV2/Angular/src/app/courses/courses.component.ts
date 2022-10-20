@@ -23,7 +23,7 @@ export class CoursesComponent implements OnInit {
   public activeCR: ICourseRequest[] = [];
   public acceptedCR: ICourseRequest[] = [];
   public userTypeHolder: IUser;
-  
+
   // for getting the course that was clicked on
   public currCourse?: ICourse;
 
@@ -44,7 +44,7 @@ export class CoursesComponent implements OnInit {
     this.userTypeHolder = new class implements IUser
     {
       firstName?: string;
-      id?: number;
+      userID?: number;
       isActive?: boolean;
       lastName?: string;
       password?: string;
@@ -56,6 +56,8 @@ export class CoursesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCourses();
+    //this.getUserRequests();
+
   }
 
   //Gets all the courses from the database, can be called to update the list of courses without reloading the page
@@ -83,6 +85,8 @@ export class CoursesComponent implements OnInit {
   }
 
   getUserRequests() {
+    //needs a payload with users id
+
     // get course requests that the user is in and that are active
     this.httpService.getActiveCourseRequests().subscribe((_courseRequests: any) => { this.activeCR = _courseRequests });
 
@@ -145,7 +149,7 @@ export class CoursesComponent implements OnInit {
       });
     }
 
-    
+
 
   }
 

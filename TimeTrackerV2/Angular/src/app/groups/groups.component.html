@@ -12,7 +12,7 @@
     <tbody>
     <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
     <tr *ngFor="let group of groups">
-      <td >{{group.groupID}}</td>
+      <td (click)="setGroupAndMove(group)" >{{group.groupID}}</td>
       <td >{{group.groupName}}</td>
       <td *ngIf="group.isActive">Active</td>
       <td *ngIf="!group.isActive">Not Active</td>

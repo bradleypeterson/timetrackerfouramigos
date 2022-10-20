@@ -42,12 +42,12 @@
               <input id="groupName" formControlName="groupName" type="text" class="form-control bg-light" style="border: none; border-bottom-right-radius: 0;" name="groupName" placeholder="Group Name" ng-model="groupName">
             </div>
             <div class="row mt-2 pl-3 pr-3">
-    
+
               <button (click)="hideForm()" type="button" class="btn btn-danger col mr-1" >Cancel</button>
-    
+
               <button type="submit" class="btn btn-primary col ml-1">Create Group</button>
             </div>
-    
+
           </form>
         </div>
 
@@ -65,7 +65,7 @@
           </div>
       </div>
 
-      
+
     </div>
 
     <div class="card">
@@ -78,9 +78,9 @@
         </thead>
         <tbody>
           <tr *ngFor="let group of groups">
-            <td>{{group.groupName}}</td>
-            <td><button [hidden]="isInstructor == true" class="btn btn-primary mr-1">Join Group</button>
-            <button [hidden]="isInstructor == true" class="btn btn-danger mr-1">Leave Group</button></td>
+            <td (click)="group.display === true ? setGroupAndMove(group) : false">{{group.groupName}}</td>
+            <td><button (click)="joinGroup(group)" [hidden]="isInstructor == true || group.display" class="btn btn-primary mr-1">Join Group</button>
+            <button (click)="leaveGroup(group)" [hidden]="isInstructor == true || !group.display" class="btn btn-danger mr-1">Leave Group</button></td>
         </tbody>
       </table>
     </div>
