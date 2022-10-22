@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommsService } from '../comms.service';
 import { HttpService } from '../services/http.service';
+import {IUser} from "../interfaces/IUser";
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ export class LoginComponent implements OnInit {
 
   public errMsg = '';
   userName!: string;
+  userTypeHolder?: IUser;
 
   constructor(private data: CommsService,
     private formBuilder: FormBuilder,
@@ -22,7 +24,7 @@ export class LoginComponent implements OnInit {
     private httpService: HttpService,
   ) { }
 
-  ngOnInit(): void 
+  ngOnInit(): void
   {
     //Subscribes to the CommsService for username updates
     this.data.currentUserName.subscribe(userName => this.userName = userName);
@@ -53,6 +55,25 @@ export class LoginComponent implements OnInit {
         this.data.changeUserName(JSON.parse(localStorage.getItem('currentUser') || "{}").username);
         this.data.changeLogin("Logout");
 
+        let payload = {
+          username: this.userName,
+        }
+        //Gets user from database
+        this.httpService.getUser(payload).subscribe((_user: any) =>
+        {
+          this.userTypeHolder = _user
+          //Allow user to create courses if they are an instructor
+          // @ts-ignore
+          if(this.userTypeHolder.type == "Instructor")
+          {
+            this.data.changeInstructor(true);
+          }
+          else
+          {
+            this.data.changeInstructor(false);
+          }
+        });
+
         this.router.navigate(['./dashboard']);
       },
       error: error => {
@@ -63,5 +84,5 @@ export class LoginComponent implements OnInit {
 
 }
 
-  
+
 

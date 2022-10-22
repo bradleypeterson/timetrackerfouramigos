@@ -12,6 +12,8 @@ import { HttpService } from '../services/http.service';
 export class RegisterComponent implements OnInit {
   public pageTitle = 'TimeTrackerV2 | Register'
   public errMsg = '';
+  //Temporary to create an Instructor user
+  public userType: string = "Basic";
 
   constructor(
     private formBuilder: FormBuilder,
@@ -37,6 +39,8 @@ export class RegisterComponent implements OnInit {
       lastName: this.registrationForm.value['lastName'],
       password: this.registrationForm.value['password'],
       repeatPassword: this.registrationForm.value['repeatPassword'],
+      //Temporary to create an Instructor user
+      userType: this.userType,
     }
 
 
@@ -49,6 +53,18 @@ export class RegisterComponent implements OnInit {
         this.errMsg = error['error']['message'];
       }
     });
+  }
+  //Temporary to create an Instructor user
+  onChange(): void
+  {
+    if (this.userType == "Basic")
+    {
+      this.userType = "Instructor";
+    }
+    else
+    {
+      this.userType = "Basic";
+    }
   }
 
 }

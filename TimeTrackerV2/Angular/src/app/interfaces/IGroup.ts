@@ -4,6 +4,7 @@ export interface IGroup {
   isActive?: boolean;
   projectID?: number;
   projectName?: string;
+  display?: boolean;
 }
 
 //Interface for groups

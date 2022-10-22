@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
 import { ICourse } from '../interfaces/ICourse';
+import {IUser} from "../interfaces/IUser";
+import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
+import { ICourseRequest } from '../interfaces/ICourseRequest';
 
 
 @Component({
@@ -16,24 +20,81 @@ export class CoursesComponent implements OnInit {
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
+  public activeCR: ICourseRequest[] = [];
+  public acceptedCR: ICourseRequest[] = [];
+  public userTypeHolder: IUser;
 
-  public bvis = false;
+  // for getting the course that was clicked on
+  public currCourse?: ICourse;
 
+  public bvis = false; // for form visibility
+  public bjoin = false; // for join button visibility
+  public bleave = false; // for leave button visibility
+
+
+  //Allow course creation if the user is an Instructor
+  public isInstructor: boolean = false;
 
   constructor(
+    private http: HttpClient,
     private formBuilder: FormBuilder,
     private router: Router,
-    private httpService: HttpService,
-  ) {}
+    private httpService: HttpService,)
+  {
+    this.userTypeHolder = new class implements IUser
+    {
+      firstName?: string;
+      userID?: number;
+      isActive?: boolean;
+      lastName?: string;
+      password?: string;
+      salt?: string;
+      type?: string;
+      username?: string;
+    }
+  }
 
   ngOnInit(): void {
     this.getCourses();
+    //this.getUserRequests();
+
   }
 
   //Gets all the courses from the database, can be called to update the list of courses without reloading the page
   getCourses(): void {
     this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
+
+    let payload = {
+      username: this.user.username,
+    }
+    //Gets user from database
+    this.httpService.getUser(payload).subscribe((_user: any) =>
+    {
+      this.userTypeHolder = _user
+      //Allow user to create courses if they are an instructor
+      if(this.userTypeHolder.type == "Instructor")
+      {
+        this.isInstructor = true;
+      }
+      else
+      {
+        this.isInstructor = false;
+      }
+    });
+
   }
+
+  getUserRequests() {
+    //needs a payload with users id
+
+    // get course requests that the user is in and that are active
+    this.httpService.getActiveCourseRequests().subscribe((_courseRequests: any) => { this.activeCR = _courseRequests });
+
+    // get courses that the user has been accepted into
+    this.httpService.getAcceptedCourseRequests().subscribe((_courseRequests: any) => { this.acceptedCR = _courseRequests });
+  }
+
+
 
   //Forms for creating a new course
   courseForm = this.formBuilder.group({
@@ -43,13 +104,53 @@ export class CoursesComponent implements OnInit {
 
   // changes the value of bvis to show the hidden form
   revealForm(): void {
-    this.bvis = true;
+    if (this.bvis == true) {
+      this.bvis = false;
+      this.courseForm.reset(); //Clears the form data
+    }
+    else {
+      this.bvis = true;
+    }
   }
 
   // hide form when clicking cancel?
   hideForm(): void {
     this.bvis = false; // set to false
+    this.courseForm.reset(); //Clears the form data
     //location.reload(); // refresh the page
+  }
+
+  // pass in the course that was clicked on
+  joinCourse(cId : any): void {
+
+    // make sure they aren't an instructor
+    if(this.isInstructor == false) {
+      // create payload to hold courseRequest data
+      let payload2 = {
+        userID: this.user['userID'],
+        courseID: cId.courseID,
+        instructorID: cId.instructorID,
+        isActive: true,
+        reviewerID: null,
+        status: false,
+
+      }
+
+      // insert the data into the course request table
+      this.httpService.insertCourseRequest(payload2).subscribe({
+        next: data => {
+          this.errMsg = "";
+          //this.router.navigate(['./']);
+          //location.reload(); // refresh the page
+        },
+        error: error => {
+          this.errMsg = error['error']['message'];
+        }
+      });
+    }
+
+
+
   }
 
   createCourse(): void {
@@ -75,6 +176,7 @@ export class CoursesComponent implements OnInit {
         //this.router.navigate(['./']);
         //location.reload(); // refresh the page
         this.courseForm.reset(); //Clears the form data after submitting the data.
+        this.bvis = false; // hide the form again
         this.getCourses();
       },
       error: error => {

@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminDashComponent } from './admin-dash/admin-dash.component';
 import { RegisterComponent } from './register/register.component';
+import { InstructorComponent } from './instructor/instructor.component';
 import { GroupsComponent } from './groups/groups.component';
 import { AdminModalComponent } from './modals/admin-modal/admin-modal.component';
 
@@ -24,6 +25,8 @@ import { AdminModalComponent } from './modals/admin-modal/admin-modal.component'
     RegisterComponent,
     GroupsComponent,
     AdminModalComponent,
+    InstructorComponent,
+
   ],
   imports: [
     BrowserModule,
