@@ -13,26 +13,25 @@
                   <div class="col-auto">
                     <input id="searchTerm" formControlName="searchTerm" type="text" name="searchTerm" placeholder="Search...">
                     <button type="submit" class="btn btn-primary" id="searchBtn">Search</button>
-                  </div>
 
-                  <div class="col-auto">
-                    <input type="radio" id="All" name="searchRadio" value="All">
+                    <input type="radio" id="All" name="searchRadio" value="All" (click)="filterUsers('all')">
                     <label for="All"> All </label>
-                  </div>
 
-                  <div class="col-auto">
-                    <input type="radio" id="Student" name="searchRadio" value="Student">
+                    <input type="radio" id="Student" name="searchRadio" value="Student" (click)="filterUsers('Basic')">
                     <label for="Student"> Student </label>
-                  </div>
 
-                  <div class="col-auto">
-                    <input type="radio" id="Instructor" name="searchRadio" value="Instructor">
+                    <input type="radio" id="Instructor" name="searchRadio" value="Instructor" (click)="filterUsers('Instructor')">
                     <label for="Instructor"> Instructor </label>
+
+                    <input type="radio" id="Admin" name="searchRadio" value="Admin" (click)="filterUsers('Admin')">
+                    <label for="Admin"> Admin </label>
+
                   </div>
-
                 </div>
-
               </form>
+
+
+
             </header>
           </div>
 
@@ -48,10 +47,11 @@
               </thead>
               <tbody>
               <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
-              <tr *ngFor="let user of users">
+              <tr *ngFor="let user of filtered_users" (click)="showModal(user)">
                 <td >{{user.username}}</td>
                 <td >{{user.lastName}}, {{user.firstName}}</td>
-                <td >{{user.type}}</td>
+                <td *ngIf="user.type == 'Basic'">Student</td>
+                <td *ngIf="user.type != 'Basic'">{{user.type}}</td>
                 <td *ngIf="user.isActive">Active</td>
                 <td *ngIf="!user.isActive">Not Active</td>
               </tr>
@@ -66,8 +66,7 @@
     <div class="col-lg-4">
         <div class="container">
           <button type="button" class="btn btn-danger" (click)="modalService.showModal()">Modal</button>
-<!--            <app-admin-modal *ngIf="modalService.modalDisplay"></app-admin-modal>-->
-            <app-admin-modal></app-admin-modal>
+            <app-admin-modal *ngIf="modalService.modalDisplay"></app-admin-modal>
 
         </div>
     </div>

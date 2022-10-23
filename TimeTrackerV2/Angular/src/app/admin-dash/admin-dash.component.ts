@@ -13,6 +13,7 @@ import { AdminModalService } from "../services/adminmodal.service";
 export class AdminDashComponent implements OnInit {
 
   users: IUser[] = []
+  filtered_users: IUser[] = []
   modal: boolean = false;
 
   constructor(
@@ -28,7 +29,8 @@ export class AdminDashComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.httpService.getUsers().subscribe((_users: any) => { this.users = _users});
+    this.httpService.getUsers().subscribe((_users: any) => { this.users = _users; this.filtered_users = this.users;});
+
 
   }
 
@@ -36,7 +38,25 @@ export class AdminDashComponent implements OnInit {
 
   }
 
-  showModal(){
-    this.modal = !this.modal;
+  showModal(user: IUser){
+    this.modalService.create(user);
+    this.modalService.showModal();
   }
+
+  filterUsers(filterType: string){
+
+
+    this.filtered_users = this.users.filter((user: IUser) => {
+
+      if (filterType == 'all'){
+        return user;
+      } else {
+        return user.type == filterType;
+      }
+
+    })
+  }
+
+
+
 }

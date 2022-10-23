@@ -8,15 +8,20 @@
 }
 
 input[type="radio"] {
-  margin-right: 5px;
+  margin-left: 20px;
+
 }
 
-.red {
+.red{
   border: red solid 2px;
 }
 
-.col-auto label {
+.col-auto {
+  width: fit-content;
+}
+label {
   font-size: 18pt;
+  margin-left: 10px;
 }
 
 #searchTerm {

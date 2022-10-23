@@ -1,5 +1,6 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {AdminModalService } from '../../services/adminmodal.service';
+import {IUser} from "../../interfaces/IUser";
 
 @Component({
   selector: 'app-admin-modal',
@@ -8,6 +9,8 @@ import {AdminModalService } from '../../services/adminmodal.service';
 })
 export class AdminModalComponent implements OnInit {
 
+  user: IUser = this.modalService.user;
+
   constructor(
     public modalService: AdminModalService,
   ) { }
@@ -15,9 +18,9 @@ export class AdminModalComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  // @HostListener('click') closeModal() {
-  //   this.modalService.showModal();
-  // }
+  @HostListener('click') closeModal() {
+    this.modalService.showModal();
+  }
 
 
 }

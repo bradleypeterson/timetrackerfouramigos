@@ -44,6 +44,10 @@
   font-size: 32pt;
 }
 
+i {
+  cursor: pointer;
+}
+
 main {
   flex-grow: 1;
 }
@@ -101,25 +105,48 @@ main {
   height: 100%;
 }
 
-#course-table-container {
-  padding-left: 20%;
-  padding-right: 25px;
-  padding-top: 25px;
-  height: 35%;
+.content-right-table-container {
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 15px;
+  height: 33%;
+  /*overflow: hidden;*/
+  /*overflow-y: auto;*/
 }
 
-#user-course-table {
-  display: block;
+.content-right-table {
+  table-layout: fixed;
   height: 100%;
+  width: 100%;
+  /*overflow: hidden;*/
+  border: 1px solid black;
+
+}
+
+.content-right-table tbody {
+  display: block;
+  height: 125px;
+  width: 100%;
+  overflow: hidden;
   overflow-y: scroll;
-  width: fit-content;
+}
+
+.content-right-table thead {
+  display: block;
+  position: sticky;
+  top: 0;
+}
+
+.content-right-table th, td {
+  width: 10%;
 }
 
 
 
 
 
-/*=================================================*/
+
+  /*=================================================*/
 
 #footer-container{
   display: flex;
