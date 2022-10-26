@@ -38,9 +38,16 @@ export class HttpService {
     return this.http.post<IUser>(this.apiUrl + 'getuser', payload, this.httpOptions)
   }
 
+  //Updates the user data on the database
   updateUser(user: IUser): Observable<any>{
     return this.http.post<IUser>(this.apiUrl + `updateuserbyid/${user.userID}`, user, this.httpOptions);
   }
+
+  //Deletes the passed in user from the database
+  deleteUser(user: IUser): Observable<any>{
+    return this.http.post<IUser>(this.apiUrl + `deleteuserbyid/${user.userID}`, user, this.httpOptions);
+  }
+
   //Returns all course requests
   getCourseRequests(): Observable<ICourseRequest[]>
   {
@@ -179,4 +186,11 @@ export class HttpService {
   {
     return this.http.post<any>(this.apiUrl + `deletetimecard`, payload, this.httpOptions);
   }
+
+  //Resets the user's to a default password
+  resetPassword(user: IUser): Observable<any>{
+    return this.http.post<any>(this.apiUrl + `resetPassword/${user.userID}`, user, this.httpOptions);
+  }
+
+
 }

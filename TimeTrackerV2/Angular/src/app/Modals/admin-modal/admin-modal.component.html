@@ -123,7 +123,7 @@
             </div>
 
             <div class="col-auto ml-auto">
-              <button class="btn btn-outline-danger">Delete User</button>
+              <button class="btn btn-outline-danger" (click)="editDelete()">Delete User</button>
             </div>
 
           </div>
@@ -234,7 +234,7 @@
       </div>
 
       <div id="footer-right">
-        <button id="resetPassword" type="button" class="btn btn-success">Reset Password</button>
+        <button id="resetPassword" type="button" class="btn btn-success" (click)="modalService.setDefaultPassword(user)">Reset Password</button>
         <button id="closeBtnBottom" type="button" class="btn btn-danger" (click)="modalService.closeModal()">Close</button>
       </div>
 

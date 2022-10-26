@@ -32,9 +32,9 @@ export class AdminDashComponent implements OnInit {
 
     this.getUsers();
 
-
   }
 
+  //Gets users from the database
   getUsers(){
     this.httpService.getUsers().subscribe((_users: any) => {
       this.users = _users;
@@ -54,23 +54,27 @@ export class AdminDashComponent implements OnInit {
     let regex = new RegExp('^[a-zA-Z0-9 _]*$');
     let test = regex.test(searchWord);
 
-    if (searchWord == "" || searchWord == null){
-      this.searchByName("");
-    } else if (regex) {
-      this.searchByName(searchWord.trim());
+    if (test){
+      if (searchWord == "" || searchWord == null){
+        this.searchByTerm("");
+      } else  {
+        this.searchByTerm(searchWord.trim());
+      }
+    } else {
+      alert("Invalid search input! Letters, numbers, and spaces only!");
     }
-
-
 
     this.searchForm.reset();
   }
 
+  //Opens the modal and passes in the selected user
   showModal(user: IUser) {
 
     this.modalService.create(user);
     this.modalService.showModal();
   }
 
+  //filters users based on which radio button is selected
   filterUsers(filterType: string) {
 
     this.filtered_users = this.users.filter((user: IUser) => {
@@ -84,13 +88,16 @@ export class AdminDashComponent implements OnInit {
     })
   }
 
-  searchByName(name: string){
+  //Fired when the user uses the search bar to find a specific user or set of users
+  searchByTerm(name: string){
 
+    //Returns all users if the search bar is blank
     if(name == "" || name == null){
       this.filtered_users = this.users;
       return;
     }
 
+    //Returns the users that match the search criteria
     this.filtered_users = this.users.filter((user: IUser) => {
       // @ts-ignore
       if ((user.firstName.toLowerCase() as string) == name || (user.lastName.toLowerCase() as string) == name || (user.username.toLowerCase() as string) == name){
@@ -100,8 +107,8 @@ export class AdminDashComponent implements OnInit {
       }
     });
 
-
   }
+
 
 }
 

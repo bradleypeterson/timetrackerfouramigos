@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import {EventEmitter, Injectable, Output} from '@angular/core';
 import {IUser} from "../interfaces/IUser";
 import {HttpService} from "./http.service"
+
+import { BehaviorSubject } from 'rxjs/';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +13,10 @@ export class AdminModalService {
   public user: any;
 
   msg: string = "";
+
+  private _refreshSource = new BehaviorSubject<boolean>(false)
+  _refresh = this._refreshSource.asObservable();
+
 
   constructor( private httpService: HttpService) { }
 
@@ -26,20 +32,54 @@ export class AdminModalService {
     this.user = user;
   }
 
-  updateUser(user: IUser): boolean {
+  //Calls the httpService to update the user's data on the database
+  //Emits a true event if update was successful
+  updateUser(user: IUser){
 
     this.httpService.updateUser(user).subscribe(  {
       next: data => {
         this.closeModal();
-        return true;
+        this.invokeRefresh();
       },
       error: error => {
         this.msg = error['error']['message'];
-        return false;
+
       }
     });
 
-     return false;
 
+  }
+
+  //Deletes the user based on a passed in user
+  //Emits true event if deletion was successful
+  deleteUser(user: IUser) {
+
+
+    this.httpService.deleteUser(user).subscribe(  {
+      next: data => {
+        this.closeModal();
+        this.invokeRefresh();
+      },
+      error: error => {
+        this.msg = error['error']['message'];
+        console.log(this.msg);
+
+      }
+    });
+
+  }
+
+  setDefaultPassword(user: IUser){
+    this.httpService.resetPassword(user).subscribe( {
+      next: data => {
+        this.closeModal();
+        this.invokeRefresh();
+      }
+    })
+  }
+
+  //Yells at the admin-dash component to refresh the table data
+  invokeRefresh(){
+    this._refreshSource.next(true);
   }
 }

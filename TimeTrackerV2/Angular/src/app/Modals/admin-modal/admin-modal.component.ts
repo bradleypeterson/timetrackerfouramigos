@@ -1,6 +1,7 @@
 import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 import {AdminModalService } from '../../services/adminmodal.service';
 import {IUser} from "../../interfaces/IUser";
+import { Subscription} from "rxjs";
 
 @Component({
   selector: 'app-admin-modal',
@@ -16,11 +17,18 @@ export class AdminModalComponent implements OnInit {
   isHidden: boolean = true;
   enableEditing: boolean = false;
 
+  refreshListener: Subscription | undefined;
+
   constructor(
     public modalService: AdminModalService,
   ) { }
 
   ngOnInit(): void {
+
+    this.refreshListener = this.modalService._refresh.subscribe(bool => {
+      this.refresh.emit(bool);
+    })
+
   }
 
   @HostListener('click') closeModal() {
@@ -80,13 +88,38 @@ export class AdminModalComponent implements OnInit {
       this.user.isActive = false;
     }
 
-    //Only emit refresh if the user was updated
-    //Makes sure the admin-dash table updates only after
-    //a user's data was updated
-    if(this.modalService.updateUser(this.user)){
-      this.refresh.emit(true);
+    if (this.isNotAdminCheck()) {
+      this.modalService.updateUser(this.user);
+
     }
 
+  }
+
+  //Fires when the edit menu is shown and the delete button is pressed
+  //Deletes the user from the database
+  editDelete(){
+
+    if (this.isNotAdminCheck()) {
+      this.modalService.deleteUser(this.user);
+    }
+
+  }
+
+  //Returns true if the user is not the admin
+  isNotAdminCheck(): boolean{
+    if (this.user.username === "Admin" && this.user.firstName === "Sudo" && this.user.lastName === "Admin"){
+      alert("Cannot modify Admin account!");
+      return false;
+    }
+
+    return true;
+  }
+
+
+  resetToDefaultPassword(){
+    if (this.isNotAdminCheck()){
+      this.modalService.setDefaultPassword(this.user);
+    }
   }
 
 }
