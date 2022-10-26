@@ -331,6 +331,38 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
     });
 });
 
+app.post('/updateuserbyid/:userid', async (req, res) => {
+
+    let data = []
+    data[0] = req.body['username'];
+    data[1] = req.body['firstName'];
+    data[2] = req.body['lastName'];
+    data[3] = req.body['type'];
+    data[4] = req.body['isActive'];
+
+
+
+   let sql = `UPDATE
+                  users
+              SET
+                  username = ?,
+                  firstName = ?,
+                  lastName = ?,
+                  type = ?,
+                  isActive = ?
+              WHERE
+                  userID = ${req.params.userid}`;
+
+   db.run(sql, data, (err) => {
+       if(err){
+           return res.status(500).json({error: err.message});
+       } else {
+           return res.status(200).json({message: "User updated successfully"});
+       }
+   });
+
+});
+
 
 //-------------------------------------------------------
 

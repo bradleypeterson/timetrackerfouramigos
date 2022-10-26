@@ -8,7 +8,7 @@
         </div>
 
         <div id="closeBtnTop">
-            <i id="close" (click)="modalService.showModal()">X</i>
+             <i id="close" (click)="modalService.closeModal()">X</i>
         </div>
 
       </div>
@@ -21,7 +21,7 @@
       <div id="content-left">
 
         <div id="user-data-table-container" class="user-info-table-container">
-          <table class="table table-sm table-hover table-borderless user-info-table" id="user-data-table">
+          <table class="table table-sm table-borderless user-info-table" id="user-data-table">
             <thead>
             <tr>
               <th>Info</th>
@@ -32,36 +32,36 @@
             <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
             <tr>
               <td >{{user.firstName}}</td>
-              <td> <input type="text" readonly="true"></td>
+              <td> <input type="text" id="edit_firstname" [hidden]="isHidden" placeholder="First name"></td>
             </tr>
 
             <tr>
 
               <td>{{user.lastName}}</td>
-              <td> <input type="text" readonly="true"></td>
+              <td> <input type="text" id="edit_lastname" [hidden]="isHidden" placeholder="Last name"></td>
             </tr>
 
             <tr>
               <td >{{user.username}}</td>
-              <td> <input type="text" readonly="true"></td>
+              <td> <input type="text" id="edit_username" [hidden]="isHidden" placeholder="Username"></td>
             </tr>
 
             <tr>
               <td >Email</td>
-              <td> <input type="text" readonly="true"></td>
+              <td> <input type="text" id="edit_email" [hidden]="isHidden" placeholder="Email"></td>
             </tr>
 
             <tr>
               <td >Phone</td>
-              <td> <input type="text" readonly="true"></td>
+              <td> <input type="text" id="edit_phone" [hidden]="isHidden" placeholder="Phone number"></td>
             </tr>
 
             <tr>
               <td *ngIf="user.type == 'Basic'" ><label for="accountType">Student</label></td>
-              <td *ngIf="user.type != 'Basic'" ><label for="accountType">Student</label>{{user.type}}</td>
+              <td *ngIf="user.type != 'Basic'" ><label for="accountType">{{user.type}}</label></td>
               <td>
-                <select name="accountType" id="accountType">
-                  <option Value="student">Student</option>
+                <select name="accountType" id="accountType" [hidden]="isHidden">
+                  <option Value="Student">Student</option>
                   <option Value="Instructor">Instructor</option>
                   <option Value="Admin">Admin</option>
                 </select>
@@ -72,9 +72,9 @@
               <td *ngIf="user.isActive"><label for="activeChoice">Active</label></td>
               <td *ngIf="!user.isActive"><label for="activeChoice">Not Active</label></td>
               <td>
-                <select name="activeChoice" id="activeChoice">
-                  <option Value="active">Active</option>
-                  <option Value="notActive">Not Active</option>
+                <select name="activeChoice" id="activeChoice" [hidden]="isHidden">
+                  <option Value="true">Active</option>
+                  <option Value="false">Not Active</option>
                 </select>
 
               </td>
@@ -116,7 +116,22 @@
           <p>Number of Evals Assigned: 1 Number of Evals Completed: 1</p>
         </div>
 
+        <div id="save-delete-info" [hidden]="isHidden">
+          <div class="row">
+            <div class="col-auto">
+              <button class="btn btn-outline-info" (click)="editSave()">Save</button>
+            </div>
+
+            <div class="col-auto ml-auto">
+              <button class="btn btn-outline-danger">Delete User</button>
+            </div>
+
+          </div>
+        </div>
+
       </div>
+
+
 
 
 
@@ -204,11 +219,11 @@
     <div id="footer-container">
 
       <div id="footer-left">
-          <button id="editBtn" type="button" class="btn btn-dark">Edit</button>
+          <button id="editBtn" type="button" class="btn btn-dark" (click)="editBtn()">Edit</button>
 
         <div class="pretty p-switch p-slim mr-1">
           <!-- ng-model="config.showInactiveCourses" -->
-          <input type="checkbox" />
+          <input type="checkbox" (change)="enableEdit($event)"/>
           <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" -->
           <div class="float-left mr-2 mt-2 state">
             <label>Enable Editing</label>
@@ -220,7 +235,7 @@
 
       <div id="footer-right">
         <button id="resetPassword" type="button" class="btn btn-success">Reset Password</button>
-        <button id="closeBtnBottom" type="button" class="btn btn-danger" (click)="modalService.showModal()">Close</button>
+        <button id="closeBtnBottom" type="button" class="btn btn-danger" (click)="modalService.closeModal()">Close</button>
       </div>
 
     </div>

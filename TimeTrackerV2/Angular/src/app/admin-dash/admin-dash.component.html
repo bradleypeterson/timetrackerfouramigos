@@ -65,12 +65,14 @@
 
     <div class="col-lg-4">
         <div class="container">
-          <button type="button" class="btn btn-danger" (click)="modalService.showModal()">Modal</button>
-            <app-admin-modal *ngIf="modalService.modalDisplay"></app-admin-modal>
 
         </div>
     </div>
 
+  </div>
+
+  <div>
+    <app-admin-modal *ngIf="modalService.modalDisplay"></app-admin-modal>
   </div>
 
 

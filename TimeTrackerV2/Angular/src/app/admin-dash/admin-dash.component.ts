@@ -16,12 +16,13 @@ export class AdminDashComponent implements OnInit {
   filtered_users: IUser[] = []
   modal: boolean = false;
 
+
   constructor(
-    private httpService:HttpService,
+    private httpService: HttpService,
     private formBuilder: FormBuilder,
     public modalService: AdminModalService,
-  )
-  { }
+  ) {
+  }
 
   searchForm = this.formBuilder.group({
     searchTerm: '',
@@ -29,26 +30,33 @@ export class AdminDashComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.httpService.getUsers().subscribe((_users: any) => { this.users = _users; this.filtered_users = this.users;});
+    this.getUsers();
 
 
+  }
+
+  getUsers(){
+    this.httpService.getUsers().subscribe((_users: any) => {
+      this.users = _users;
+      this.filtered_users = this.users;
+    });
   }
 
   onSubmit() {
-
+      //Add code for searching a specific user
   }
 
-  showModal(user: IUser){
+  showModal(user: IUser) {
+
     this.modalService.create(user);
     this.modalService.showModal();
   }
 
-  filterUsers(filterType: string){
-
+  filterUsers(filterType: string) {
 
     this.filtered_users = this.users.filter((user: IUser) => {
 
-      if (filterType == 'all'){
+      if (filterType == 'all') {
         return user;
       } else {
         return user.type == filterType;
@@ -57,6 +65,5 @@ export class AdminDashComponent implements OnInit {
     })
   }
 
-
-
 }
+

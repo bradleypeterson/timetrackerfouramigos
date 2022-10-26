@@ -36,7 +36,11 @@ export class HttpService {
   getUser(payload: any): Observable<any>
   {
     return this.http.post<IUser>(this.apiUrl + 'getuser', payload, this.httpOptions)
+  }
 
+  updateUser(user: IUser): Observable<any>{
+    console.log("Updating user in http service");
+    return this.http.post<IUser>(this.apiUrl + `updateuserbyid/${user.userID}`, user, this.httpOptions);
   }
   //Returns all course requests
   getCourseRequests(): Observable<ICourseRequest[]>
