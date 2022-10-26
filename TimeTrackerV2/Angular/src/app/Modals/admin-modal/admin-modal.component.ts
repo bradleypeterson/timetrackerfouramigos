@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 import {AdminModalService } from '../../services/adminmodal.service';
 import {IUser} from "../../interfaces/IUser";
 
@@ -8,6 +8,8 @@ import {IUser} from "../../interfaces/IUser";
   styleUrls: ['./admin-modal.component.css']
 })
 export class AdminModalComponent implements OnInit {
+
+  @Output() refresh = new EventEmitter<boolean>();
 
   user: IUser = this.modalService.user;
 
@@ -78,7 +80,12 @@ export class AdminModalComponent implements OnInit {
       this.user.isActive = false;
     }
 
-    this.modalService.updateUser(this.user);
+    //Only emit refresh if the user was updated
+    //Makes sure the admin-dash table updates only after
+    //a user's data was updated
+    if(this.modalService.updateUser(this.user)){
+      this.refresh.emit(true);
+    }
 
   }
 

@@ -39,7 +39,6 @@ export class HttpService {
   }
 
   updateUser(user: IUser): Observable<any>{
-    console.log("Updating user in http service");
     return this.http.post<IUser>(this.apiUrl + `updateuserbyid/${user.userID}`, user, this.httpOptions);
   }
   //Returns all course requests

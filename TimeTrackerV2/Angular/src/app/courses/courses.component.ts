@@ -184,16 +184,6 @@ export class CoursesComponent implements OnInit {
       }
     });
 
-    //this.http.post<any>('http://localhost:8080/createCourse/', payload, { headers: new HttpHeaders({ "Access-Control-Allow-Headers": "Content-Type" }) }).subscribe({
-    //  next: data => {
-    //    this.errMsg = "";
-    //    localStorage.setItem('currentCourse', JSON.stringify(data['course']));
-    //    this.router.navigate(['./course']);
-    //  },
-    //  error: error => {
-    //    this.errMsg = error['error']['message'];
-    //  }
-    //});
   }
 
   //Sets the current course in localstorage and navigates the user to the course page

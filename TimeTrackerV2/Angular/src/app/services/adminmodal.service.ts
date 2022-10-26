@@ -26,17 +26,20 @@ export class AdminModalService {
     this.user = user;
   }
 
-  updateUser(user: IUser) {
+  updateUser(user: IUser): boolean {
 
     this.httpService.updateUser(user).subscribe(  {
-      next: data => {},
+      next: data => {
+        this.closeModal();
+        return true;
+      },
       error: error => {
         this.msg = error['error']['message'];
         return false;
       }
     });
 
-    this.closeModal();
+     return false;
 
   }
 }

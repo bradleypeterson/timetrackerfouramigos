@@ -1,6 +1,9 @@
 .container {
-  border: black solid 2px;
   height: 100vh;
+}
+
+.container-black-outline{
+  border: 1px solid black;
 }
 
 .btn {
@@ -12,13 +15,14 @@ input[type="radio"] {
 
 }
 
-.red{
-  border: red solid 2px;
+header {
+  margin-top: 5px;
 }
 
 .col-auto {
-  width: fit-content;
+  width: 100%;
 }
+
 label {
   font-size: 18pt;
   margin-left: 10px;
@@ -26,6 +30,7 @@ label {
 
 #searchTerm {
   height: 100%;
+
 }
 
 table tr td{
@@ -34,5 +39,5 @@ table tr td{
 }
 
 #searchBtn {
-  z-index: -1;
+  z-index: 0;
 }

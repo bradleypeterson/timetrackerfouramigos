@@ -1,10 +1,10 @@
-<h1>Admin Dashboard</h1>
+<h1 style="margin-left: 10px;">Admin Dashboard</h1>
 
 <div class="container">
 
   <div class="row">
     <div class="col-lg-8">
-        <div class="container">
+        <div class="container container-black-outline">
           <div class="row">
             <header>
               <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
@@ -18,13 +18,13 @@
                     <label for="All"> All </label>
 
                     <input type="radio" id="Student" name="searchRadio" value="Student" (click)="filterUsers('Basic')">
-                    <label for="Student"> Student </label>
+                    <label for="Student" (click)="filterUsers('Basic')"> Student </label>
 
                     <input type="radio" id="Instructor" name="searchRadio" value="Instructor" (click)="filterUsers('Instructor')">
-                    <label for="Instructor"> Instructor </label>
+                    <label for="Instructor" (click)="filterUsers('Instructor')"> Instructor </label>
 
                     <input type="radio" id="Admin" name="searchRadio" value="Admin" (click)="filterUsers('Admin')">
-                    <label for="Admin"> Admin </label>
+                    <label for="Admin" (click)="filterUsers('Admin')"> Admin </label>
 
                   </div>
                 </div>
@@ -64,7 +64,7 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="container">
+        <div class="container container-black-outline">
 
         </div>
     </div>
@@ -72,7 +72,7 @@
   </div>
 
   <div>
-    <app-admin-modal *ngIf="modalService.modalDisplay"></app-admin-modal>
+    <app-admin-modal *ngIf="modalService.modalDisplay" (refresh)="getUsers()"></app-admin-modal>
   </div>
 
 
