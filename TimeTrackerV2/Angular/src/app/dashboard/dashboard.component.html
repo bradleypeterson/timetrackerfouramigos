@@ -6,6 +6,25 @@
     <h4 class="mt-5">You are not a member of any groups. Find a group through the <a href="./courses">courses</a> page.</h4>
   </div>
 
+  <div class="panel panel-default border border-light rounded">
+    <div class="panel-heading dashboard-titles">
+      <h4 style="padding: .5em">My Courses</h4>
+    </div>
+    <div  class="row justify-content-left">
+      <div *ngFor="let course of courses">
+
+      <div class="card border-dark m-3 pl-0 pr-0" style="max-width: 18rem;">
+        <div class="card-header">{{course.description}}</div>
+        <div class="card-body">
+          <h5 class="card-title">{{course.courseName}}</h5>
+          <p class="card-text">{{course.firstName}} {{course.lastName}}</p>
+        </div>
+      </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- if groups.length !== 0 && loaded -->
   <div class="panel panel-default border border-light rounded">
     <div class="panel-heading dashboard-titles">

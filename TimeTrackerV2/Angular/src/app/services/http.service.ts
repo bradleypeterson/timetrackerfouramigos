@@ -116,6 +116,11 @@ export class HttpService {
     return this.http.get<ICourse[]>(this.apiUrl + 'getcourses');
   }
 
+  // get the user's courses from user ID
+  getUserCourses(id: number): Observable<ICourse[]> {
+    return this.http.get<ICourse[]>(this.apiUrl + `getusercourses/${id}`);
+  }
+
   //Returns courses and course requests from server db
   getCourseAndRequests(): Observable<ICourse[]> {
     return this.http.get<ICourse[]>(this.apiUrl + 'getcoursesandrequests');

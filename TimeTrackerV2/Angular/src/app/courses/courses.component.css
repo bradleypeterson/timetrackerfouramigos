@@ -1,7 +1,3 @@
 tr {
   cursor: pointer;
 }
-
-#joinbtn:focus {
-  background-color:green; 
-}

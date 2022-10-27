@@ -21,7 +21,7 @@ export class CoursesComponent implements OnInit {
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
   public activeCR: ICourseRequest[] = [];
-  public acceptedCR: ICourseRequest[] = [];
+  public courseRequests: ICourseRequest[] = [];
   public userTypeHolder: IUser;
 
   // for getting the course that was clicked on
@@ -56,6 +56,7 @@ export class CoursesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCourses();
+    this.getUserRequests();
     //this.getUserRequests();
 
   }
@@ -82,16 +83,55 @@ export class CoursesComponent implements OnInit {
       }
     });
 
+    
+    
+
+
+
   }
 
+  // THIS IS NOT WORKING RIGHT NOW...
   getUserRequests() {
-    //needs a payload with users id
+    //Gets a list of all group assignments the user has and sets the visibility
+    this.httpService.getCourseRequests().subscribe((_courseRequests: ICourseRequest[]) =>
+    {
+      
+      this.courseRequests = _courseRequests;
+      this.courses.forEach(value =>
+      {
+        console.log(this.userTypeHolder.userID);
+        // if it's the user's course request and the course matches and there's a course request
+        if(this.courseRequests.some(x => this.userTypeHolder.userID === x.userID)) {
 
-    // get course requests that the user is in and that are active
-    this.httpService.getActiveCourseRequests().subscribe((_courseRequests: any) => { this.activeCR = _courseRequests });
-
-    // get courses that the user has been accepted into
-    this.httpService.getAcceptedCourseRequests().subscribe((_courseRequests: any) => { this.acceptedCR = _courseRequests });
+          console.log(this.courseRequests.some(x => x.status));
+          // if it was accecpted
+          if(this.courseRequests.some(x => x.status === true))
+          {
+            value.display = false;
+            value.pending = false;
+            //value.leave = true; // the leave button shows
+          }
+          // if it's still active
+          else if(this.courseRequests.some(x => x.isActive === true))
+          {
+            value.display = false;
+            value.pending = true; // the pending button shows
+            //value.leave = false;
+          }
+          // if it's not accepted nor active
+          else if(this.courseRequests.some(x=> x.status === false && x.isActive === false)) {
+            value.display = true; // the join button shows
+            value.pending = false;
+            //value.leave = false;
+          }
+        }
+        else {
+          value.display = true;
+          value.pending = false;
+          //value.leave = false;
+        }
+      });
+    });
   }
 
 
@@ -142,6 +182,8 @@ export class CoursesComponent implements OnInit {
           this.errMsg = "";
           //this.router.navigate(['./']);
           //location.reload(); // refresh the page
+          this.getCourses();
+          this.getUserRequests();
         },
         error: error => {
           this.errMsg = error['error']['message'];

@@ -213,6 +213,27 @@ app.get('/getcourses', async (req, res) => {
 // where instructor ID = user id
 // where current user = user id in course request
 
+//Gets all courses where the user id is the current user and status is accepted
+app.get('/getusercourses/:userid', async (req, res) => {
+  let sql = `SELECT Courses.*, Users.firstName, Users.lastName
+  FROM Courses
+    INNER JOIN CourseRequest CR ON CR.courseID = Courses.courseID
+    INNER JOIN Users U ON U.userID = Courses.instructorID
+    INNER JOIN Users UI ON UI.userID = CR.userID
+  WHERE CR.status = 1
+  AND CR.userID = ${req.params.userid}`;
+
+  db.all(sql, [], (err, rows) => {
+
+      if (err) {
+          res.status(400).json({ "error": err.message });
+      } else {
+          res.send(JSON.stringify(rows));
+      }
+
+  });
+});
+
 
 //Gets all courses and course requests where the user id is the current user and status is accepted
 app.get('/getcoursesandrequests', async (req, res) => {
