@@ -125,7 +125,7 @@ app.get('/getactivecourserequests', async (req, res, next) => {
 app.get('/getacceptedcourserequests', async (req, res, next) => {
   let sql = `SELECT
                  CR.requestID,
-                 C.courseName,
+                 CR.courseName,
                  U.firstName || ' ' || U.lastName as studentName,
                  CR.status,
                  CR.isActive
@@ -330,6 +330,97 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
         }
     });
 });
+
+//Updates the user in the database with the passed in information
+app.post('/updateuserbyid/:userid', async (req, res) => {
+
+    let data = []
+    data[0] = req.body['username'];
+    data[1] = req.body['firstName'];
+    data[2] = req.body['lastName'];
+    data[3] = req.body['type'];
+    data[4] = req.body['isActive'];
+
+   if (data[0] === "Admin" && data[1] === "Sudo" && data[2] === "Admin"){
+       return res.status(500).json({error: "Cannot modify Admin account!"});
+   }
+
+   let sql = `UPDATE
+                  users
+              SET
+                  username = ?,
+                  firstName = ?,
+                  lastName = ?,
+                  type = ?,
+                  isActive = ?
+              WHERE
+                  userID = ${req.params.userid}`;
+
+   db.run(sql, data, (err) => {
+       if(err){
+           return res.status(500).json({error: err.message});
+       } else {
+           return res.status(200).json({message: "User updated successfully"});
+       }
+   });
+
+});
+
+//Deletes the user based on a passed in user id, checks if the passed in user is the admin account
+app.post('/deleteuserbyid/:userid', async (req, res) => {
+
+    let data = []
+    data[0] = req.body['username'];
+    data[1] = req.body['firstName'];
+    data[2] = req.body['lastName'];
+    data[3] = req.body['type'];
+    data[4] = req.body['isActive'];
+
+    if (data[0] === "Admin" && data[1] === "Sudo" && data[2] === "Admin"){
+        return res.status(500).json({error: "Cannot modify Admin account!"});
+    }
+
+    let sql = `DELETE FROM users WHERE userID = ${req.params.userid}`;
+
+    db.run(sql, (err) => {
+        if(err){
+            return res.status(500).json({error: err.message});
+        } else {
+            return res.status(200).json({message: "User deleted successfully"});
+        }
+    });
+
+});
+
+//Resets the passed in users password to a default value
+app.post('/resetpassword/:userid', async (req, res) => {
+
+    let defaultPassword = 'wildcat123';
+
+    let salt = crypto.randomBytes(16).toString('hex');
+
+    let hash = crypto.pbkdf2Sync(defaultPassword, salt,
+        1000, 64, `sha512`).toString(`hex`);
+
+    let data = []
+
+    data.push(hash);
+    data.push(salt);
+
+    sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${req.params.userid}`;
+
+    db.run(sql, data,(err) => {
+        if(err){
+            return res.status(500).json({error: err.message});
+        } else {
+            return res.status(200).json({message: "Password reset"});
+        }
+    });
+
+
+});
+
+
 
 
 //-------------------------------------------------------

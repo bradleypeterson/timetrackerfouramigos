@@ -1,6 +1,9 @@
 .container {
-  border: black solid 2px;
   height: 100vh;
+}
+
+.container-black-outline{
+  border: 1px solid black;
 }
 
 .btn {
@@ -8,22 +11,33 @@
 }
 
 input[type="radio"] {
-  margin-right: 5px;
+  margin-left: 20px;
+
 }
 
-.red {
-  border: red solid 2px;
+header {
+  margin-top: 5px;
 }
 
-.col-auto label {
+.col-auto {
+  width: 100%;
+}
+
+label {
   font-size: 18pt;
+  margin-left: 10px;
 }
 
 #searchTerm {
   height: 100%;
+
 }
 
 table tr td{
   cursor: pointer;
   font-size: 18pt;
+}
+
+#searchBtn {
+  z-index: 0;
 }

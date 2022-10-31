@@ -1,0 +1,248 @@
+
+<div id="modal-container">
+
+    <header>
+      <div id="header-container">
+        <div id="username">
+            <h1>{{user.username}}</h1>
+        </div>
+
+        <div id="closeBtnTop">
+             <i id="close" (click)="modalService.closeModal()">X</i>
+        </div>
+
+      </div>
+
+    </header>
+
+  <main>
+    <div id="main-container">
+
+      <div id="content-left">
+
+        <div id="user-data-table-container" class="user-info-table-container">
+          <table class="table table-sm table-borderless user-info-table" id="user-data-table">
+            <thead>
+            <tr>
+              <th>Info</th>
+              <th>Edit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
+            <tr>
+              <td >{{user.firstName}}</td>
+              <td> <input type="text" id="edit_firstname" [hidden]="isHidden" placeholder="First name"></td>
+            </tr>
+
+            <tr>
+
+              <td>{{user.lastName}}</td>
+              <td> <input type="text" id="edit_lastname" [hidden]="isHidden" placeholder="Last name"></td>
+            </tr>
+
+            <tr>
+              <td >{{user.username}}</td>
+              <td> <input type="text" id="edit_username" [hidden]="isHidden" placeholder="Username"></td>
+            </tr>
+
+            <tr>
+              <td >Email</td>
+              <td> <input type="text" id="edit_email" [hidden]="isHidden" placeholder="Email"></td>
+            </tr>
+
+            <tr>
+              <td >Phone</td>
+              <td> <input type="text" id="edit_phone" [hidden]="isHidden" placeholder="Phone number"></td>
+            </tr>
+
+            <tr>
+              <td *ngIf="user.type == 'Basic'" ><label for="accountType">Student</label></td>
+              <td *ngIf="user.type != 'Basic'" ><label for="accountType">{{user.type}}</label></td>
+              <td>
+                <select name="accountType" id="accountType" [hidden]="isHidden">
+                  <option Value="Student">Student</option>
+                  <option Value="Instructor">Instructor</option>
+                  <option Value="Admin">Admin</option>
+                </select>
+              </td>
+            </tr>
+
+            <tr>
+              <td *ngIf="user.isActive"><label for="activeChoice">Active</label></td>
+              <td *ngIf="!user.isActive"><label for="activeChoice">Not Active</label></td>
+              <td>
+                <select name="activeChoice" id="activeChoice" [hidden]="isHidden">
+                  <option Value="true">Active</option>
+                  <option Value="false">Not Active</option>
+                </select>
+
+              </td>
+            </tr>
+
+
+            </tbody>
+          </table>
+        </div>
+
+
+<!--        Table for stats of user if the user is a student-->
+        <div id="user-stats-table-container" class="user-info-table-container">
+          <table class="table table-sm table-hover table-borderless user-info-table" id="user-stats-table">
+            <tbody>
+            <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
+            <tr>
+              <td >Number of Courses: </td>
+              <td> Courses number</td>
+            </tr>
+
+            <tr>
+              <td >Number of Projects:</td>
+              <td> Projects number</td>
+            </tr>
+
+            <tr>
+              <td >Number of Groups: </td>
+              <td> Groups number</td>
+            </tr>
+
+
+
+            </tbody>
+          </table>
+        </div>
+
+        <div id="eval-info">
+          <p>Number of Evals Assigned: 1 Number of Evals Completed: 1</p>
+        </div>
+
+        <div id="save-delete-info" [hidden]="isHidden">
+          <div class="row">
+            <div class="col-auto">
+              <button class="btn btn-outline-info" (click)="editSave()">Save</button>
+            </div>
+
+            <div class="col-auto ml-auto">
+              <button class="btn btn-outline-danger" (click)="editDelete()">Delete User</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+
+
+
+
+      <div id="content-right">
+
+        <div id="course-table-container" class="content-right-table-container">
+          <table class="table table-hover table-borderless content-right-table" id="user-course-table">
+            <thead>
+            <tr>
+              <th>Course</th>
+              <th>Instructor</th>
+            </tr>
+            </thead>
+            <tbody>
+
+<!--            wrap in a for loop to display all of the courses-->
+              <tr>
+                <td>test course name</td>
+                <td>test instructor name</td>
+              </tr>
+
+
+            </tbody>
+          </table>
+
+
+
+        </div>
+
+        <div id="project-table-container" class="content-right-table-container">
+          <table class="table table-hover table-borderless content-right-table" id="user-project-table">
+            <thead>
+            <tr>
+              <th>Project</th>
+              <th>Course</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <!--            wrap in a for loop to display all of the courses-->
+            <tr>
+              <td>test Project name</td>
+              <td>test Course name</td>
+            </tr>
+
+
+            </tbody>
+          </table>
+
+
+
+        </div>
+
+        <div id="group-table-container" class="content-right-table-container">
+          <table class="table table-hover table-borderless content-right-table" id="user-group-table">
+            <thead>
+            <tr>
+              <th>Group</th>
+              <th>Course</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <!--            wrap in a for loop to display all of the courses-->
+            <tr>
+              <td>test Group name</td>
+              <td>test Course name</td>
+            </tr>
+
+
+            </tbody>
+          </table>
+
+
+
+        </div>
+
+      </div>
+
+
+    </div>
+  </main>
+
+  <footer>
+    <div id="footer-container">
+
+      <div id="footer-left">
+          <button id="editBtn" type="button" class="btn btn-dark" (click)="editBtn()">Edit</button>
+
+        <div class="pretty p-switch p-slim mr-1">
+          <!-- ng-model="config.showInactiveCourses" -->
+          <input type="checkbox" (change)="enableEdit($event)"/>
+          <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" -->
+          <div class="float-left mr-2 mt-2 state">
+            <label>Enable Editing</label>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="footer-right">
+        <button id="resetPassword" type="button" class="btn btn-success" (click)="modalService.setDefaultPassword(user)">Reset Password</button>
+        <button id="closeBtnBottom" type="button" class="btn btn-danger" (click)="modalService.closeModal()">Close</button>
+      </div>
+
+    </div>
+  </footer>
+
+
+</div>
+
+
+
