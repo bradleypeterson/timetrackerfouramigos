@@ -10,6 +10,7 @@
   margin-left: 10px;
 }
 
+/*Used for content regarding the table in the left hand container*/
 input[type="radio"] {
   margin-left: 20px;
 
@@ -29,7 +30,7 @@ label {
 }
 
 #searchTerm {
-  height: 100%;
+  height: fit-content;/* 100%*/
 
 }
 
@@ -40,4 +41,23 @@ table tr td{
 
 #searchBtn {
   z-index: 0;
+}
+
+/*Used for content in the right container for requests*/
+
+#right-container{
+  height: 100%;
+  width: 100%;
+}
+
+#amount-of-requests {
+  font-size: 90pt;
+  border: 1px solid green;
+  margin-top: 0
+}
+
+
+
+.red {
+  border: 1px solid red;
 }
