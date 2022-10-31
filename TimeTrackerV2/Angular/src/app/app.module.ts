@@ -13,6 +13,8 @@ import { AdminDashComponent } from './admin-dash/admin-dash.component';
 import { RegisterComponent } from './register/register.component';
 import { InstructorComponent } from './instructor/instructor.component';
 import { GroupsComponent } from './groups/groups.component';
+import { AdminModalComponent } from './modals/admin-modal/admin-modal.component';
+
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { GroupsComponent } from './groups/groups.component';
     AdminDashComponent,
     RegisterComponent,
     GroupsComponent,
+    AdminModalComponent,
     InstructorComponent,
+
   ],
   imports: [
     BrowserModule,
