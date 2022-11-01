@@ -5,7 +5,7 @@ import { AppRoutingModule, RoutingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
-
+import { MatButtonModule } from '@angular/material/button';
 
 
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,6 +14,9 @@ import { RegisterComponent } from './register/register.component';
 import { InstructorComponent } from './instructor/instructor.component';
 import { GroupsComponent } from './groups/groups.component';
 import { AdminModalComponent } from './modals/admin-modal/admin-modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatTableModule} from "@angular/material/table";
 
 
 @NgModule({
@@ -34,6 +37,10 @@ import { AdminModalComponent } from './modals/admin-modal/admin-modal.component'
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatTableModule
   ],
   providers: [FormBuilder],
   bootstrap: [AppComponent]
