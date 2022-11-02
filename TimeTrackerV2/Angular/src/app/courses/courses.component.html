@@ -61,7 +61,7 @@
         <td (click)="setCourseAndMove(course)">{{course.courseName}}</td>
         <td>{{course.firstName}} {{course.lastName}}</td>
           <td [hidden]="isInstructor == true">
-            <button id="joinbtn" (click)="joinCourse(course)" [hidden]="!course.display && course.pending" class="btn btn-primary mr-1">Join Course</button>
+            <button ng-click="disabled" id="joinbtn" (click)="joinCourse(course)" [hidden]="!course.display && course.pending" class="btn btn-primary mr-1">Join Course</button>
             <button id="pendingbtn" [hidden]="!course.pending" class="btn btn-warning mr-1">pending</button>
             <button id="leavebtn" [hidden]="course.display" class="btn btn-danger mr-1">Leave Course</button>
         </td>

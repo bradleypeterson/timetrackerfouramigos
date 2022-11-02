@@ -11,15 +11,34 @@
       <h4 style="padding: .5em">My Courses</h4>
     </div>
     <div  class="row justify-content-left">
-      <div *ngFor="let course of courses">
+      
+    <h4 [hidden]="courses != null" class="mt-5">You have not joined any courses. Join a course through the <a href="./courses">courses</a> page.</h4>
 
-      <div class="card border-dark m-3 pl-0 pr-0" style="max-width: 18rem;">
+      <div *ngFor="let course of courses" class="card border-dark m-3 pl-0 pr-0" style="max-width: 18rem;">
         <div class="card-header">{{course.description}}</div>
-        <div class="card-body">
+        <div (click)="setCourseAndMove(course)" class="card-body">
           <h5 class="card-title">{{course.courseName}}</h5>
-          <p class="card-text">{{course.firstName}} {{course.lastName}}</p>
+          <p class="card-text"></p>
         </div>
       </div>
+
+    </div>
+  </div>
+
+  <div class="panel panel-default border border-light rounded">
+    <div class="panel-heading dashboard-titles">
+      <h4 style="padding: .5em">My Groups</h4>
+    </div>
+    <div  class="row justify-content-left">
+      
+    <h4 [hidden]="groups != null" class="mt-5">You are not a member of any groups.</h4>
+
+      <div *ngFor="let group of groups" class="card border-dark m-3 pl-0 pr-0" style="max-width: 18rem;">
+        <div class="card-header">{{group.projectName}}</div>
+        <div (click)="setGroupAndMove(group)" class="card-body">
+          <h5 class="card-title">{{group.groupName}}</h5>
+          <p class="card-text"></p>
+        </div>
       </div>
 
     </div>

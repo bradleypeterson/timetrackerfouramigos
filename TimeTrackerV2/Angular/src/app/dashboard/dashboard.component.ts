@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
 import { ICourse } from '../interfaces/ICourse';
+import { IGroup } from '../interfaces/IGroup';
 import {IUser} from "../interfaces/IUser";
 import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 import { ICourseRequest } from '../interfaces/ICourseRequest';
@@ -20,6 +21,8 @@ export class DashboardComponent implements  OnInit
   public courses: ICourse[] = [];
   public courseRequests: ICourseRequest[] = [];
   public userTypeHolder: IUser;
+  public groups: IGroup[] = [];
+  public size = 0;
 
   //Allow course creation if the user is an Instructor
   public isInstructor: boolean = false;
@@ -45,7 +48,11 @@ export class DashboardComponent implements  OnInit
 
   ngOnInit(): void 
   {
-
+    this.getUserCourses();
+    
+    
+    // get user groups
+    //this.getUserGroups(this.userTypeHolder.userID as number);
   }
 
 
@@ -55,7 +62,6 @@ export class DashboardComponent implements  OnInit
   // and where course request course ID = Course course ID
 
   getUserCourses(): void {
-    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.courses = _courses });
 
     let payload = {
       username: this.user.username,
@@ -63,7 +69,7 @@ export class DashboardComponent implements  OnInit
     //Gets user from database
     this.httpService.getUser(payload).subscribe((_user: any) =>
     {
-      this.userTypeHolder = _user
+      this.userTypeHolder = _user;
       //Allow user to create courses if they are an instructor
       if(this.userTypeHolder.type == "Instructor")
       {
@@ -73,8 +79,14 @@ export class DashboardComponent implements  OnInit
       {
         this.isInstructor = false;
       }
+      //Get the groups the user is in
+      console.log("userID: " + this.userTypeHolder.userID);
+      this.getUserGroups(this.userTypeHolder.userID as number);
     });
 
+    
+    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.courses = _courses });
+    console.log(this.user.userID);
 
 
 
@@ -82,7 +94,24 @@ export class DashboardComponent implements  OnInit
 
 
   // get the user's groups
+  getUserGroups(id: number)
+  {
+    this.httpService.getUserGroups(id).subscribe((_groups: any) => { this.groups = _groups; });
 
+    console.log("size of groups: " + this.groups.length);
+    console.log(this.groups);
+    this.size = this.groups.length;
+  }
+
+
+  //Sets the current course in localstorage and navigates the user to the course page
+  setCourseAndMove(course: ICourse) {
+    this.router.navigate(['./course'], {state:{data: course}});
+  }
+
+  setGroupAndMove(group: IGroup) {
+    this.router.navigate(['./group'], {state:{data: group}});
+  }
 
 
 

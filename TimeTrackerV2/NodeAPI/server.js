@@ -215,11 +215,9 @@ app.get('/getcourses', async (req, res) => {
 
 //Gets all courses where the user id is the current user and status is accepted
 app.get('/getusercourses/:userid', async (req, res) => {
-  let sql = `SELECT Courses.*, Users.firstName, Users.lastName
+  let sql = `SELECT Courses.*
   FROM Courses
-    INNER JOIN CourseRequest CR ON CR.courseID = Courses.courseID
-    INNER JOIN Users U ON U.userID = Courses.instructorID
-    INNER JOIN Users UI ON UI.userID = CR.userID
+    LEFT JOIN CourseRequest CR ON CR.courseID = Courses.courseID
   WHERE CR.status = 1
   AND CR.userID = ${req.params.userid}`;
 
