@@ -832,7 +832,49 @@ app.post('/deletetimecard', async (req, res, next) => {
     });
 });
 
+//Returns a list of all courses for an instructor
+app.get('/getinstructorcourses/:userID', async (req, res) =>
+{
+   let sql = `SELECT 
+                  courseID, courseName, instructorID, description
+              FROM
+                  Courses
+              WHERE
+                  instructorID = ${req.params.userID}
+                  AND 
+                  isActive = 1`;
+   db.all(sql, [], (err, rows) => {
+       if (err)
+       {
+           return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+       }
+       res.send(JSON.stringify(rows));
+   })
+});
+//Returns a list of all course requests for a course that have been accepted
+app.get('/getcoursestudents/:courseID', async (req, res) => {
 
+    let sql = `SELECT DISTINCT CR.requestID,
+                      C.courseName,
+                      U.firstName || ' ' || U.lastName as studentName,
+                      CR.status,
+                      CR.isActive
+               FROM CourseRequest as CR
+                        LEFT JOIN Users U on CR.userID = U.userID
+                        LEFT JOIN Courses C on CR.courseID = C.courseID
+               WHERE CR.status = 1
+                 AND CR.isActive = 1
+                 AND CR.courseID = ${req.params.courseID}
+               GROUP BY studentName`;
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+
+});
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

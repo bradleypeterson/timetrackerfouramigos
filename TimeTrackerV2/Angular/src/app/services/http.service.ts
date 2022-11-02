@@ -65,6 +65,11 @@ export class HttpService {
   {
     return this.http.get<ICourseRequest[]>(this.apiUrl + 'getacceptedcourserequests');
   }
+  //Returns all students in a course
+  getCourseStudents(id: number): Observable<ICourseRequest[]>
+  {
+    return this.http.get<ICourseRequest[]>(this.apiUrl + `getcoursestudents/${id}`, this.httpOptions);
+  }
 
   //Joins group based on userID and groupID
   joinGroup(payload: any): Observable<any>
@@ -124,6 +129,12 @@ export class HttpService {
   //Returns courses from server db
   getCourses(): Observable<ICourse[]> {
     return this.http.get<ICourse[]>(this.apiUrl + 'getcourses');
+  }
+
+  //Returns all courses for an instructor
+  getInstructorCourses(id: number): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + `getinstructorcourses/${id}`, this.httpOptions);
   }
 
   //Returns courses and course requests from server db
