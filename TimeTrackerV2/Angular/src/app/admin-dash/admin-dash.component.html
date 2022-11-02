@@ -68,6 +68,7 @@
 
           <header>
 
+<!--            Shows the number of requests the admin currently has-->
             <div class="row">
               <div class="col-auto text-center">
                 <h3>Requests</h3>
@@ -75,15 +76,18 @@
 
             </div>
 
-            <div class="row">
-              <div class="col-auto text-center">
-                <p id="amount-of-requests">5</p>
-              </div>
-            </div>
-
           </header>
 
+          <div class="row grey-background">
+            <div class="col-auto text-center">
+              <p id="amount-of-requests">5</p>
+              <p id="requests-text">Pending Requests</p>
+            </div>
+          </div>
+
         </div>
+
+        <app-admin-requests-modal></app-admin-requests-modal>
     </div>
 
   </div>

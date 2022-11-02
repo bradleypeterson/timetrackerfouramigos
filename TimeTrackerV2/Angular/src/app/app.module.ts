@@ -14,6 +14,7 @@ import { RegisterComponent } from './register/register.component';
 import { InstructorComponent } from './instructor/instructor.component';
 import { GroupsComponent } from './groups/groups.component';
 import { AdminModalComponent } from './modals/admin-modal/admin-modal.component';
+import { AdminRequestsModalComponent } from './Modals/admin-requests-modal/admin-requests-modal.component';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { AdminModalComponent } from './modals/admin-modal/admin-modal.component'
     GroupsComponent,
     AdminModalComponent,
     InstructorComponent,
+    AdminRequestsModalComponent,
 
   ],
   imports: [

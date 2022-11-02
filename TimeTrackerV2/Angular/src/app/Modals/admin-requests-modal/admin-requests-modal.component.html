@@ -1,0 +1,119 @@
+<div id="modal-container">
+
+
+  <header>
+    <div id="header-container">
+      <div id="requests">
+        <h1>Requests</h1>
+      </div>
+
+      <div id="closeBtnTop">
+        <i id="close">X</i>
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <main>
+    <div id="main-container">
+
+      <div id="content-left">
+
+        <table class="table table-hover table-striped" id="requestsTable">
+          <thead>
+          <tr>
+            <th> </th>
+            <th>Username</th>
+            <th>Type</th>
+            <th>Request</th>
+            <th>Account</th>
+            <th>Approve/Deny</th>
+          </tr>
+          </thead>
+          <tbody>
+          <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
+<!--          <tr *ngFor="let user of filtered_users" (click)="showModal(user)">-->
+          <tr>
+            <td >Circle</td>
+            <td >Username</td>
+<!--            <td *ngIf="user.type == 'Basic'">Student</td>-->
+<!--            <td *ngIf="user.type != 'Basic'">{{user.type}}</td>-->
+
+            <td>Type</td>
+            <td>Request Type</td>
+            <td>Account Button</td>
+            <td>Approve / Deny buttons</td>
+          </tr>
+          </tbody>
+        </table>
+
+
+      </div>
+
+      <div id="content-right">
+        <header>
+          <form [formGroup]="requestsSearchForm" (ngSubmit)="onSubmit()">
+            <div class="input-group">
+
+              <input type="text" id="requestSearch" name="RequestSearch" formControlName="requestsSearchForm" placeholder="Search...">
+              <br/>
+              <button type="submit" class="btn btn-primary" id="requestSearchBtn"> Search</button>
+
+            </div>
+
+
+          </form>
+
+        </header>
+
+        <div id="radio-div">
+
+          <div class="row">
+
+            <div class="col-auto">
+              <input type="radio" id="All" name="searchRequestRadio" value="All">
+              <label for="All"> All </label>
+            </div>
+
+            <div class="col-auto">
+              <input type="radio" id="Password" name="searchRequestRadio" value="Password" >
+              <label for="Password"> Student </label>
+            </div>
+
+            <div class="col-auto">
+              <input type="radio" id="Account" name="searchRequestRadio" value="Account">
+              <label for="Account"> Instructor </label>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="edit-all" >
+
+          <button class="btn btn-outline-success">Accept All</button>
+
+          <button class="btn btn-outline-danger">Deny All</button>
+
+        </div>
+
+
+        <footer>
+
+            <button class="btn btn-warning">Reset</button>
+
+            <button class="btn btn-success">Save</button>
+
+            <button class="btn btn-danger">Close</button>
+
+
+        </footer>
+
+      </div>
+    </div>
+  </main>
+
+
+
+</div>

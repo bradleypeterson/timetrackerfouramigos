@@ -1,0 +1,159 @@
+:host {
+  display: flex;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+
+
+#modal-container {
+
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  height: 50%;
+
+  border-radius: 10px;
+  background-color: #fff;
+
+}
+
+#header-container{
+  display: flex;
+  border-bottom: 1px solid black;
+  height: 100%;
+}
+
+#requests {
+  flex: 2;
+  margin-left: 1.5%;
+}
+
+#closeBtnTop{
+  flex: 1;
+  text-align: end;
+  margin-right: 2.5%;
+  color: darkgrey;
+  font-size: 32pt;
+}
+
+i {
+  cursor: pointer;
+}
+
+/*main body styles*/
+main {
+  flex-grow: 1;
+}
+
+#main-container{
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 auto;
+  height: 100%;
+}
+
+/*left content container styles*/
+
+#content-left {
+  flex: 2;
+  border-right: 1px solid black;
+}
+
+#requestsTable {
+ margin-bottom: 5px;
+}
+
+#requestsTable tbody{
+  overflow-y: scroll;
+}
+
+#requestsTable td, th {
+  text-align: center;
+}
+
+/*right content container styles*/
+#content-right{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: available;
+}
+
+header input[type="text"] {
+  height: 50px;
+  width: 100%;
+  font-size: 16pt;
+  margin: 10px;
+}
+
+#requestSearchBtn {
+  font-size: 18pt;
+  margin-left: auto;
+  margin-right: 10px;
+  margin-top: -5px;
+}
+
+#radio-div{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+}
+
+#radio-div .row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 5px;
+  width: 100%;
+}
+
+#radio-div label{
+  font-size: 18pt;
+  margin-left: 10px;
+}
+
+#edit-all{
+  display: flex;
+  flex-direction: column;
+}
+
+#edit-all button{
+  font-size: 22pt;
+  margin: 0px 10px 10px 10px;
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin-top: auto;
+}
+
+footer button{
+  font-size: 22pt;
+  width: 80%;
+  margin: 0 5px 5px 5px;
+}
+/*border colors for testing*/
+.red {
+  border: 5px solid red;
+}
+
+.green {
+  border: 1px solid green;
+}
+
+.blue {
+  border: 3px solid blue;
+}
+
+.black {
+  border: 1px solid black;
+}
