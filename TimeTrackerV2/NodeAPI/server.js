@@ -516,10 +516,9 @@ app.post('/login', async (req, res, next) => {
                 .toString(`hex`);
 
             if (rows['password'] === hash) {
+                //set user session variable
                 ssn = req.session;
                 ssn.user = { user: rows };
-                console.log(ssn.user)
-                //ssn.role = 'regular';
                 ssn.save();
                 return res.status(200).json({ user: rows });
             } else {

@@ -1,3 +1,5 @@
+
+//check if user session variable is set
 function authUser(req, res, next){
     if (req.session.user == null){
         res.status(403)
@@ -6,6 +8,7 @@ function authUser(req, res, next){
     next()
 }
 
+//check if user role meets requirements
 function authRole(role){
     return(req, res, next) => {
         if (req.session.user.type !== role){
