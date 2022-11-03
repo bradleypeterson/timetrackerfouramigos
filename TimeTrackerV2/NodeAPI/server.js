@@ -1,8 +1,11 @@
-const cors = require('cors'); 
+const cors = require('cors');
 const express = require('express');
-const mongoose = require('mongoose'); 
-const crypto = require('crypto'); 
+const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
+const crypto = require('crypto');
 const sqlite3 = require('sqlite3').verbose();
+const session = require('express-session');
+const { authUser, authRole } = require('./basicAuth')
 
 // Constants
 const PORT = 8080;
@@ -15,16 +18,33 @@ const db = new sqlite3.Database('./database/main.db');
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept'
+    );
+    next();
 });
 
-app.get('/', (req, res) => {
-  return res.send('Hello World');
+app.use(
+    session({
+        name: 'sid',
+        resave: false,
+        secret: '4amigos number 1!',
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 36000000,
+            sameSite: true,
+        },
+    })
+);
+
+app.get('/',(req, res) => {
+    return res.send('Hello World');
 });
 
 //Joins a group based on user id and group id
@@ -33,12 +53,14 @@ app.post('/joingroup', async (req, res, next) => {
                 VALUES (?, ?)`;
 
     let data = [];
-    data[0] = req.body["userID"];
-    data[1] = req.body["groupID"];
+    data[0] = req.body['userID'];
+    data[1] = req.body['groupID'];
 
-    db.run(sql, data, function(err, rows) {
+    db.run(sql, data, function (err, rows) {
         if (err) {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
         }
         res.send(JSON.stringify(rows));
     });
@@ -52,12 +74,14 @@ app.post('/leavegroup', async (req, res, next) => {
                    GA.userID = ? AND GA.groupID = ?`;
 
     let data = [];
-    data[0] = req.body["userID"];
-    data[1] = req.body["groupID"];
+    data[0] = req.body['userID'];
+    data[1] = req.body['groupID'];
 
-    db.run(sql, data, function(err, rows) {
+    db.run(sql, data, function (err, rows) {
         if (err) {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
         }
         res.send(JSON.stringify(rows));
     });
@@ -66,14 +90,14 @@ app.post('/leavegroup', async (req, res, next) => {
 //Get users info based on username
 app.post('/getuser', async (req, res, next) => {
     let sql = `SELECT userID, username, firstName, lastName, type, isActive FROM Users WHERE username = ?`;
-    db.get(sql, [req.body["username"]], (err, rows) => {
-
+    db.get(sql, [req.body['username']], (err, rows) => {
         if (err) {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
         }
         res.send(JSON.stringify(rows));
     });
-
 });
 //Retrieves a list of all course requests
 app.get('/getcourserequests', async (req, res, next) => {
@@ -92,9 +116,8 @@ app.get('/getcourserequests', async (req, res, next) => {
                         LEFT JOIN Users UR on CR.reviewerID = UR.userID
                WHERE CR.isActive = 1`;
     db.all(sql, [], (err, rows) => {
-        if(err)
-        {
-            res.status(400).json({ "error": err.message });
+        if (err) {
+            res.status(400).json({ error: err.message });
         }
         res.send(JSON.stringify(rows));
     });
@@ -102,7 +125,7 @@ app.get('/getcourserequests', async (req, res, next) => {
 
 // get all course requests for a student, which are active
 app.get('/getactivecourserequests', async (req, res, next) => {
-  let sql = `SELECT
+    let sql = `SELECT
                  CR.requestID,
                  C.courseName,
                  U.firstName || ' ' || U.lastName as studentName,
@@ -111,19 +134,17 @@ app.get('/getactivecourserequests', async (req, res, next) => {
              FROM CourseRequest as CR
                       LEFT JOIN Users U on CR.userID = U.userID
              WHERE CR.status = 1`;
-  db.all(sql, [], (err, rows) => {
-      if(err)
-      {
-          res.status(400).json({ "error": err.message });
-      }
-      res.send(JSON.stringify(rows));
-  });
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+        }
+        res.send(JSON.stringify(rows));
+    });
 });
-
 
 // get all course requests for a student, which are accepted
 app.get('/getacceptedcourserequests', async (req, res, next) => {
-  let sql = `SELECT
+    let sql = `SELECT
                  CR.requestID,
                  CR.courseName,
                  U.firstName || ' ' || U.lastName as studentName,
@@ -132,20 +153,17 @@ app.get('/getacceptedcourserequests', async (req, res, next) => {
              FROM CourseRequest as CR
                       LEFT JOIN Users U on CR.userID = U.userID
              WHERE CR.status = 1`;
-  db.all(sql, [], (err, rows) => {
-      if(err)
-      {
-          res.status(400).json({ "error": err.message });
-      }
-      res.send(JSON.stringify(rows));
-  });
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+        }
+        res.send(JSON.stringify(rows));
+    });
 });
-
-
 
 //Updates passed course request
 app.post('/updatecourserequest', async (req, res, next) => {
-    console.log("Running update course request");
+    console.log('Running update course request');
 
     let sql = `UPDATE CourseRequest
                SET
@@ -157,40 +175,32 @@ app.post('/updatecourserequest', async (req, res, next) => {
                    requestID = ?`;
 
     let data = [];
-    data[0] = req.body["status"];
-    data[1] = req.body["isActive"];
-    data[2] = req.body["reviewerID"];
-    data[3] = req.body["requestID"];
-    db.run(sql, data, function(err, rows)
-    {
-        if (err)
-        {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
-        }
-        else
-        {
-            return res.status(200).json({message: 'User registered'});
+    data[0] = req.body['status'];
+    data[1] = req.body['isActive'];
+    data[2] = req.body['reviewerID'];
+    data[3] = req.body['requestID'];
+    db.run(sql, data, function (err, rows) {
+        if (err) {
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
+        } else {
+            return res.status(200).json({ message: 'User registered' });
         }
     });
-
 });
 
 //Testing for admin stuff! ------------------------------
 
 //Retrieves a list of all users from the database
-app.get('/getusers', async (req, res, next) => {
-
+app.get('/getusers', authUser, authRole('Admin'), async (req, res, next) => {
     let sql = `SELECT userID, username, firstName, lastName, type, isActive FROM Users`;
     db.all(sql, [], (err, rows) => {
-
         if (err) {
-            res.status(400).json({ "error": err.message });
+            res.status(400).json({ error: err.message });
         }
-
         res.send(JSON.stringify(rows));
-
     });
-
 });
 
 //Gets all courses from the database and sends them to the caller
@@ -200,74 +210,64 @@ app.get('/getcourses', async (req, res) => {
     LEFT JOIN Users ON Courses.instructorID = Users.userID`;
 
     db.all(sql, [], (err, rows) => {
-
         if (err) {
-            res.status(400).json({ "error": err.message });
+            res.status(400).json({ error: err.message });
         } else {
             res.send(JSON.stringify(rows));
         }
-
     });
 });
 
 // where instructor ID = user id
 // where current user = user id in course request
 
-
 //Gets all courses and course requests where the user id is the current user and status is accepted
 app.get('/getcoursesandrequests', async (req, res) => {
-  let sql = `SELECT Courses.*, CR.*, Users.firstName, Users.lastName
+    let sql = `SELECT Courses.*, CR.*, Users.firstName, Users.lastName
   FROM Courses, CourseRequest as CR
     LEFT JOIN Users U ON Courses.instructorID = U.userID
     LEFT JOIN Users UI ON UI.userID = CR.userID
   WHERE CR.status = 1`;
 
-  db.all(sql, [], (err, rows) => {
-
-      if (err) {
-          res.status(400).json({ "error": err.message });
-      } else {
-          res.send(JSON.stringify(rows));
-      }
-
-  });
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
 });
-
 
 // get courses without user data
 app.get('/getcoursesonly', async (req, res) => {
-  let sql = `SELECT *
+    let sql = `SELECT *
   FROM Courses`;
 
-  db.all(sql, [], (err, rows) => {
-
-      if (err) {
-          res.status(400).json({ "error": err.message });
-      } else {
-          res.send(JSON.stringify(rows));
-      }
-
-  });
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
 });
 
 // get a course from the course table using the course ID
 app.get('/getcourse', async (req, res) => {
-  let sql = `SELECT *
+    let sql = `SELECT *
   FROM Courses
   WHERE courseId = ?`;
 
-  let data = [];
-    data[0] = req.body["courseID"];
+    let data = [];
+    data[0] = req.body['courseID'];
 
-  db.all(sql, data, (err, rows) => {
-
-      if (err) {
-          res.status(400).json({ "error": err.message });
-      } else {
-          res.send(JSON.stringify(rows));
-      }
-
-  });
+    db.all(sql, data, (err, rows) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
 });
 
 app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
@@ -280,7 +280,7 @@ app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
 
     db.all(sql, [], (err, rows) => {
         if (err) {
-            res.status(400).json({"error": err.message });
+            res.status(400).json({ error: err.message });
         } else {
             res.send(JSON.stringify(rows));
         }
@@ -289,30 +289,25 @@ app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
 
 // insert course request into table
 app.post('/insertcourserequest', async (req, res, next) => {
-  let sql = `INSERT INTO
-  CourseRequest (userID, courseID, instructorID, isActive, reviewerID, status) VALUES (?, ?, ?, ?, ?, ?)` ;
+    let sql = `INSERT INTO
+  CourseRequest (userID, courseID, instructorID, isActive, reviewerID, status) VALUES (?, ?, ?, ?, ?, ?)`;
 
-  let data = [];
-    data[0] = req.body["userID"];
-    data[1] = req.body["courseID"];
-    data[2] = req.body["instructorID"];
-    data[3] = req.body["isActive"];
-    data[4] = req.body["reviewerID"];
-    data[5] = req.body["status"];
+    let data = [];
+    data[0] = req.body['userID'];
+    data[1] = req.body['courseID'];
+    data[2] = req.body['instructorID'];
+    data[3] = req.body['isActive'];
+    data[4] = req.body['reviewerID'];
+    data[5] = req.body['status'];
 
-
-  db.run(sql, data, function (err, rows) {
-
-      if (err) {
-          res.status(400).json({ "error": err.message });
-      } else {
-          res.send(JSON.stringify(rows));
-      }
-
-  });
-
+    db.run(sql, data, function (err, rows) {
+        if (err) {
+            res.status(400).json({ error: err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
 });
-
 
 app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
     //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
@@ -324,7 +319,7 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
 
     db.all(sql, [], (err, rows) => {
         if (err) {
-            res.status(400).json({"error": err.message });
+            res.status(400).json({ error: err.message });
         } else {
             res.send(JSON.stringify(rows));
         }
@@ -333,19 +328,18 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
 
 //Updates the user in the database with the passed in information
 app.post('/updateuserbyid/:userid', async (req, res) => {
-
-    let data = []
+    let data = [];
     data[0] = req.body['username'];
     data[1] = req.body['firstName'];
     data[2] = req.body['lastName'];
     data[3] = req.body['type'];
     data[4] = req.body['isActive'];
 
-   if (data[0] === "Admin" && data[1] === "Sudo" && data[2] === "Admin"){
-       return res.status(500).json({error: "Cannot modify Admin account!"});
-   }
+    if (data[0] === 'Admin' && data[1] === 'Sudo' && data[2] === 'Admin') {
+        return res.status(500).json({ error: 'Cannot modify Admin account!' });
+    }
 
-   let sql = `UPDATE
+    let sql = `UPDATE
                   users
               SET
                   username = ?,
@@ -356,326 +350,390 @@ app.post('/updateuserbyid/:userid', async (req, res) => {
               WHERE
                   userID = ${req.params.userid}`;
 
-   db.run(sql, data, (err) => {
-       if(err){
-           return res.status(500).json({error: err.message});
-       } else {
-           return res.status(200).json({message: "User updated successfully"});
-       }
-   });
-
+    db.run(sql, data, (err) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        } else {
+            return res
+                .status(200)
+                .json({ message: 'User updated successfully' });
+        }
+    });
 });
 
 //Deletes the user based on a passed in user id, checks if the passed in user is the admin account
 app.post('/deleteuserbyid/:userid', async (req, res) => {
-
-    let data = []
+    let data = [];
     data[0] = req.body['username'];
     data[1] = req.body['firstName'];
     data[2] = req.body['lastName'];
     data[3] = req.body['type'];
     data[4] = req.body['isActive'];
 
-    if (data[0] === "Admin" && data[1] === "Sudo" && data[2] === "Admin"){
-        return res.status(500).json({error: "Cannot modify Admin account!"});
+    if (data[0] === 'Admin' && data[1] === 'Sudo' && data[2] === 'Admin') {
+        return res.status(500).json({ error: 'Cannot modify Admin account!' });
     }
 
     let sql = `DELETE FROM users WHERE userID = ${req.params.userid}`;
 
     db.run(sql, (err) => {
-        if(err){
-            return res.status(500).json({error: err.message});
+        if (err) {
+            return res.status(500).json({ error: err.message });
         } else {
-            return res.status(200).json({message: "User deleted successfully"});
+            return res
+                .status(200)
+                .json({ message: 'User deleted successfully' });
         }
     });
-
 });
 
 //Resets the passed in users password to a default value
 app.post('/resetpassword/:userid', async (req, res) => {
-
     let defaultPassword = 'wildcat123';
 
     let salt = crypto.randomBytes(16).toString('hex');
 
-    let hash = crypto.pbkdf2Sync(defaultPassword, salt,
-        1000, 64, `sha512`).toString(`hex`);
+    let hash = crypto
+        .pbkdf2Sync(defaultPassword, salt, 1000, 64, `sha512`)
+        .toString(`hex`);
 
-    let data = []
+    let data = [];
 
     data.push(hash);
     data.push(salt);
 
     sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${req.params.userid}`;
 
-    db.run(sql, data,(err) => {
-        if(err){
-            return res.status(500).json({error: err.message});
+    db.run(sql, data, (err) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
         } else {
-            return res.status(200).json({message: "Password reset"});
+            return res.status(200).json({ message: 'Password reset' });
         }
     });
-
-
 });
-
-
-
 
 //-------------------------------------------------------
 
 app.post('/register', async (req, res, next) => {
-
-  function isEmpty(str) {
-    return (!str || str.length === 0 );
-  }
-
-  if(isEmpty(req.body["username"]) ||
-  isEmpty(req.body["firstName"]) ||
-  isEmpty(req.body["lastName"]) ||
-  isEmpty(req.body["password"]) ||
-  isEmpty(req.body["repeatPassword"])) {
-    return res.status(400).json({message: 'Missing one or more required arguments.'});
-  };
-
-  // Validate user doesn't already exist
-  let sql = `SELECT * FROM Users WHERE username = ?`;
-  db.get(sql, [req.body["username"]], (err, rows) => {
-
-    if (err) {
-      return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+    function isEmpty(str) {
+        return !str || str.length === 0;
     }
 
-    if(rows) {
-      return res.status(400).json({message: 'A user of this name already exists'});
+    if (
+        isEmpty(req.body['username']) ||
+        isEmpty(req.body['firstName']) ||
+        isEmpty(req.body['lastName']) ||
+        isEmpty(req.body['password']) ||
+        isEmpty(req.body['repeatPassword'])
+    ) {
+        return res
+            .status(400)
+            .json({ message: 'Missing one or more required arguments.' });
     }
 
-    // Validate passwords match
-    if(req.body["password"] !== req.body["repeatPassword"]) {
-      return res.status(400).json({message: 'Given passwords do not match'});
-    }
-    
-    let salt = crypto.randomBytes(16).toString('hex');
-        
-    let hash = crypto.pbkdf2Sync(req.body["password"], salt,  
-      1000, 64, `sha512`).toString(`hex`);
+    // Validate user doesn't already exist
+    let sql = `SELECT * FROM Users WHERE username = ?`;
+    db.get(sql, [req.body['username']], (err, rows) => {
+        if (err) {
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
+        }
 
-    let data = [];
+        if (rows) {
+            return res
+                .status(400)
+                .json({ message: 'A user of this name already exists' });
+        }
 
-    // Can't use dictionaries for queries so order matters!
-    data[0] = req.body["username"];
-    data[1] = hash;
-    data[2] = req.body["firstName"];
-    data[3] = req.body["lastName"];
-    //Temporary to create an Instructor user
-    data[4] = req.body["userType"];
-    data[5] = true;
-    data[6] = salt;
+        // Validate passwords match
+        if (req.body['password'] !== req.body['repeatPassword']) {
+            return res
+                .status(400)
+                .json({ message: 'Given passwords do not match' });
+        }
 
-    db.run(`INSERT INTO Users(username, password, firstName, lastName, type, isActive, salt) VALUES(?, ?, ?, ?, ?, ?, ?)`, data, function(err, rows) {
-      if (err) {
-        return res.status(500).json({message: 'Something went wrong. Please try again later.'});
-      } else {
-        return res.status(200).json({message: 'User registered'});
-      }
+        let salt = crypto.randomBytes(16).toString('hex');
+
+        let hash = crypto
+            .pbkdf2Sync(req.body['password'], salt, 1000, 64, `sha512`)
+            .toString(`hex`);
+
+        let data = [];
+
+        // Can't use dictionaries for queries so order matters!
+        data[0] = req.body['username'];
+        data[1] = hash;
+        data[2] = req.body['firstName'];
+        data[3] = req.body['lastName'];
+        //Temporary to create an Instructor user
+        data[4] = req.body['userType'];
+        data[5] = true;
+        data[6] = salt;
+
+        db.run(
+            `INSERT INTO Users(username, password, firstName, lastName, type, isActive, salt) VALUES(?, ?, ?, ?, ?, ?, ?)`,
+            data,
+            function (err, rows) {
+                if (err) {
+                    return res.status(500).json({
+                        message:
+                            'Something went wrong. Please try again later.',
+                    });
+                } else {
+                    return res.status(200).json({ message: 'User registered' });
+                }
+            }
+        );
     });
-  });
 });
 
 app.post('/login', async (req, res, next) => {
-  function isEmpty(str) {
-    return (!str || str.length === 0 );
-  }
-
-
-  if(isEmpty(req.body["username"]) ||
-  isEmpty(req.body["password"])) {
-    return res.status(400).json({message: 'Missing one or more required arguments.'});
-  };
-
-  let sql = `SELECT * FROM Users WHERE username = ?`;
-  db.get(sql, [req.body["username"]], (err, rows) => {
-    if (err) {
-      return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+    function isEmpty(str) {
+        return !str || str.length === 0;
     }
 
-    if(rows) {
-      salt = rows['salt']
-
-      let hash = crypto.pbkdf2Sync(req.body["password"], salt,  
-      1000, 64, `sha512`).toString(`hex`);
-
-      if(rows['password'] === hash) {
-        return res.status(200).json({user: rows});
-      } else {
-        return res.status(401).json({message: 'Username or password is incorrect.'});
-      }
-    } else {
-      return res.status(401).json({message: 'Username or password is incorrect.'});
+    if (isEmpty(req.body['username']) || isEmpty(req.body['password'])) {
+        return res
+            .status(400)
+            .json({ message: 'Missing one or more required arguments.' });
     }
-  });
+
+    let sql = `SELECT * FROM Users WHERE username = ?`;
+    db.get(sql, [req.body['username']], (err, rows) => {
+        if (err) {
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
+        }
+
+        if (rows) {
+            salt = rows['salt'];
+
+            let hash = crypto
+                .pbkdf2Sync(req.body['password'], salt, 1000, 64, `sha512`)
+                .toString(`hex`);
+
+            if (rows['password'] === hash) {
+                ssn = req.session;
+                ssn.user = { user: rows };
+                console.log(ssn.user)
+                //ssn.role = 'regular';
+                ssn.save();
+                return res.status(200).json({ user: rows });
+            } else {
+                return res
+                    .status(401)
+                    .json({ message: 'Username or password is incorrect.' });
+            }
+        } else {
+            return res
+                .status(401)
+                .json({ message: 'Username or password is incorrect.' });
+        }
+    });
 });
 
 app.post('/createGroup', async (req, res, next) => {
     function isEmpty(str) {
-        return (!str || str.length === 0);
+        return !str || str.length === 0;
     }
 
-    console.log("Running createGroup");
+    console.log('Running createGroup');
 
     let data = [];
 
     // Can't use dictionaries for queries so order matters!
-    data[0] = req.body["groupName"];
-    data[1] = req.body["isActive"];
-    data[2] = req.body["projectID"];
+    data[0] = req.body['groupName'];
+    data[1] = req.body['isActive'];
+    data[2] = req.body['projectID'];
 
     console.log(data);
 
-    db.run(`INSERT INTO Groups(groupName, isActive, projectID) VALUES(?, ?, ?)`, data, function (err, rows) {
-        if (err) {
-            return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
-        } else {
-            console.log(data);
-            return res.status(200).json({group: data});
+    db.run(
+        `INSERT INTO Groups(groupName, isActive, projectID) VALUES(?, ?, ?)`,
+        data,
+        function (err, rows) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Something went wrong. Please try again later.',
+                });
+            } else {
+                console.log(data);
+                return res.status(200).json({ group: data });
+            }
         }
-    });
+    );
 });
 
-app.get
+app.get;
 
 app.post('/createCourse', async (req, res, next) => {
-  function isEmpty(str) {
-      return (!str || str.length === 0);
-  }
+    function isEmpty(str) {
+        return !str || str.length === 0;
+    }
 
-  console.log("Running createCourse");
+    console.log('Running createCourse');
 
-  let data = [];
+    let data = [];
 
-  // Can't use dictionaries for queries so order matters!
-  data[0] = req.body["courseName"];
-  data[1] = req.body["isActive"];
-  data[2] = req.body["instructorID"]; //Edited by Tage for course creation
-  data[3] = req.body["description"]; //Edited by Tage for course creation
+    // Can't use dictionaries for queries so order matters!
+    data[0] = req.body['courseName'];
+    data[1] = req.body['isActive'];
+    data[2] = req.body['instructorID']; //Edited by Tage for course creation
+    data[3] = req.body['description']; //Edited by Tage for course creation
 
-  console.log(data);
+    console.log(data);
 
-  db.run(`INSERT INTO Courses(courseName, isActive, instructorID, description) VALUES(?, ?, ?, ?)`, data, function (err, rows) {
-      if (err) {
-          return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
-      } else {
-          return res.status(200).json({course: data});
-      }
-  });
+    db.run(
+        `INSERT INTO Courses(courseName, isActive, instructorID, description) VALUES(?, ?, ?, ?)`,
+        data,
+        function (err, rows) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Something went wrong. Please try again later.',
+                });
+            } else {
+                return res.status(200).json({ course: data });
+            }
+        }
+    );
 });
 
 app.post('/createProject', async (req, res, next) => {
-  function isEmpty(str) {
-      return (!str || str.length === 0);
-  }
+    function isEmpty(str) {
+        return !str || str.length === 0;
+    }
 
-  console.log("Running createProject");
+    console.log('Running createProject');
 
-  let data = [];
+    let data = [];
 
-  // Can't use dictionaries for queries so order matters!
-  data[0] = req.body["projectName"];
-  data[1] = req.body["isActive"];
-  data[2] = req.body['courseID'];
-  data[3] = req.body['description']
+    // Can't use dictionaries for queries so order matters!
+    data[0] = req.body['projectName'];
+    data[1] = req.body['isActive'];
+    data[2] = req.body['courseID'];
+    data[3] = req.body['description'];
 
-  console.log(data);
+    console.log(data);
 
-  db.run(`INSERT INTO Projects(projectName, isActive, courseID, description) VALUES(?, ?, ?, ?)`, data, function (err, rows) {
-      if (err) {
-          return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
-      } else {
-          console.log(rows);
-          return res.status(200).json({project: data});
-      }
-  });
+    db.run(
+        `INSERT INTO Projects(projectName, isActive, courseID, description) VALUES(?, ?, ?, ?)`,
+        data,
+        function (err, rows) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Something went wrong. Please try again later.',
+                });
+            } else {
+                console.log(rows);
+                return res.status(200).json({ project: data });
+            }
+        }
+    );
 });
 
 app.post('/clock', async (req, res, next) => {
-  function isEmpty(str) {
-    return (!str || str.length === 0 );
-  }
-  
-  let isValid = true;
-  let isClockin = req.body["timeIn"] !== null;
-  let sql = `SELECT * FROM TimeCard WHERE UserID = ?`;
-  db.all(sql, [req.body["userID"]], (error, rows) => 
-  {
-    if (error) {
-      return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+    function isEmpty(str) {
+        return !str || str.length === 0;
     }
 
-    if(isClockin){
-      console.log("clocking in.");
-      rows.forEach(row => {
-        isValid = (row['timeOut'] !== null);
-      });
-
-      if(!isValid){
-        return res.status(400).json({message: 'you have an outstanding clock in. Please clock out.'});
-      }
-
-      let data = [];
-
-      data[0] = req.body["timeIn"];
-      data[1] = false;
-      data[2] = req.body["createdOn"];
-      data[3] = req.body["userID"];
-      data[4] = req.body["description"];
-      data[5] = req.body["groupID"];
-
-      db.run(`INSERT INTO TimeCard(timeIn, isEdited, createdOn, userID, description, groupID) VALUES(?, ?, ?, ?, ?, ?)`, data, function(err,value){
-        if(err){
-          console.log(err)
-          return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+    let isValid = true;
+    let isClockin = req.body['timeIn'] !== null;
+    let sql = `SELECT * FROM TimeCard WHERE UserID = ?`;
+    db.all(sql, [req.body['userID']], (error, rows) => {
+        if (error) {
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
         }
-        else{
-          return res.status(200).json({message: 'Clocked in successfully.'});
-        }
-      });
-    }
-    else{//clocking out
-      console.log("clocking out.");
-      let isNullTimeOut = false;
-      let ID = 0;
-      rows.every(row => {
-        isNullTimeOut = row["timeOut"] === null;
-        if(isNullTimeOut){
-          ID = row["timeslotID"];
-          return false;
-        }
-        return true;
-      });
 
-      isValid = isNullTimeOut;
+        if (isClockin) {
+            console.log('clocking in.');
+            rows.forEach((row) => {
+                isValid = row['timeOut'] !== null;
+            });
 
-      if(!isValid){
-        return res.status(400).json({message: 'No outstanding clock in. Please clock in first.'});
-      }
+            if (!isValid) {
+                return res.status(400).json({
+                    message:
+                        'you have an outstanding clock in. Please clock out.',
+                });
+            }
 
-      let data = [];
-      data[0] = req.body["timeOut"];
-      data[1] = req.body["description"];
-      data[2] = ID;
+            let data = [];
 
-      db.run(`UPDATE TimeCard SET timeOut = ? , description = ? WHERE timeslotID = ? `, data, function(err, value){
-        if(err){
-          console.log(err)
-          return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            data[0] = req.body['timeIn'];
+            data[1] = false;
+            data[2] = req.body['createdOn'];
+            data[3] = req.body['userID'];
+            data[4] = req.body['description'];
+            data[5] = req.body['groupID'];
+
+            db.run(
+                `INSERT INTO TimeCard(timeIn, isEdited, createdOn, userID, description, groupID) VALUES(?, ?, ?, ?, ?, ?)`,
+                data,
+                function (err, value) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({
+                            message:
+                                'Something went wrong. Please try again later.',
+                        });
+                    } else {
+                        return res
+                            .status(200)
+                            .json({ message: 'Clocked in successfully.' });
+                    }
+                }
+            );
+        } else {
+            //clocking out
+            console.log('clocking out.');
+            let isNullTimeOut = false;
+            let ID = 0;
+            rows.every((row) => {
+                isNullTimeOut = row['timeOut'] === null;
+                if (isNullTimeOut) {
+                    ID = row['timeslotID'];
+                    return false;
+                }
+                return true;
+            });
+
+            isValid = isNullTimeOut;
+
+            if (!isValid) {
+                return res.status(400).json({
+                    message: 'No outstanding clock in. Please clock in first.',
+                });
+            }
+
+            let data = [];
+            data[0] = req.body['timeOut'];
+            data[1] = req.body['description'];
+            data[2] = ID;
+
+            db.run(
+                `UPDATE TimeCard SET timeOut = ? , description = ? WHERE timeslotID = ? `,
+                data,
+                function (err, value) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({
+                            message:
+                                'Something went wrong. Please try again later.',
+                        });
+                    } else {
+                        return res
+                            .status(200)
+                            .json({ message: 'Clocked out successfully.' });
+                    }
+                }
+            );
         }
-        else{
-          return res.status(200).json({message: 'Clocked out successfully.'});
-        }
-      });
-    }
-  });  
+    });
 });
 
 app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
@@ -688,7 +746,7 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
 
     db.all(sql, [], (err, rows) => {
         if (err) {
-            res.status(400).json({"error": err.message });
+            res.status(400).json({ error: err.message });
         } else {
             res.send(JSON.stringify(rows));
         }
@@ -704,13 +762,13 @@ app.get('/getgroupassignments/:userID', async (req, res) => {
                WHERE 
                    userID = ${req.params.userID}`;
     db.all(sql, [], (err, rows) => {
-
         if (err) {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
         }
         res.send(JSON.stringify(rows));
     });
-
 });
 
 //Gets a list of all groups a user is in
@@ -728,13 +786,13 @@ app.get('/getusergroups/:userID', async (req, res) => {
                WHERE
                    GA.userID = ${req.params.userID}`;
     db.all(sql, [], (err, rows) => {
-
         if (err) {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
         }
         res.send(JSON.stringify(rows));
     });
-
 });
 
 //Gets a list of all users in a group
@@ -751,18 +809,20 @@ app.get('/getgroupusers/:groupID', async (req, res) => {
                WHERE
                    GA.groupID = ${req.params.groupID}`;
     db.all(sql, [], (err, rows) => {
-
         if (err) {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
         }
         res.send(JSON.stringify(rows));
     });
-
 });
 
 //Gets a list of all time cards for a users group
 app.post('/getusergrouptimecards', async (req, res) => {
-    console.log("groupID: " + req.body["groupID"] + " userID: " + req.body["userID"]);
+    console.log(
+        'groupID: ' + req.body['groupID'] + ' userID: ' + req.body['userID']
+    );
     let sql = `SELECT
                    *
                FROM
@@ -770,13 +830,14 @@ app.post('/getusergrouptimecards', async (req, res) => {
                WHERE
                    userID = ? AND groupID = ?`;
     let data = [];
-    data[0] = req.body["userID"];
-    data[1] = req.body["groupID"];
+    data[0] = req.body['userID'];
+    data[1] = req.body['groupID'];
 
     db.all(sql, data, (err, rows) => {
-
         if (err) {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
         }
         res.send(JSON.stringify(rows));
     });
@@ -785,14 +846,14 @@ app.post('/getusergrouptimecards', async (req, res) => {
 //Creates a new time card
 app.post('/createtimecard', async (req, res, next) => {
     function isEmpty(str) {
-        return (!str || str.length === 0);
+        return !str || str.length === 0;
     }
 
     let data = [];
 
     // Can't use dictionaries for queries so order matters!
-    data[0] = req.body["timeIn"];
-    data[1] = req.body["timeOut"];
+    data[0] = req.body['timeIn'];
+    data[1] = req.body['timeOut'];
     data[2] = 0;
     data[3] = req.body['createdOn'];
     data[4] = req.body['userID'];
@@ -801,38 +862,44 @@ app.post('/createtimecard', async (req, res, next) => {
 
     console.log(data);
 
-    db.run(`INSERT INTO TimeCard(timeIn, timeOut, isEdited, createdOn, userID, description, groupID) VALUES(?, ?, ?, ?, ?, ?, ?)`, data, function (err, rows)
-    {
-        if (err)
-        {
-            return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+    db.run(
+        `INSERT INTO TimeCard(timeIn, timeOut, isEdited, createdOn, userID, description, groupID) VALUES(?, ?, ?, ?, ?, ?, ?)`,
+        data,
+        function (err, rows) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Something went wrong. Please try again later.',
+                });
+            }
+            res.send(JSON.stringify(rows));
         }
-        res.send(JSON.stringify(rows));
-    });
+    );
 });
 
 //Delete specified time card
 app.post('/deletetimecard', async (req, res, next) => {
     function isEmpty(str) {
-        return (!str || str.length === 0);
+        return !str || str.length === 0;
     }
 
     let data = [];
 
     // Can't use dictionaries for queries so order matters!
-    data[0] = req.body["timeslotID"];
+    data[0] = req.body['timeslotID'];
 
-    db.run(`DELETE FROM TimeCard WHERE timeslotID = ?`, data, function (err, rows)
-    {
-        if (err)
-        {
-            return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+    db.run(
+        `DELETE FROM TimeCard WHERE timeslotID = ?`,
+        data,
+        function (err, rows) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Something went wrong. Please try again later.',
+                });
+            }
+            res.send(JSON.stringify(rows));
         }
-        res.send(JSON.stringify(rows));
-    });
+    );
 });
-
-
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
