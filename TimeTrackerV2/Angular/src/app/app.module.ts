@@ -17,6 +17,7 @@ import { AdminModalComponent } from './modals/admin-modal/admin-modal.component'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatTableModule} from "@angular/material/table";
+import {MatRippleModule} from "@angular/material/core";
 
 
 @NgModule({
@@ -31,17 +32,18 @@ import {MatTableModule} from "@angular/material/table";
     InstructorComponent,
 
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatTableModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatTableModule,
+        MatRippleModule
+    ],
   providers: [FormBuilder],
   bootstrap: [AppComponent]
 })

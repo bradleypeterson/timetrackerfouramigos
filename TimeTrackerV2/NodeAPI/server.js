@@ -684,7 +684,8 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
     let sql = `SELECT Groups.*, Projects.projectName
                FROM Groups
                LEFT JOIN Projects on Projects.projectID = Groups.projectID
-               WHERE Groups.projectID = ${req.params.projectid}`;
+               WHERE Groups.projectID = ${req.params.projectid}
+               ORDER BY Groups.groupName`;
 
     db.all(sql, [], (err, rows) => {
         if (err) {
@@ -842,14 +843,16 @@ app.get('/getinstructorcourses/:userID', async (req, res) =>
               WHERE
                   instructorID = ${req.params.userID}
                   AND 
-                  isActive = 1`;
+                  isActive = 1
+              ORDER BY 
+                  courseName`;
    db.all(sql, [], (err, rows) => {
        if (err)
        {
            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
        }
        res.send(JSON.stringify(rows));
-   })
+   });
 });
 //Returns a list of all course requests for a course that have been accepted
 app.get('/getcoursestudents/:courseID', async (req, res) => {
@@ -865,7 +868,8 @@ app.get('/getcoursestudents/:courseID', async (req, res) => {
                WHERE CR.status = 1
                  AND CR.isActive = 1
                  AND CR.courseID = ${req.params.courseID}
-               GROUP BY studentName`;
+               GROUP BY studentName
+               ORDER BY studentName`;
     db.all(sql, [], (err, rows) => {
 
         if (err) {
@@ -873,8 +877,35 @@ app.get('/getcoursestudents/:courseID', async (req, res) => {
         }
         res.send(JSON.stringify(rows));
     });
-
 });
+
+//Returns a list of projects for an instructor
+app.get('/getinstructorprojects/:userID', async (req, res) => {
+    let sql = `SELECT
+                   P.projectName,
+                   C.courseName,
+                   P.description,
+                   P.projectID
+               FROM Projects P
+                        LEFT JOIN Courses C on P.courseID = C.courseID
+               WHERE
+                   C.instructorID = ${req.params.userID}
+                 AND
+                   P.isActive = 1
+                 AND
+                   C.isActive = 1
+               ORDER BY
+                   C.courseName, P.projectName`;
+    db.all(sql, [], (err, rows) => {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
+
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

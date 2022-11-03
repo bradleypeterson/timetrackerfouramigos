@@ -136,6 +136,17 @@ export class HttpService {
   {
     return this.http.get<any>(this.apiUrl + `getinstructorcourses/${id}`, this.httpOptions);
   }
+  //Returns all projects for an instructor
+  getInstructorProjects(id: number): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + `getinstructorprojects/${id}`, this.httpOptions);
+  }
+  //Returns all groups in a project
+  getProjectGroups(id: number): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + `getprojectgroups/${id}`, this.httpOptions);
+  }
+
 
   //Returns courses and course requests from server db
   getCourseAndRequests(): Observable<ICourse[]> {
