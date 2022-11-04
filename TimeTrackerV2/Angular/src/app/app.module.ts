@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
-
+import { NgxChartsModule} from "@swimlane/ngx-charts";
 
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminDashComponent } from './admin-dash/admin-dash.component';
@@ -42,7 +42,8 @@ import {MatRippleModule} from "@angular/material/core";
         MatButtonModule,
         MatToolbarModule,
         MatTableModule,
-        MatRippleModule
+        MatRippleModule,
+        NgxChartsModule
     ],
   providers: [FormBuilder],
   bootstrap: [AppComponent]

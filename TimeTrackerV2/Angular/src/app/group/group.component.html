@@ -15,9 +15,13 @@
 
   <div class="row mt-4">
     <div class="col-sm-6 col-md-5 col-lg-4 col-12">
-      <canvas id="groupHours" width="400" height="400"></canvas>
-      <img class="noDataFound" id="noData" src="noDataFound-310x310.png" alt="No Data Entered" width="400"
-           height="400" />
+      <ngx-charts-pie-chart
+        [legend]="true"
+        [labels]="true"
+        [doughnut]="true"
+        [gradient]="true"
+        [results]="single"
+        ></ngx-charts-pie-chart>
     </div>
 
   </div>

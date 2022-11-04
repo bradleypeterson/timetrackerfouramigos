@@ -45,6 +45,27 @@ export class GroupComponent implements OnInit {
   public descriptionAuto: any;
   public isClocked: any;
   public isNegative: any;
+  public pieData: PieChartData[] = [];
+
+  public single = [
+    {
+      "name": "Germany",
+      "value": 8940000
+    },
+    {
+      "name": "USA",
+      "value": 5000000
+    },
+    {
+      "name": "France",
+      "value": 7200000
+    },
+    {
+      "name": "UK",
+      "value": 6200000
+    }
+  ];
+
 
   constructor(
     private http: HttpClient,
@@ -101,7 +122,18 @@ export class GroupComponent implements OnInit {
     this.httpService.getGroupUsers(this.group.groupID as number).subscribe((_users: any) =>
     {
       this.users = _users;
+      this.getTotalTimes();
     })
+  }
+  //Gets the total time for each user and sets the pie chart
+  getTotalTimes(): void
+  {
+    this.users.forEach(user => {
+
+    });
+  }
+  setOptions(): void
+  {
   }
 
   //Gets all timeCards for the user for the specified group
@@ -319,4 +351,10 @@ export class GroupComponent implements OnInit {
       }
     }
   }
+}
+
+export interface PieChartData
+{
+  name?: string;
+  time?: number;
 }
