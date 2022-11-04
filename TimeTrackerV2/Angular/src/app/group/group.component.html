@@ -12,19 +12,18 @@
       </div>
     </div>
   </div>
-
-  <div class="row mt-4">
-    <div class="col-sm-6 col-md-5 col-lg-4 col-12">
-      <ngx-charts-pie-chart
-        [legend]="true"
-        [labels]="true"
-        [doughnut]="true"
-        [gradient]="true"
-        [results]="single"
-        ></ngx-charts-pie-chart>
-    </div>
-
+  <div style="height: 30rem">
+    <ngx-charts-pie-chart
+      [legendTitle]="title"
+      [legend]="true"
+      [labels]="true"
+      [gradient]="true"
+      [explodeSlices]="true"
+      [results]="pieData"></ngx-charts-pie-chart>
   </div>
+
+
+
   <!-- Clock in/Clock out  -->
   <div class="row mt-4">
     <div class="col-12 mb-2">

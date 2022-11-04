@@ -46,26 +46,7 @@ export class GroupComponent implements OnInit {
   public isClocked: any;
   public isNegative: any;
   public pieData: PieChartData[] = [];
-
-  public single = [
-    {
-      "name": "Germany",
-      "value": 8940000
-    },
-    {
-      "name": "USA",
-      "value": 5000000
-    },
-    {
-      "name": "France",
-      "value": 7200000
-    },
-    {
-      "name": "UK",
-      "value": 6200000
-    }
-  ];
-
+  public title = "Hours Per Member"
 
   constructor(
     private http: HttpClient,
@@ -99,7 +80,6 @@ export class GroupComponent implements OnInit {
   ngOnInit(): void
   {
     this.getUser();
-    this.getGroupUsers();
   }
 
   //Get all users info based on local storage username
@@ -111,8 +91,7 @@ export class GroupComponent implements OnInit {
     this.httpService.getUser(payload).subscribe((_user: any) =>
     {
       this.currUser = _user;
-      //Get all time cards for the users group
-      this.getTimeCards();
+      this.getGroupUsers();
     });
   }
 
@@ -122,61 +101,77 @@ export class GroupComponent implements OnInit {
     this.httpService.getGroupUsers(this.group.groupID as number).subscribe((_users: any) =>
     {
       this.users = _users;
-      this.getTotalTimes();
+      this.reloadTimeCard();
     })
-  }
-  //Gets the total time for each user and sets the pie chart
-  getTotalTimes(): void
-  {
-    this.users.forEach(user => {
-
-    });
-  }
-  setOptions(): void
-  {
   }
 
   //Gets all timeCards for the user for the specified group
-  getTimeCards(): void
+  getTimeCards(user: any): void
   {
     let payload = {
       groupID: this.group.groupID,
-      userID: this.user.userID
+      userID: user.userID
     }
-    console.log("payload.groupID:" + payload.groupID + " payload.userID: " + payload.userID);
+    this.pieData = [];
     this.httpService.getTimeCards(payload).subscribe((_timecard: any) =>
     {
-      this.times = _timecard;
-      this.dateTime = [];
-      this.times.forEach(time =>
+      //Only load the current users time cards
+      if(user.userID == this.user.userID)
       {
-        let tempDate = new IDateTimeCard();
-        //Parse mill to date
-        let newIn = new Date(parseInt(time.timeIn as string));
-        let newOut = new Date(parseInt(time.timeOut as string));
-        let newCreate = new Date(parseInt(time.createdOn as string));
-        //Convert milliseconds to hours
-        //let hours = new Date(parseInt(time.timeOut as string) - parseInt(time.timeIn as string)).toISOString().slice(11,19);
+        this.times = _timecard;
+        this.dateTime = [];
+        this.times.forEach(time =>
+        {
+          let tempDate = new IDateTimeCard();
+          //Parse mill to date
+          let newIn = new Date(parseInt(time.timeIn as string));
+          let newOut = new Date(parseInt(time.timeOut as string));
+          let newCreate = new Date(parseInt(time.createdOn as string));
 
 
-        //Assign new values to tempDate
-        tempDate.groupID = time.groupID;
-        tempDate.timeIn = newIn.toLocaleString();
-        tempDate.timeOut = newOut.toLocaleString();
-        tempDate.userID = time.userID;
-        tempDate.createdOn = newCreate.toLocaleString();
-        tempDate.description = time.description;
-        tempDate.isEdited = time.isEdited;
-        tempDate.timeslotID = time.timeslotID;
-        //tempDate.hours = hours;
-        tempDate.hours = this.getTime(parseInt(time.timeOut as string) - parseInt(time.timeIn as string));
-        //Add to array
-        this.dateTime.push(tempDate);
-      });
+          //Assign new values to tempDate
+          tempDate.groupID = time.groupID;
+          tempDate.timeIn = newIn.toLocaleString();
+          tempDate.timeOut = newOut.toLocaleString();
+          tempDate.userID = time.userID;
+          tempDate.createdOn = newCreate.toLocaleString();
+          tempDate.description = time.description;
+          tempDate.isEdited = time.isEdited;
+          tempDate.timeslotID = time.timeslotID;
+          //tempDate.hours = hours;
+          tempDate.hours = this.getTime(parseInt(time.timeOut as string) - parseInt(time.timeIn as string));
+          //Add to array
+          this.dateTime.push(tempDate);
+        });
+      }
+      this.getTotalTimes(_timecard, user);
+
     });
   }
 
+  //Gets the total time for each user and sets the pie chart
+  getTotalTimes(timeCards: ITimeCard[], user: IUser): void
+  {
+    let totalTime = 0;
+    let name = user.firstName + " " + user.lastName;
+    timeCards.forEach(timeCard =>
+    {
+      let newIn = new Date(parseInt(timeCard.timeIn as string));
+      let newOut = new Date(parseInt(timeCard.timeOut as string));
+      let hours = (newOut.getTime() - newIn.getTime())/ 3600000;
+      totalTime += hours;
+    });
+    this.pieData = [...this.pieData, {name: name, value: totalTime}];
+  }
 
+  //Loops through users to reload the time card info
+  reloadTimeCard(): void
+  {
+    this.users.forEach(user => {
+      //Get all time cards for the users group
+      this.getTimeCards(user);
+    });
+  }
 
   //Leave the current group
   leaveGroup(): void
@@ -205,7 +200,7 @@ export class GroupComponent implements OnInit {
     this.httpService.deleteTimeCard(payload).subscribe({
       next: data => {
         this.errMsg = "";
-        this.getTimeCards();
+        this.reloadTimeCard()
       },
       error: error => {
         this.errMsg = error['error']['message'];
@@ -245,7 +240,7 @@ export class GroupComponent implements OnInit {
       this.httpService.createTimeCard(payload).subscribe({
         next: data => {
           this.errMsg = "";
-          this.getTimeCards();
+          this.reloadTimeCard();
           //Clear fields
           this.startTime = "";
           this.endTime = "";
@@ -341,7 +336,7 @@ export class GroupComponent implements OnInit {
           next: data => {
             this.errMsg = "";
             /// populate a label to inform the user that they successfully clocked out, maybe with the time.
-            this.getTimeCards();
+            this.reloadTimeCard();
             this.descriptionAuto = "";
           },
           error: error => {
@@ -356,5 +351,5 @@ export class GroupComponent implements OnInit {
 export interface PieChartData
 {
   name?: string;
-  time?: number;
+  value?: number;
 }
