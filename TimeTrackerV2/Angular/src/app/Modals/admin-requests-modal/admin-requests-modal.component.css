@@ -9,6 +9,7 @@
   align-items: center;
   justify-content: center;
   z-index: 0;
+
 }
 
 
@@ -21,6 +22,7 @@
 
   border-radius: 10px;
   background-color: #fff;
+  z-index: 50;
 
 }
 
@@ -76,6 +78,21 @@ main {
 
 #requestsTable td, th {
   text-align: center;
+  vertical-align: middle;
+}
+
+.dot {
+  height: 20px;
+  width: 20px;
+  background-color: green;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid black;
+}
+
+.modify-btn {
+  font-size: 16pt;
+  padding: 2px 15px 2px 15px;
 }
 
 /*right content container styles*/

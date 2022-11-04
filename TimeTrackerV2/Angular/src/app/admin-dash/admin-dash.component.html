@@ -79,7 +79,7 @@
           </header>
 
           <div class="row grey-background">
-            <div class="col-auto text-center">
+            <div class="col-auto text-center requestModalNotification" (click)="requestService.showModal()">
               <p id="amount-of-requests">5</p>
               <p id="requests-text">Pending Requests</p>
             </div>
@@ -87,7 +87,7 @@
 
         </div>
 
-        <app-admin-requests-modal></app-admin-requests-modal>
+
     </div>
 
   </div>
@@ -96,6 +96,9 @@
     <app-admin-modal *ngIf="modalService.modalDisplay" (refresh)="getUsers()"></app-admin-modal>
   </div>
 
+  <div>
+    <app-admin-requests-modal *ngIf="requestService.modalDisplay"></app-admin-requests-modal>
+  </div>
 
 
 </div>

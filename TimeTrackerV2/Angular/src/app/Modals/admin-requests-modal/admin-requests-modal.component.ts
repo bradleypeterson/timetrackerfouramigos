@@ -3,6 +3,7 @@ import {AdminModalService } from '../../services/adminmodal.service';
 import {IUser} from "../../interfaces/IUser";
 import { FormBuilder } from "@angular/forms";
 import {HttpService} from "../../services/http.service";
+import {AdminRequestService} from "../../services/adminrequest.service";
 
 @Component({
   selector: 'app-admin-requests-modal',
@@ -18,6 +19,7 @@ export class AdminRequestsModalComponent implements OnInit {
   constructor(
     private httpService: HttpService,
     private formBuilder: FormBuilder,
+    public requestService: AdminRequestService,
   ) { }
 
   ngOnInit(): void {

@@ -3,18 +3,37 @@ const express = require('express');
 const mongoose = require('mongoose'); 
 const crypto = require('crypto'); 
 const sqlite3 = require('sqlite3').verbose();
+const session = require('express-session');
+const body_parser = require('body-parser');
 
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
+const SEVENDAYS = 1000 * 60 * 60 * 24 * 7
+
 // Database
 const db = new sqlite3.Database('./database/main.db');
+
+
+
+
 
 // App
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use(session({
+    name: 'sid',
+    resave: false,
+    secret: "4amigos number 1!",
+    saveUninitialized: false,
+    cookie: {
+        maxAge: SEVENDAYS,
+        sameSite: true,
+    }
+}));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -24,6 +43,7 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', (req, res) => {
+    console.log(req.session);
   return res.send('Hello World');
 });
 
@@ -837,3 +857,4 @@ app.post('/deletetimecard', async (req, res, next) => {
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
 require('./database/seed.js');
+const {maxAge} = require("express-session/session/cookie");

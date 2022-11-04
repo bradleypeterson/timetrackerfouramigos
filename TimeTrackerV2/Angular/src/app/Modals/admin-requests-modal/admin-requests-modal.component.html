@@ -8,7 +8,7 @@
       </div>
 
       <div id="closeBtnTop">
-        <i id="close">X</i>
+        <i id="close" (click)="requestService.closeModal()">X</i>
       </div>
 
     </div>
@@ -36,7 +36,9 @@
           <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
 <!--          <tr *ngFor="let user of filtered_users" (click)="showModal(user)">-->
           <tr>
-            <td >Circle</td>
+            <td id="circle">
+              <div class="dot"></div>
+            </td>
             <td >Username</td>
 <!--            <td *ngIf="user.type == 'Basic'">Student</td>-->
 <!--            <td *ngIf="user.type != 'Basic'">{{user.type}}</td>-->
@@ -44,7 +46,7 @@
             <td>Type</td>
             <td>Request Type</td>
             <td>Account Button</td>
-            <td>Approve / Deny buttons</td>
+            <td><button class="btn btn-outline-success modify-btn">✓</button> | <button class="btn btn-outline-danger modify-btn">X</button></td>
           </tr>
           </tbody>
         </table>
@@ -57,7 +59,7 @@
           <form [formGroup]="requestsSearchForm" (ngSubmit)="onSubmit()">
             <div class="input-group">
 
-              <input type="text" id="requestSearch" name="RequestSearch" formControlName="requestsSearchForm" placeholder="Search...">
+              <input type="text" id="requestSearch" name="RequestSearch" formControlName="requestsSearchForm" placeholder="Search..." required>
               <br/>
               <button type="submit" class="btn btn-primary" id="requestSearchBtn"> Search</button>
 
@@ -105,7 +107,7 @@
 
             <button class="btn btn-success">Save</button>
 
-            <button class="btn btn-danger">Close</button>
+            <button class="btn btn-danger" (click)="requestService.closeModal()">Close</button>
 
 
         </footer>
