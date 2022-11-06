@@ -1,27 +1,28 @@
 const cors = require('cors');
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const sqlite3 = require('sqlite3').verbose();
 const session = require('express-session');
 const { authUser, authRole } = require('./basicAuth')
+const proxy = require('express-http-proxy');
 
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
+
 
 // Database
 const db = new sqlite3.Database('./database/main.db');
 
 // App
 const app = express();
+app.use(proxy('http://127.0.0.1:4200')); // assuming your Reacts runs on P3000
 app.use(cors());
 app.use(express.json());
-app.use(cookieParser());
 
 app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:4200');
     res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
     res.header(
         'Access-Control-Allow-Headers',
@@ -46,6 +47,12 @@ app.use(
 app.get('/',(req, res) => {
     return res.send('Hello World');
 });
+
+app.use(cors({
+    origin: 'http://127.0.0.1:4200',
+    allowHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 
 //Joins a group based on user id and group id
 app.post('/joingroup', async (req, res, next) => {
