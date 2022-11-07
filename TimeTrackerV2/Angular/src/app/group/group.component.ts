@@ -138,6 +138,7 @@ export class GroupComponent implements OnInit {
       userID: user.userID
     }
     this.pieData = [];
+    this.timeCardData = [];
     this.httpService.getTimeCards(payload).subscribe((_timecard: any) =>
     {
       //Only load the current users time cards
@@ -147,25 +148,8 @@ export class GroupComponent implements OnInit {
         this.dateTime = [];
         this.times.forEach(time =>
         {
-          let tempDate = new IDateTimeCard();
-          //Parse mill to date
-          let newIn = new Date(parseInt(time.timeIn as string));
-          let newOut = new Date(parseInt(time.timeOut as string));
-          let newCreate = new Date(parseInt(time.createdOn as string));
-
-
-          //Assign new values to tempDate
-          tempDate.groupID = time.groupID;
-          tempDate.timeIn = newIn.toLocaleString();
-          tempDate.timeOut = newOut.toLocaleString();
-          tempDate.userID = time.userID;
-          tempDate.createdOn = newCreate.toLocaleString();
-          tempDate.description = time.description;
-          tempDate.isEdited = time.isEdited;
-          tempDate.timeslotID = time.timeslotID;
-          tempDate.hours = this.getTime(parseInt(time.timeOut as string) - parseInt(time.timeIn as string));
           //Add to array
-          this.dateTime.push(tempDate);
+          this.dateTime.push(this.parseTimeCard(time));
         });
       }
       this.loadTime(_timecard, user);
@@ -181,25 +165,8 @@ export class GroupComponent implements OnInit {
     {
       timeCards.forEach(time =>
       {
-        let tempDate = new IDateTimeCard();
-        //Parse mill to date
-        let newIn = new Date(parseInt(time.timeIn as string));
-        let newOut = new Date(parseInt(time.timeOut as string));
-        let newCreate = new Date(parseInt(time.createdOn as string));
-
-
-        //Assign new values to tempDate
-        tempDate.groupID = time.groupID;
-        tempDate.timeIn = newIn.toLocaleString();
-        tempDate.timeOut = newOut.toLocaleString();
-        tempDate.userID = time.userID;
-        tempDate.createdOn = newCreate.toLocaleString();
-        tempDate.description = time.description;
-        tempDate.isEdited = time.isEdited;
-        tempDate.timeslotID = time.timeslotID;
-        tempDate.hours = this.getTime(parseInt(time.timeOut as string) - parseInt(time.timeIn as string));
-        //Add to array
-        hourTimes.push(tempDate);
+         //Add to array
+         hourTimes.push(this.parseTimeCard(time));
       });
       this.timeCardData = [...this.timeCardData, {username: user.username, firstName: user.firstName, lastName: user.lastName, times: new MatTableDataSource(hourTimes)}]
     }
@@ -208,6 +175,30 @@ export class GroupComponent implements OnInit {
       this.timeCardData = [...this.timeCardData, {username: user.username, firstName: user.firstName, lastName: user.lastName}];
     }
     this.dataSourceMembers = new MatTableDataSource(this.timeCardData);
+  }
+
+  //Parses the retrieved timecard into a IDateTimeCard
+  parseTimeCard(time: ITimeCard): IDateTimeCard
+  {
+    let tempDate = new IDateTimeCard();
+    //Parse mill to date
+    let newIn = new Date(parseInt(time.timeIn as string));
+    let newOut = new Date(parseInt(time.timeOut as string));
+    let newCreate = new Date(parseInt(time.createdOn as string));
+
+
+    //Assign new values to tempDate
+    tempDate.groupID = time.groupID;
+    tempDate.timeIn = newIn.toLocaleString();
+    tempDate.timeOut = newOut.toLocaleString();
+    tempDate.userID = time.userID;
+    tempDate.createdOn = newCreate.toLocaleString();
+    tempDate.description = time.description;
+    tempDate.isEdited = time.isEdited;
+    tempDate.timeslotID = time.timeslotID;
+    tempDate.hours = this.getTime(parseInt(time.timeOut as string) - parseInt(time.timeIn as string));
+
+    return tempDate
   }
 
   //Gets the total time for each user and sets the pie chart
