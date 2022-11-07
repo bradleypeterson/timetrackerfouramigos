@@ -4,28 +4,23 @@ import {Router} from '@angular/router';
 import { User } from '../user.model';
 import { HttpService} from "../services/http.service";
 import {IUser} from "../interfaces/IUser";
-import {group} from "@angular/animations";
+import {animate, group, state, style, transition, trigger} from "@angular/animations";
 import {IGroup} from "../interfaces/IGroup";
 import {FormBuilder} from "@angular/forms";
 import {ITimeCard} from "../interfaces/ITimeCard";
-
-export class IDateTimeCard
-{
-  timeslotID?: number;
-  timeIn?: string;
-  timeOut?: string;
-  isEdited?: boolean;
-  createdOn?: string;
-  userID?: number;
-  description?: string;
-  groupID?: number;
-  hours?: string;
-}
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'app-group',
   templateUrl: './group.component.html',
-  styleUrls: ['./group.component.css']
+  styleUrls: ['./group.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 
 export class GroupComponent implements OnInit {
@@ -45,8 +40,17 @@ export class GroupComponent implements OnInit {
   public descriptionAuto: any;
   public isClocked: any;
   public isNegative: any;
+
   public pieData: PieChartData[] = [];
   public title = "Hours Per Member"
+
+  public membersDisplay = ["username", "firstName", "lastName"];
+  public timeDisplay = ["timeIn", "timeOut", "hours", "description"];
+  public members: IUser[] = [];
+  public expandedElementMember?: GroupTimeDataSource | null;
+  public dataSourceMembers: MatTableDataSource<any> = new MatTableDataSource<any>();
+  public timeCardData: GroupTimeDataSource[] = [];
+  public tempUser: IUser;
 
   constructor(
     private http: HttpClient,
@@ -55,6 +59,16 @@ export class GroupComponent implements OnInit {
     private formBuilder: FormBuilder,
   )
   {
+    this.tempUser = new class implements IUser {
+      firstName?: string;
+      isActive?: boolean;
+      lastName?: string;
+      password?: string;
+      salt?: string;
+      type?: string;
+      userID?: number;
+      username?: string;
+    }
     this.isClocked = false;
     this.isNegative = true;
     this.item = localStorage.getItem('currentGroup');
@@ -101,8 +115,19 @@ export class GroupComponent implements OnInit {
     this.httpService.getGroupUsers(this.group.groupID as number).subscribe((_users: any) =>
     {
       this.users = _users;
+      this.members = _users;
+      this.timeCardData = [];
       this.reloadTimeCard();
-    })
+    });
+  }
+
+  //Loops through users to reload the time card info
+  reloadTimeCard(): void
+  {
+    this.users.forEach(user => {
+      //Get all time cards for the users group
+      this.getTimeCards(user);
+    });
   }
 
   //Gets all timeCards for the user for the specified group
@@ -138,15 +163,51 @@ export class GroupComponent implements OnInit {
           tempDate.description = time.description;
           tempDate.isEdited = time.isEdited;
           tempDate.timeslotID = time.timeslotID;
-          //tempDate.hours = hours;
           tempDate.hours = this.getTime(parseInt(time.timeOut as string) - parseInt(time.timeIn as string));
           //Add to array
           this.dateTime.push(tempDate);
         });
       }
+      this.loadTime(_timecard, user);
       this.getTotalTimes(_timecard, user);
 
     });
+  }
+  //loads timeCards into array for table
+  loadTime(timeCards: ITimeCard[], user: IUser)
+  {
+    let hourTimes: IDateTimeCard[] = [];
+    if(timeCards && Array.isArray(timeCards) && timeCards.length)
+    {
+      timeCards.forEach(time =>
+      {
+        let tempDate = new IDateTimeCard();
+        //Parse mill to date
+        let newIn = new Date(parseInt(time.timeIn as string));
+        let newOut = new Date(parseInt(time.timeOut as string));
+        let newCreate = new Date(parseInt(time.createdOn as string));
+
+
+        //Assign new values to tempDate
+        tempDate.groupID = time.groupID;
+        tempDate.timeIn = newIn.toLocaleString();
+        tempDate.timeOut = newOut.toLocaleString();
+        tempDate.userID = time.userID;
+        tempDate.createdOn = newCreate.toLocaleString();
+        tempDate.description = time.description;
+        tempDate.isEdited = time.isEdited;
+        tempDate.timeslotID = time.timeslotID;
+        tempDate.hours = this.getTime(parseInt(time.timeOut as string) - parseInt(time.timeIn as string));
+        //Add to array
+        hourTimes.push(tempDate);
+      });
+      this.timeCardData = [...this.timeCardData, {username: user.username, firstName: user.firstName, lastName: user.lastName, times: new MatTableDataSource(hourTimes)}]
+    }
+    else
+    {
+      this.timeCardData = [...this.timeCardData, {username: user.username, firstName: user.firstName, lastName: user.lastName}];
+    }
+    this.dataSourceMembers = new MatTableDataSource(this.timeCardData);
   }
 
   //Gets the total time for each user and sets the pie chart
@@ -162,15 +223,6 @@ export class GroupComponent implements OnInit {
       totalTime += hours;
     });
     this.pieData = [...this.pieData, {name: name, value: totalTime}];
-  }
-
-  //Loops through users to reload the time card info
-  reloadTimeCard(): void
-  {
-    this.users.forEach(user => {
-      //Get all time cards for the users group
-      this.getTimeCards(user);
-    });
   }
 
   //Leave the current group
@@ -352,4 +404,23 @@ export interface PieChartData
 {
   name?: string;
   value?: number;
+}
+export class IDateTimeCard
+{
+  timeslotID?: number;
+  timeIn?: string;
+  timeOut?: string;
+  isEdited?: boolean;
+  createdOn?: string;
+  userID?: number;
+  description?: string;
+  groupID?: number;
+  hours?: string;
+}
+export interface GroupTimeDataSource
+{
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  times?: IDateTimeCard | MatTableDataSource<IDateTimeCard>
 }

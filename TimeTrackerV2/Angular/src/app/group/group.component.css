@@ -1,0 +1,17 @@
+tr.example-detail-row
+{
+  height: 0;
+}
+.example-element-detail
+{
+  overflow: hidden;
+  display: flex;
+}
+th
+{
+  border-bottom: 2px solid black;
+}
+td.mat-cell, th.mat-header-cell
+{
+  padding-right: 10px;
+}
