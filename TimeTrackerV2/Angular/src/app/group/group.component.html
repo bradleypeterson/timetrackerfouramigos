@@ -117,13 +117,13 @@
     <!--        Enter new clock times-->
     <h2 class="mt-3 float-left">Manual Time Enter</h2>
     <div>
-      <table class="table table-sm table-hover table-striped">
+      <table class="table table-sm table-hover">
         <thead>
         <tr>
-          <th>Time In</th>
-          <th>Time Out</th>
-          <th>Description</th>
-          <th></th>
+          <th class="fw-light h6">Time In</th>
+          <th class="fw-light h6">Time Out</th>
+          <th class="fw-light h6">Description</th>
+          <th class="fw-light h6"></th>
         </tr>
         </thead>
         <tbody>
@@ -148,15 +148,15 @@
       <!--        Previous clock times-->
       <h2 class="mt-3 float-left">Previous Clock Times</h2>
       <div>
-        <table class="table table-responsive-lg table-hover table-striped">
+        <table class="table table-responsive-lg table-hover ">
           <thead>
           <tr>
-            <th>Time In</th>
-            <th>Time Out</th>
-            <th>Total Time</th>
-            <th>Description</th>
-            <th></th>
-            <th></th>
+            <th class="fw-light h6">Time In</th>
+            <th class="fw-light h6">Time Out</th>
+            <th class="fw-light h6">Total Time</th>
+            <th class="fw-light h6">Description</th>
+            <th class="fw-light h6"></th>
+            <th class="fw-light h6"></th>
           </tr>
           </thead>
           <tbody>
@@ -165,7 +165,9 @@
             <td>{{date.timeOut}}</td>
             <td>{{date.hours}}</td>
             <td>{{date.description}}</td>
-            <td><button class="btn btn-danger" (click)="deleteTime(date)">Delete</button></td>
+            <td>
+              <button mat-raised-button class="btn btn-primary m-1" (click)="editTime(date)">Edit</button>
+              <button class="btn btn-danger" (click)="deleteTime(date)">Delete</button></td>
           </tr>
           </tbody>
         </table>

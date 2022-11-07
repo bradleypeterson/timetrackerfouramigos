@@ -18,6 +18,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatTableModule} from "@angular/material/table";
 import {MatRippleModule} from "@angular/material/core";
+import {MatDialogModule} from "@angular/material/dialog";
+import { EditTimeDialogComponent } from './Modals/edit-time-dialog/edit-time-dialog.component';
+import {MatInputModule} from "@angular/material/input";
 
 
 @NgModule({
@@ -30,21 +33,25 @@ import {MatRippleModule} from "@angular/material/core";
     GroupsComponent,
     AdminModalComponent,
     InstructorComponent,
+    EditTimeDialogComponent,
 
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        FormsModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        BrowserAnimationsModule,
-        MatButtonModule,
-        MatToolbarModule,
-        MatTableModule,
-        MatRippleModule,
-        NgxChartsModule
-    ],
+  entryComponents: [EditTimeDialogComponent],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatTableModule,
+    MatRippleModule,
+    NgxChartsModule,
+    MatDialogModule,
+    MatInputModule
+  ],
   providers: [FormBuilder],
   bootstrap: [AppComponent]
 })

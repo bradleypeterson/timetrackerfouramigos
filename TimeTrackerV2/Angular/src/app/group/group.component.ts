@@ -9,6 +9,8 @@ import {IGroup} from "../interfaces/IGroup";
 import {FormBuilder} from "@angular/forms";
 import {ITimeCard} from "../interfaces/ITimeCard";
 import {MatTableDataSource} from "@angular/material/table";
+import { MatDialog} from "@angular/material/dialog";
+import {EditTimeDialogComponent} from "../Modals/edit-time-dialog/edit-time-dialog.component";
 
 @Component({
   selector: 'app-group',
@@ -57,6 +59,7 @@ export class GroupComponent implements OnInit {
     private router: Router,
     private httpService: HttpService,
     private formBuilder: FormBuilder,
+    public dialog: MatDialog
   )
   {
     this.tempUser = new class implements IUser {
@@ -249,7 +252,16 @@ export class GroupComponent implements OnInit {
         this.errMsg = error['error']['message'];
       }
     });
+  }
 
+  //Pops up a modal for the user to edit
+  editTime(date: any): void
+  {
+    let dialog = this.dialog.open(EditTimeDialogComponent, {data: {timeIn: new Date(date.timeIn).toISOString().slice(0, -1), timeOut: new Date(date.timeOut).toISOString().slice(0, -1), description: date.description, timeslotID: date.timeslotID}});
+
+    dialog.afterClosed().subscribe(result => {
+      console.log("Dialog result: " + result);
+    });
   }
 
   //Adds a new clock time to the database

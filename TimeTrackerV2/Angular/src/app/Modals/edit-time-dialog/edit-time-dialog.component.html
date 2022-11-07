@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Edit Time</h2>
+<mat-dialog-content>Time In</mat-dialog-content>
+<input dataformatas="" type="datetime-local" value="{{date.timeIn}}">
+
+<mat-dialog-content>Time Out</mat-dialog-content>
+<input type="datetime-local" [value]="date.timeOut">
+
+<mat-dialog-content>Description</mat-dialog-content>
+<input  [value]="date.description">
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close="true">Save</button>
+  <button mat-button mat-dialog-close="false">Cancel</button>
+</mat-dialog-actions>
