@@ -20,6 +20,7 @@ export class CoursesComponent implements OnInit {
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
+  public userCourses: ICourse[] = [];
   public activeCR: ICourseRequest[] = [];
   public courseRequests: ICourseRequest[] = [];
   public userTypeHolder: IUser;
@@ -58,6 +59,7 @@ export class CoursesComponent implements OnInit {
   ngOnInit(): void {
     this.getCourses();
     this.getUserRequests();
+    this.getUserCourses();
 
   }
 
@@ -90,14 +92,23 @@ export class CoursesComponent implements OnInit {
 
   }
 
-  // THIS IS NOT WORKING RIGHT NOW...
+
+  getUserCourses(): void {
+
+    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.userCourses = _courses; console.log(this.userCourses)});
+
+
+  }
+
+
+
+
   getUserRequests() {
     //Gets a list of all group assignments the user has and sets the visibility
     this.httpService.getUserCourseRequests(this.user.userID).subscribe((_courseRequests: ICourseRequest[]) =>
     {
       
       this.courseRequests = _courseRequests;
-      console.log(this.courseRequests);
       this.courses.forEach(value =>
       {
         
@@ -105,7 +116,6 @@ export class CoursesComponent implements OnInit {
         // if it's the user's course request and the course matches and there's a course request
         if(this.courseRequests.some(x => value.courseID === x.courseID)) {
           
-          console.log("course id = ", value.courseID);
           console.log("Status = ", this.courseRequests.some(x => x.status));
           console.log("Active = ", this.courseRequests.some(x => x.isActive));
 
@@ -116,7 +126,6 @@ export class CoursesComponent implements OnInit {
           // if it was accecpted
           if(this.courseRequests.some(x => x.isActive == true && x.status == true))
           {
-            console.log("leave btn");
             value.leave = true; // the leave button shows
             value.display = false;
             value.pending = false;
@@ -134,7 +143,6 @@ export class CoursesComponent implements OnInit {
           // if it's not accepted nor active
           //if(this.courseRequests.some(x=> (x.status == false && x.isActive === false))) {
           else {
-            console.log("join btn");
             value.display = true; // the join button shows
             value.pending = false;
             value.leave = false;
