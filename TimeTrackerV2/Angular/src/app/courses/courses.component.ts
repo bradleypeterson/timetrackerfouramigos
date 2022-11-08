@@ -123,16 +123,17 @@ export class CoursesComponent implements OnInit {
             this.default = 1;
           }
           // if it's still active
-          if(this.courseRequests.some(x => x.isActive == true && x.status == false))
+          /*if(this.courseRequests.some(x => x.isActive == true && x.status == false))
           {
             console.log("pending btn");
             value.display = false;
             value.pending = true; // the pending button shows
             value.leave = false;
             this.default = 2;
-          }
+          }*/
           // if it's not accepted nor active
-          if(this.courseRequests.some(x=> (x.status == false && x.isActive === false))) {
+          //if(this.courseRequests.some(x=> (x.status == false && x.isActive === false))) {
+          else {
             console.log("join btn");
             value.display = true; // the join button shows
             value.pending = false;
