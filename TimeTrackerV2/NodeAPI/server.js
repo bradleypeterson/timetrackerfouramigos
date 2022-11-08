@@ -104,12 +104,11 @@ app.get('/getcourserequests', async (req, res, next) => {
 app.get('/getactivecourserequests', async (req, res, next) => {
   let sql = `SELECT
                  CR.requestID,
-                 C.courseName,
                  U.firstName || ' ' || U.lastName as studentName,
                  CR.status,
                  CR.isActive
              FROM CourseRequest as CR
-                      LEFT JOIN Users U on CR.userID = U.userID
+                      LEFT JOIN Users U on U.userID = CR.userID
              WHERE CR.status = 1`;
   db.all(sql, [], (err, rows) => {
       if(err)
@@ -122,16 +121,11 @@ app.get('/getactivecourserequests', async (req, res, next) => {
 
 
 // get all course requests for a student, which are accepted
-app.get('/getacceptedcourserequests', async (req, res, next) => {
-  let sql = `SELECT
-                 CR.requestID,
-                 CR.courseName,
-                 U.firstName || ' ' || U.lastName as studentName,
-                 CR.status,
-                 CR.isActive
-             FROM CourseRequest as CR
-                      LEFT JOIN Users U on CR.userID = U.userID
-             WHERE CR.status = 1`;
+app.get('/getusercourserequests/:userid', async (req, res, next) => {
+  let sql = `SELECT CourseRequest.*
+            FROM CourseRequest
+            LEFT JOIN Users U on U.userID = CourseRequest.userID
+            WHERE U.userID = ${req.params.userid}`;
   db.all(sql, [], (err, rows) => {
       if(err)
       {
@@ -219,6 +213,7 @@ app.get('/getusercourses/:userid', async (req, res) => {
   FROM Courses
     LEFT JOIN CourseRequest CR ON CR.courseID = Courses.courseID
   WHERE CR.status = 1
+  AND CR.isActive = 1
   AND CR.userID = ${req.params.userid}`;
 
   db.all(sql, [], (err, rows) => {
@@ -296,6 +291,25 @@ app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
     FROM Projects
     LEFT JOIN Courses on Courses.courseID = Projects.courseID
     WHERE Projects.courseID = ${req.params.courseid}`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({"error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
+});
+
+
+app.get('/getuserprojects/:userid', async (req, res) => {
+
+    let sql = `SELECT DISTINCT Projects.*, Courses.courseName
+    FROM Projects
+    INNER JOIN Courses on Courses.courseID = Projects.courseID
+    INNER JOIN Groups G on G.projectID = Projects.projectID
+    INNER JOIN GroupAssignment GA on GA.groupID = G.groupID
+    WHERE GA.userID = ${req.params.userid}`;
 
     db.all(sql, [], (err, rows) => {
         if (err) {

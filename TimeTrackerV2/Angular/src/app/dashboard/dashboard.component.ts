@@ -8,6 +8,7 @@ import { IGroup } from '../interfaces/IGroup';
 import {IUser} from "../interfaces/IUser";
 import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 import { ICourseRequest } from '../interfaces/ICourseRequest';
+import { IProject } from '../interfaces/IProject';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,7 +23,10 @@ export class DashboardComponent implements  OnInit
   public courseRequests: ICourseRequest[] = [];
   public userTypeHolder: IUser;
   public groups: IGroup[] = [];
-  public size = 0;
+  public projects: IProject[] = [];
+  public gSize = 0;
+  public cSize = 0;
+  public pSize = 0;
 
   //Allow course creation if the user is an Instructor
   public isInstructor: boolean = false;
@@ -80,13 +84,13 @@ export class DashboardComponent implements  OnInit
         this.isInstructor = false;
       }
       //Get the groups the user is in
-      console.log("userID: " + this.userTypeHolder.userID);
       this.getUserGroups(this.userTypeHolder.userID as number);
+
+      this.getUserProjects(this.userTypeHolder.userID as number);
     });
 
     
-    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.courses = _courses });
-    console.log(this.user.userID);
+    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.courses = _courses; this.cSize = this.courses.length; console.log(this.courses); });
 
 
 
@@ -96,11 +100,16 @@ export class DashboardComponent implements  OnInit
   // get the user's groups
   getUserGroups(id: number)
   {
-    this.httpService.getUserGroups(id).subscribe((_groups: any) => { this.groups = _groups; });
+    this.httpService.getUserGroups(id).subscribe((_groups: any) => { this.groups = _groups; this.gSize = this.groups.length;});
 
-    console.log("size of groups: " + this.groups.length);
-    console.log(this.groups);
-    this.size = this.groups.length;
+  }
+
+
+  // get the user's groups
+  getUserProjects(id: number)
+  {
+    this.httpService.getUserProjects(id).subscribe((_projects: any) => { this.projects = _projects; this.pSize = this.projects.length; });
+
   }
 
 
@@ -111,6 +120,11 @@ export class DashboardComponent implements  OnInit
 
   setGroupAndMove(group: IGroup) {
     this.router.navigate(['./group'], {state:{data: group}});
+  }
+
+
+  setProjectAndMove(project: IProject) {
+    this.router.navigate(['./projcet'], {state:{data: project}});
   }
 
 

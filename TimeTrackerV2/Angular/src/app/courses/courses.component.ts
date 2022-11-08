@@ -23,6 +23,7 @@ export class CoursesComponent implements OnInit {
   public activeCR: ICourseRequest[] = [];
   public courseRequests: ICourseRequest[] = [];
   public userTypeHolder: IUser;
+  public default = 0;
 
   // for getting the course that was clicked on
   public currCourse?: ICourse;
@@ -57,7 +58,6 @@ export class CoursesComponent implements OnInit {
   ngOnInit(): void {
     this.getCourses();
     this.getUserRequests();
-    //this.getUserRequests();
 
   }
 
@@ -93,42 +93,57 @@ export class CoursesComponent implements OnInit {
   // THIS IS NOT WORKING RIGHT NOW...
   getUserRequests() {
     //Gets a list of all group assignments the user has and sets the visibility
-    this.httpService.getCourseRequests().subscribe((_courseRequests: ICourseRequest[]) =>
+    this.httpService.getUserCourseRequests(this.user.userID).subscribe((_courseRequests: ICourseRequest[]) =>
     {
       
       this.courseRequests = _courseRequests;
+      console.log(this.courseRequests);
       this.courses.forEach(value =>
       {
-        console.log(this.userTypeHolder.userID);
-        // if it's the user's course request and the course matches and there's a course request
-        if(this.courseRequests.some(x => this.userTypeHolder.userID === x.userID)) {
+        
 
-          console.log(this.courseRequests.some(x => x.status));
+        // if it's the user's course request and the course matches and there's a course request
+        if(this.courseRequests.some(x => value.courseID === x.courseID)) {
+          
+          console.log("course id = ", value.courseID);
+          console.log("Status = ", this.courseRequests.some(x => x.status));
+          console.log("Active = ", this.courseRequests.some(x => x.isActive));
+
+          // if pending: status is 0, active is 1
+          // if rejected: status is 0, active is 0
+          // if accepted: statis is 1, active is 1
+          
           // if it was accecpted
-          if(this.courseRequests.some(x => x.status === true))
+          if(this.courseRequests.some(x => x.isActive == true && x.status == true))
           {
+            console.log("leave btn");
+            value.leave = true; // the leave button shows
             value.display = false;
             value.pending = false;
-            //value.leave = true; // the leave button shows
+            this.default = 1;
           }
           // if it's still active
-          else if(this.courseRequests.some(x => x.isActive === true))
+          if(this.courseRequests.some(x => x.isActive == true && x.status == false))
           {
+            console.log("pending btn");
             value.display = false;
             value.pending = true; // the pending button shows
-            //value.leave = false;
+            value.leave = false;
+            this.default = 2;
           }
           // if it's not accepted nor active
-          else if(this.courseRequests.some(x=> x.status === false && x.isActive === false)) {
+          if(this.courseRequests.some(x=> (x.status == false && x.isActive === false))) {
+            console.log("join btn");
             value.display = true; // the join button shows
             value.pending = false;
-            //value.leave = false;
+            value.leave = false;
+            this.default = 3;
           }
         }
         else {
           value.display = true;
           value.pending = false;
-          //value.leave = false;
+          value.leave = false; 
         }
       });
     });
