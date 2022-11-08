@@ -257,10 +257,25 @@ export class GroupComponent implements OnInit {
   //Pops up a modal for the user to edit
   editTime(date: any): void
   {
-    let dialog = this.dialog.open(EditTimeDialogComponent, {data: {timeIn: new Date(date.timeIn).toISOString().slice(0, -1), timeOut: new Date(date.timeOut).toISOString().slice(0, -1), description: date.description, timeslotID: date.timeslotID}});
+    let dialog = this.dialog.open(EditTimeDialogComponent, {data: {timeIn: new Date(date.timeIn).toISOString().slice(0, -1), timeOut: new Date(date.timeOut).toISOString().slice(0, -1), description: date.description}});
 
     dialog.afterClosed().subscribe(result => {
-      console.log("Dialog result: " + result);
+      //Check if the dialog was closed or saved
+      if(result != "false" && result != undefined)
+      {
+        let payload = {
+          timeIn: new Date(result.timeIn).getTime(),
+          timeOut: new Date(result.timeOut).getTime(),
+          description: result.description,
+          timeslotID: date.timeslotID
+        }
+        this.httpService.updateTimeCard(payload).subscribe((_return: any) =>{
+          this.reloadTimeCard();
+        });
+
+      }
+
+
     });
   }
 

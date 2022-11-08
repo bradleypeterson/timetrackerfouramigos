@@ -905,6 +905,36 @@ app.get('/getinstructorprojects/:userID', async (req, res) => {
     });
 });
 
+//Updates a timecard
+app.post('/updatetimecard', async (req, res, next) => {
+
+    let sql = `UPDATE TimeCard
+               SET
+
+                   timeIn = ?,
+                   timeOut = ?,
+                   description = ?
+               WHERE
+                   timeslotID = ?`;
+
+    let data = [];
+    data[0] = req.body["timeIn"];
+    data[1] = req.body["timeOut"];
+    data[2] = req.body["description"];
+    data[3] = req.body["timeslotID"];
+    db.run(sql, data, function(err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        else
+        {
+            return res.status(200).json({message: 'User registered'});
+        }
+    });
+
+});
 
 
 app.listen(PORT, HOST);

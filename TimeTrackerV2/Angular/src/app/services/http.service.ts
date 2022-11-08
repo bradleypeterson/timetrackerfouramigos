@@ -214,5 +214,11 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + `resetPassword/${user.userID}`, user, this.httpOptions);
   }
 
+  //Updates the given timecard
+  updateTimeCard(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + `updatetimecard`, payload, this.httpOptions);
+  }
+
 
 }
