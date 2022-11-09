@@ -95,18 +95,18 @@
 
         <div id="edit-all" >
 
-          <button class="btn btn-outline-success">Accept All</button>
+          <button class="btn btn-outline-success" (click)="requestService.approveAll()">Approve All</button>
 
-          <button class="btn btn-outline-danger">Deny All</button>
+          <button class="btn btn-outline-danger" (click)="requestService.denyAll()">Deny All</button>
 
         </div>
 
 
         <footer>
 
-            <button class="btn btn-warning">Reset</button>
+            <button class="btn btn-warning" (click)="requestService.reset()">Reset</button>
 
-            <button class="btn btn-success">Save</button>
+            <button class="btn btn-success" (click)="requestService.saveModifiedRequests()">Save</button>
 
             <button class="btn btn-danger" (click)="requestService.closeModal()">Close</button>
 

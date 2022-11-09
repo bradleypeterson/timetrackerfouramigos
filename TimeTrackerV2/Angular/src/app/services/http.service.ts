@@ -197,4 +197,8 @@ export class HttpService {
     return this.http.get<IAdminRequest[]>(this.apiUrl + 'getAdminRequests', this.httpOptions);
   }
 
+  updateAdminRequests(requests: IAdminRequest[]): Observable<any>{
+    return this.http.post<IAdminRequest[]>(this.apiUrl + 'updateAdminRequests', requests, this.httpOptions);
+  }
+
 }

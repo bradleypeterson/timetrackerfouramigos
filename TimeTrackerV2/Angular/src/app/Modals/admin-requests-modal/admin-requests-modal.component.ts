@@ -31,6 +31,7 @@ export class AdminRequestsModalComponent implements OnInit {
   }
 
   onSubmit(){
+    this.requestService.printRequests();
   }
 
 

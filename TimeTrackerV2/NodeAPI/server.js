@@ -460,7 +460,42 @@ app.get(`/getAdminRequests`, async (req, res) => {
 
     });
 
-})
+});
+
+//Updates the admin request database with any requests that have been changed by an admin
+app.post(`/updateAdminRequests`, async (req, res) => {
+
+    let stat;
+    let msg;
+    req.body.forEach((request) =>{
+        console.log(request);
+
+        let sql = `UPDATE AdminRequests SET status = '${request.status}', isActive = ${request.isActive}, reviewerID = ${request.reviewerID} 
+                     WHERE requestID = ${request.requestID};`
+
+        db.run(sql, (err) => {
+            if(err){
+                stat = 500;
+                msg = err.message;
+                //res.status(500).json({error: err.message});
+            } else {
+                stat = 200;
+                msg = "Data Updated successfully!";
+                //res.status(200).json({message: "Data updated successfully"});
+            }
+        });
+
+     });
+
+    if (stat === 500) {
+        return res.status(stat).json({error: msg});
+    }
+
+    if (stat === 200){
+        return res.status(stat).json({message: msg});
+    }
+
+});
 
 //-------------------------------------------------------
 
