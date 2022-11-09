@@ -35,18 +35,23 @@
           <tbody>
           <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
 <!--          <tr *ngFor="let user of filtered_users" (click)="showModal(user)">-->
-          <tr>
+          <tr *ngFor="let request of requests">
             <td id="circle">
-              <div class="dot"></div>
+              <div class="dot" *ngIf="request.status == 'pending'" style="background-color: lightgray;"></div>
+              <div class="dot" *ngIf="request.status == 'approved'" style="background-color: green;"></div>
+              <div class="dot" *ngIf="request.status == 'denied'" style="background-color: red;"></div>
             </td>
-            <td >Username</td>
+            <td>{{request.username}}</td>
 <!--            <td *ngIf="user.type == 'Basic'">Student</td>-->
 <!--            <td *ngIf="user.type != 'Basic'">{{user.type}}</td>-->
 
-            <td>Type</td>
-            <td>Request Type</td>
+            <td>{{request.type}}</td>
+            <td>{{request.requestType}}</td>
             <td>Account Button</td>
-            <td><button class="btn btn-outline-success modify-btn">✓</button> | <button class="btn btn-outline-danger modify-btn">X</button></td>
+            <td>
+              <button class="btn btn-outline-success modify-btn" (click)="requestService.modifyRequest('approved', request)">✓</button> |
+              <button class="btn btn-outline-danger modify-btn" (click)="requestService.modifyRequest('denied', request)">X</button>
+            </td>
           </tr>
           </tbody>
         </table>
@@ -56,17 +61,13 @@
 
       <div id="content-right">
         <header>
-          <form [formGroup]="requestsSearchForm" (ngSubmit)="onSubmit()">
             <div class="input-group">
 
-              <input type="text" id="requestSearch" name="RequestSearch" formControlName="requestsSearchForm" placeholder="Search..." required>
+              <input type="text" id="requestSearch" name="RequestSearch" placeholder="Search..." required>
               <br/>
-              <button type="submit" class="btn btn-primary" id="requestSearchBtn"> Search</button>
+              <button type="submit" class="btn btn-primary" id="requestSearchBtn" (click)="onSubmit()"> Search</button>
 
             </div>
-
-
-          </form>
 
         </header>
 

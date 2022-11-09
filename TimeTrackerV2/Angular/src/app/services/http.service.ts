@@ -8,6 +8,7 @@ import {IProject } from '../interfaces/IProject';
 import {IGroup} from "../interfaces/IGroup";
 import {IGroupAssignment} from "../interfaces/IGroupAssignment";
 import {animate} from "@angular/animations";
+import {IAdminRequest} from "../interfaces/IAdminRequest";
 
 
 
@@ -192,5 +193,8 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + `resetPassword/${user.userID}`, user, this.httpOptions);
   }
 
+  getAdminRequests(): Observable<IAdminRequest[]>{
+    return this.http.get<IAdminRequest[]>(this.apiUrl + 'getAdminRequests', this.httpOptions);
+  }
 
 }

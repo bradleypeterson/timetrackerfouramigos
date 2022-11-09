@@ -84,7 +84,6 @@ main {
 .dot {
   height: 20px;
   width: 20px;
-  background-color: green;
   border-radius: 50%;
   display: inline-block;
   border: 1px solid black;

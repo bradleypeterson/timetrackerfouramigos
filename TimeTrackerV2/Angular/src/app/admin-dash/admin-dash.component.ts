@@ -4,6 +4,7 @@ import { IUser } from '../interfaces/IUser';
 import { FormBuilder } from "@angular/forms";
 import { AdminModalService } from "../services/adminmodal.service";
 import { AdminRequestService} from "../services/adminrequest.service";
+import { IAdminRequest} from "../interfaces/IAdminRequest";
 
 @Component({
   selector: 'app-admin-dash',
@@ -15,6 +16,9 @@ export class AdminDashComponent implements OnInit {
 
   users: IUser[] = []
   filtered_users: IUser[] = []
+
+  requests: IAdminRequest[] = [];
+
   modal: boolean = false;
 
 
@@ -33,6 +37,7 @@ export class AdminDashComponent implements OnInit {
   ngOnInit(): void {
 
     this.getUsers();
+    this.getRequests();
 
   }
 
@@ -42,6 +47,9 @@ export class AdminDashComponent implements OnInit {
       this.users = _users;
       this.filtered_users = _users;
     });
+  }
+
+  getRequests() {
 
 
   }

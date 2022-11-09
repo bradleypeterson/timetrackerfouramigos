@@ -83,8 +83,9 @@ db.run(
                     WHERE NOT EXISTS(SELECT 1 FROM Users WHERE username = 'Admin')`
 );
 
-db.run(`CREATE TABLE IF NOT EXISTS AdminRequests(requestID INTEGER PRIMARY KEY, 
-                                userID INTEGER NOT NULL,
+db.run(`CREATE TABLE IF NOT EXISTS AdminRequests(
+                                requestID INTEGER PRIMARY KEY, 
+                                userID INTEGER NOT NULL, 
                                 requestType TEXT NOT NULL,
                                 status Text NOT NULL,
                                 isActive BOOL NOT NULL,

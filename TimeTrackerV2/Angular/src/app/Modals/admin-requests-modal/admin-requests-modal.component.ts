@@ -4,6 +4,8 @@ import {IUser} from "../../interfaces/IUser";
 import { FormBuilder } from "@angular/forms";
 import {HttpService} from "../../services/http.service";
 import {AdminRequestService} from "../../services/adminrequest.service";
+import { Subscription} from "rxjs";
+import {IAdminRequest} from "../../interfaces/IAdminRequest";
 
 @Component({
   selector: 'app-admin-requests-modal',
@@ -12,21 +14,25 @@ import {AdminRequestService} from "../../services/adminrequest.service";
 })
 export class AdminRequestsModalComponent implements OnInit {
 
-  requestsSearchForm = this.formBuilder.group({
-    requestSearchTerm: '',
-  });
+  // requestsSearchForm = this.formBuilder.group({
+  //   requestSearchTerm: '',
+  // });
+
+  requests: IAdminRequest[] = [];
 
   constructor(
     private httpService: HttpService,
     private formBuilder: FormBuilder,
     public requestService: AdminRequestService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
+  this.requests = this.requestService.requests;
   }
 
   onSubmit(){
-
   }
+
+
 
 }

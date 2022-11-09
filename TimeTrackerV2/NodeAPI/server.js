@@ -440,8 +440,27 @@ app.post('/resetpassword/:userid', async (req, res) => {
 
 });
 
+//Gets a list of all active admin requests from the database and returns them
+app.get(`/getAdminRequests`, async (req, res) => {
 
+    let sql = `SELECT AdminRequests.*, Users.username, Users.type
+               FROM AdminRequests
+               LEFT JOIN Users on Users.userID = AdminRequests.userID
+               WHERE AdminRequests.isActive = true`;
 
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            res.status(400).json({ "error": err.message });
+        } else {
+
+            res.send(JSON.stringify(rows));
+
+        }
+
+    });
+
+})
 
 //-------------------------------------------------------
 
