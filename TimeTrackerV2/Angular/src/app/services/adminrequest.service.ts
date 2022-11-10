@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpService} from "./http.service";
 import {IAdminRequest} from "../interfaces/IAdminRequest";
+import {BehaviorSubject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,11 @@ export class AdminRequestService {
   //when the user clicks the reset button on the modal
   modifiedRequests: IAdminRequest[] = [];
 
+  filteredRequests: IAdminRequest[] = [];
+
+  requestSource = new BehaviorSubject<IAdminRequest[]>([]);
+  sharedRequests = this.requestSource.asObservable();
+
   constructor(private httpService: HttpService) {
     this.getRequests();
   }
@@ -22,6 +28,8 @@ export class AdminRequestService {
   getRequests(){
     this.httpService.getAdminRequests().subscribe((_requests:IAdminRequest[]) => {
       this.requests = _requests;
+      this.filteredRequests = _requests;
+      this.requestSource.next(this.filteredRequests);
     });
   }
 
@@ -99,7 +107,24 @@ export class AdminRequestService {
       }
     });
 
-    this.httpService.updateAdminRequests(this.modifiedRequests).subscribe(() => {this.modifiedRequests = [];});
+    this.httpService.updateAdminRequests(this.modifiedRequests).subscribe(() => {this.modifiedRequests = []; this.getRequests(); this.requestSource.next(this.filteredRequests);});
+
+
+  }
+
+  filter(searchTerm: string){
+
+    //Returns all users if the search bar is blank
+    if(searchTerm == "" || searchTerm == null){
+      this.filteredRequests = this.requests;
+      return;
+    }
+
+    this.filteredRequests = this.requests.filter((request: IAdminRequest) => {
+      return request.username == searchTerm;
+    })
+
+    this.requestSource.next(this.filteredRequests);
 
   }
 

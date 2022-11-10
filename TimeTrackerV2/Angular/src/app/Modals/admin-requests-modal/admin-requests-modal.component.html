@@ -16,7 +16,6 @@
   </header>
 
 
-  <main>
     <div id="main-container">
 
       <div id="content-left">
@@ -33,8 +32,7 @@
           </tr>
           </thead>
           <tbody>
-          <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
-<!--          <tr *ngFor="let user of filtered_users" (click)="showModal(user)">-->
+
           <tr *ngFor="let request of requests">
             <td id="circle">
               <div class="dot" *ngIf="request.status == 'pending'" style="background-color: lightgray;"></div>
@@ -42,9 +40,6 @@
               <div class="dot" *ngIf="request.status == 'denied'" style="background-color: red;"></div>
             </td>
             <td>{{request.username}}</td>
-<!--            <td *ngIf="user.type == 'Basic'">Student</td>-->
-<!--            <td *ngIf="user.type != 'Basic'">{{user.type}}</td>-->
-
             <td>{{request.type}}</td>
             <td>{{request.requestType}}</td>
             <td>Account Button</td>
@@ -61,13 +56,17 @@
 
       <div id="content-right">
         <header>
+
+          <form [formGroup]="requestSearchForm" (ngSubmit)="onSubmit()">
+
             <div class="input-group">
 
-              <input type="text" id="requestSearch" name="RequestSearch" placeholder="Search..." required>
+              <input type="text" id="requestSearch" formControlName="requestSearchTerm" name="RequestSearch" placeholder="Search Username..." required>
               <br/>
               <button type="submit" class="btn btn-primary" id="requestSearchBtn" (click)="onSubmit()"> Search</button>
 
             </div>
+          </form>
 
         </header>
 
@@ -115,7 +114,6 @@
 
       </div>
     </div>
-  </main>
 
 
 

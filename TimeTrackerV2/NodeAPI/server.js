@@ -16,10 +16,6 @@ const SEVENDAYS = 1000 * 60 * 60 * 24 * 7
 const db = new sqlite3.Database('./database/main.db');
 
 
-
-
-
-// App
 const app = express();
 app.use(cors());
 app.use(express.json());

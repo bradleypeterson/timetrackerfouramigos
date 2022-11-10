@@ -51,7 +51,6 @@ export class AdminDashComponent implements OnInit {
 
   getRequests() {
 
-
   }
 
   //Fires when the search button is clicked

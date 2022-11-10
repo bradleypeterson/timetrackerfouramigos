@@ -14,9 +14,9 @@ import {IAdminRequest} from "../../interfaces/IAdminRequest";
 })
 export class AdminRequestsModalComponent implements OnInit {
 
-  // requestsSearchForm = this.formBuilder.group({
-  //   requestSearchTerm: '',
-  // });
+  requestSearchForm = this.formBuilder.group({
+    requestSearchTerm: '',
+  });
 
   requests: IAdminRequest[] = [];
 
@@ -27,11 +27,37 @@ export class AdminRequestsModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-  this.requests = this.requestService.requests;
+    this.requestService.requestSource.subscribe((requestList: IAdminRequest[]) => {
+      this.refresh();
+    });
   }
 
-  onSubmit(){
-    this.requestService.printRequests();
+  onSubmit() {
+    let searchTerm: string = this.requestSearchForm.value['requestSearchTerm'];
+
+    let regex = new RegExp('^[a-zA-Z0-9 _]*$');
+    let test = regex.test(searchTerm);
+
+    if (test){
+      if (searchTerm == "" || searchTerm == null){
+        this.requestService.filter("");
+      } else  {
+        this.requestService.filter(searchTerm.trim());
+      }
+    } else {
+      alert("Invalid search input! Letters, numbers, and spaces only!");
+    }
+
+    this.requestService.requestSource.subscribe((requestList: IAdminRequest[]) => {
+      this.refresh();
+    });
+
+    this.requestSearchForm.reset();
+
+  }
+
+  refresh(){
+    this.requests = this.requestService.filteredRequests;
   }
 
 
