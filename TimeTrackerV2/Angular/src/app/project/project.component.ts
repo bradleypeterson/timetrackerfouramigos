@@ -150,7 +150,7 @@ export class ProjectComponent implements OnInit {
     let payload = {
       groupName: this.groupForm.value['groupName'],
       isActive: true,
-      projectID: this.project['projectID'] as number, // PLACEHOLDER...
+      projectID: this.project['projectID'] as number,
     }
 
     /*let payload = {
