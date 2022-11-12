@@ -1,0 +1,20 @@
+tr.example-detail-row
+{
+  height: 0;
+}
+.example-element-detail
+{
+  overflow: hidden;
+  display: flex;
+}
+.smallCell
+{
+  width: 1%;
+  padding-right: 1rem;
+  white-space: nowrap;
+}
+th
+{
+  border-bottom: 2px solid black;
+}
+

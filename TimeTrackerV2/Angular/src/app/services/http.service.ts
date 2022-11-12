@@ -65,6 +65,11 @@ export class HttpService {
   {
     return this.http.get<ICourseRequest[]>(this.apiUrl + `getusercourserequests/${id}`);
   }
+  //Returns all students in a course
+  getCourseStudents(id: number): Observable<ICourseRequest[]>
+  {
+    return this.http.get<ICourseRequest[]>(this.apiUrl + `getcoursestudents/${id}`, this.httpOptions);
+  }
 
   //Joins group based on userID and groupID
   joinGroup(payload: any): Observable<any>
@@ -125,6 +130,23 @@ export class HttpService {
   getCourses(): Observable<ICourse[]> {
     return this.http.get<ICourse[]>(this.apiUrl + 'getcourses');
   }
+
+  //Returns all courses for an instructor
+  getInstructorCourses(id: number): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + `getinstructorcourses/${id}`, this.httpOptions);
+  }
+  //Returns all projects for an instructor
+  getInstructorProjects(id: number): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + `getinstructorprojects/${id}`, this.httpOptions);
+  }
+  //Returns all groups in a project
+  getProjectGroups(id: number): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + `getprojectgroups/${id}`, this.httpOptions);
+  }
+
 
   // get the user's courses from user ID
   getUserCourses(id: number): Observable<ICourse[]> {
@@ -200,6 +222,12 @@ export class HttpService {
   //Resets the user's to a default password
   resetPassword(user: IUser): Observable<any>{
     return this.http.post<any>(this.apiUrl + `resetPassword/${user.userID}`, user, this.httpOptions);
+  }
+
+  //Updates the given timecard
+  updateTimeCard(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + `updatetimecard`, payload, this.httpOptions);
   }
 
 
