@@ -61,9 +61,9 @@ export class HttpService {
   }
 
   // returns all course requests, given a user ID, which are accepted
-  getAcceptedCourseRequests(): Observable<ICourseRequest[]>
+  getUserCourseRequests(id: number): Observable<ICourseRequest[]>
   {
-    return this.http.get<ICourseRequest[]>(this.apiUrl + 'getacceptedcourserequests');
+    return this.http.get<ICourseRequest[]>(this.apiUrl + `getusercourserequests/${id}`);
   }
 
   //Joins group based on userID and groupID
@@ -126,6 +126,11 @@ export class HttpService {
     return this.http.get<ICourse[]>(this.apiUrl + 'getcourses');
   }
 
+  // get the user's courses from user ID
+  getUserCourses(id: number): Observable<ICourse[]> {
+    return this.http.get<ICourse[]>(this.apiUrl + `getusercourses/${id}`);
+  }
+
   //Returns courses and course requests from server db
   getCourseAndRequests(): Observable<ICourse[]> {
     return this.http.get<ICourse[]>(this.apiUrl + 'getcoursesandrequests');
@@ -134,6 +139,11 @@ export class HttpService {
   //Gets all the projects from a course based on course id
   getProjectsByCourseID(id: number): Observable<IProject[]> {
     return this.http.get<IProject[]>(this.apiUrl + `getprojectsbycourseid/${id}`);
+  }
+
+  // get the user's projects from user ID
+  getUserProjects(id: number): Observable<ICourse[]> {
+    return this.http.get<ICourse[]>(this.apiUrl + `getuserprojects/${id}`);
   }
 
   //Creates a project for a course
