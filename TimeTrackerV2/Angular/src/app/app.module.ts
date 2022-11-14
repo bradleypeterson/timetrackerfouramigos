@@ -22,6 +22,8 @@ import {MatRippleModule} from "@angular/material/core";
 import {MatDialogModule} from "@angular/material/dialog";
 import { EditTimeDialogComponent } from './Modals/edit-time-dialog/edit-time-dialog.component';
 import {MatInputModule} from "@angular/material/input";
+import {MatButtonModule} from "@angular/material/button";
+import {NgxChartsModule} from "@swimlane/ngx-charts";
 
 
 @NgModule({
