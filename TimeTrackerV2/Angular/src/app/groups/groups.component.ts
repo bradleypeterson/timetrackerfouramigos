@@ -5,6 +5,7 @@ import {IGroup} from "../interfaces/IGroup";
 import {IProject} from "../interfaces/IProject";
 import {IUser} from "../interfaces/IUser";
 import {ICourse} from "../interfaces/ICourse";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'app-groups',
@@ -18,6 +19,8 @@ export class GroupsComponent implements OnInit {
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public userTypeHolder: IUser;
   public isInstructor: boolean = false;
+  public dataSource : any;
+  public columnsToDisplay = ["groupID", "groupName", "isActive", "projectName"];
 
   constructor(
     private httpService:HttpService,
@@ -68,7 +71,11 @@ export class GroupsComponent implements OnInit {
 
   getUserGroups(id: number)
   {
-    this.httpService.getUserGroups(id).subscribe((_groups: any) => { this.groups = _groups; });
+    this.httpService.getUserGroups(id).subscribe((_groups: any) =>
+    {
+      this.groups = _groups;
+      this.dataSource = new MatTableDataSource(this.groups);
+    });
   }
 
   //Sets the current group in localstorage and navigates the user to the group page

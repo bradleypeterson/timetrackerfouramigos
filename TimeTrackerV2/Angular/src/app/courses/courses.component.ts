@@ -20,9 +20,11 @@ export class CoursesComponent implements OnInit {
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
+  public userCourses: ICourse[] = [];
   public activeCR: ICourseRequest[] = [];
-  public acceptedCR: ICourseRequest[] = [];
+  public courseRequests: ICourseRequest[] = [];
   public userTypeHolder: IUser;
+  public default = 0;
 
   // for getting the course that was clicked on
   public currCourse?: ICourse;
@@ -56,7 +58,8 @@ export class CoursesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCourses();
-    //this.getUserRequests();
+    this.getUserRequests();
+    this.getUserCourses();
 
   }
 
@@ -82,16 +85,77 @@ export class CoursesComponent implements OnInit {
       }
     });
 
+    
+    
+
+
+
   }
 
+
+  getUserCourses(): void {
+
+    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.userCourses = _courses; console.log(this.userCourses)});
+
+
+  }
+
+
+
+
   getUserRequests() {
-    //needs a payload with users id
+    //Gets a list of all group assignments the user has and sets the visibility
+    this.httpService.getUserCourseRequests(this.user.userID).subscribe((_courseRequests: ICourseRequest[]) =>
+    {
+      
+      this.courseRequests = _courseRequests;
+      this.courses.forEach(value =>
+      {
+        
 
-    // get course requests that the user is in and that are active
-    this.httpService.getActiveCourseRequests().subscribe((_courseRequests: any) => { this.activeCR = _courseRequests });
+        // if it's the user's course request and the course matches and there's a course request
+        if(this.courseRequests.some(x => value.courseID === x.courseID)) {
+          
+          console.log("Status = ", this.courseRequests.some(x => x.status));
+          console.log("Active = ", this.courseRequests.some(x => x.isActive));
 
-    // get courses that the user has been accepted into
-    this.httpService.getAcceptedCourseRequests().subscribe((_courseRequests: any) => { this.acceptedCR = _courseRequests });
+          // if pending: status is 0, active is 1
+          // if rejected: status is 0, active is 0
+          // if accepted: statis is 1, active is 1
+          
+          // if it was accecpted
+          if(this.courseRequests.some(x => x.isActive == true && x.status == true))
+          {
+            value.leave = true; // the leave button shows
+            value.display = false;
+            value.pending = false;
+            this.default = 1;
+          }
+          // if it's still active
+          /*if(this.courseRequests.some(x => x.isActive == true && x.status == false))
+          {
+            console.log("pending btn");
+            value.display = false;
+            value.pending = true; // the pending button shows
+            value.leave = false;
+            this.default = 2;
+          }*/
+          // if it's not accepted nor active
+          //if(this.courseRequests.some(x=> (x.status == false && x.isActive === false))) {
+          else {
+            value.display = true; // the join button shows
+            value.pending = false;
+            value.leave = false;
+            this.default = 3;
+          }
+        }
+        else {
+          value.display = true;
+          value.pending = false;
+          value.leave = false; 
+        }
+      });
+    });
   }
 
 
@@ -142,6 +206,8 @@ export class CoursesComponent implements OnInit {
           this.errMsg = "";
           //this.router.navigate(['./']);
           //location.reload(); // refresh the page
+          this.getCourses();
+          this.getUserRequests();
         },
         error: error => {
           this.errMsg = error['error']['message'];

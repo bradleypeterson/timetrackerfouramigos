@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Edit Time</h2>
+<mat-dialog-content>Time In</mat-dialog-content>
+<input dataformatas="" type="datetime-local" [(ngModel)]="timeIn">
+
+<mat-dialog-content>Time Out</mat-dialog-content>
+<input type="datetime-local" [(ngModel)]="timeOut">
+
+<mat-dialog-content>Description</mat-dialog-content>
+<input [(ngModel)]="description">
+
+<mat-dialog-content class="mat-error" [hidden]="error == false">Enter a valid date range</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="returnDate()">Save</button>
+  <button mat-button mat-dialog-close="false">Cancel</button>
+</mat-dialog-actions>

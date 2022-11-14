@@ -24,6 +24,7 @@ export class ProjectComponent implements OnInit {
   public userTypeHolder: IUser;
   public groups: IGroup[] = [];
   public joinedGroups: IGroupAssignment[] = [];
+  public isJoinable: boolean = true;
 
   private project: IProject = history.state.data; // holds the current project data
 
@@ -40,9 +41,8 @@ export class ProjectComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private httpService: HttpService,
-
-
-  ) {
+  )
+  {
     this.item = localStorage.getItem('currentProject');
     console.log("The current project is: " + this.item);
     if(this.item) {
@@ -150,7 +150,7 @@ export class ProjectComponent implements OnInit {
     let payload = {
       groupName: this.groupForm.value['groupName'],
       isActive: true,
-      projectID: this.project['projectID'] as number, // PLACEHOLDER...
+      projectID: this.project['projectID'] as number,
     }
 
     /*let payload = {
@@ -175,8 +175,9 @@ export class ProjectComponent implements OnInit {
     });
   }
   //Joins the selected group
-  joinGroup(group: IGroup): void
+  joinGroup(group: IGroup, event: any): void
   {
+    event.target.disabled = true;
     let payload = {
       userID: this.userTypeHolder.userID,
       groupID: group.groupID,
@@ -192,8 +193,10 @@ export class ProjectComponent implements OnInit {
     });
   }
   //Leaves the selected group
-  leaveGroup(group: IGroup): void
+  leaveGroup(group: IGroup, event: any): void
   {
+    //Set the button to disable so that they can't click more than once
+    event.target.disabled = true;
     let payload = {
       userID: this.userTypeHolder.userID,
       groupID: group.groupID,

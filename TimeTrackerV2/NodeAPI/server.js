@@ -120,12 +120,11 @@ app.get('/getcourserequests', async (req, res, next) => {
 app.get('/getactivecourserequests', async (req, res, next) => {
   let sql = `SELECT
                  CR.requestID,
-                 C.courseName,
                  U.firstName || ' ' || U.lastName as studentName,
                  CR.status,
                  CR.isActive
              FROM CourseRequest as CR
-                      LEFT JOIN Users U on CR.userID = U.userID
+                      LEFT JOIN Users U on U.userID = CR.userID
              WHERE CR.status = 1`;
   db.all(sql, [], (err, rows) => {
       if(err)
@@ -138,16 +137,11 @@ app.get('/getactivecourserequests', async (req, res, next) => {
 
 
 // get all course requests for a student, which are accepted
-app.get('/getacceptedcourserequests', async (req, res, next) => {
-  let sql = `SELECT
-                 CR.requestID,
-                 CR.courseName,
-                 U.firstName || ' ' || U.lastName as studentName,
-                 CR.status,
-                 CR.isActive
-             FROM CourseRequest as CR
-                      LEFT JOIN Users U on CR.userID = U.userID
-             WHERE CR.status = 1`;
+app.get('/getusercourserequests/:userid', async (req, res, next) => {
+  let sql = `SELECT CourseRequest.*
+            FROM CourseRequest
+            LEFT JOIN Users U on U.userID = CourseRequest.userID
+            WHERE U.userID = ${req.params.userid}`;
   db.all(sql, [], (err, rows) => {
       if(err)
       {
@@ -229,6 +223,26 @@ app.get('/getcourses', async (req, res) => {
 // where instructor ID = user id
 // where current user = user id in course request
 
+//Gets all courses where the user id is the current user and status is accepted
+app.get('/getusercourses/:userid', async (req, res) => {
+  let sql = `SELECT Courses.*
+  FROM Courses
+    LEFT JOIN CourseRequest CR ON CR.courseID = Courses.courseID
+  WHERE CR.status = 1
+  AND CR.isActive = 1
+  AND CR.userID = ${req.params.userid}`;
+
+  db.all(sql, [], (err, rows) => {
+
+      if (err) {
+          res.status(400).json({ "error": err.message });
+      } else {
+          res.send(JSON.stringify(rows));
+      }
+
+  });
+});
+
 
 //Gets all courses and course requests where the user id is the current user and status is accepted
 app.get('/getcoursesandrequests', async (req, res) => {
@@ -293,6 +307,25 @@ app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
     FROM Projects
     LEFT JOIN Courses on Courses.courseID = Projects.courseID
     WHERE Projects.courseID = ${req.params.courseid}`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({"error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+    });
+});
+
+
+app.get('/getuserprojects/:userid', async (req, res) => {
+
+    let sql = `SELECT DISTINCT Projects.*, Courses.courseName
+    FROM Projects
+    INNER JOIN Courses on Courses.courseID = Projects.courseID
+    INNER JOIN Groups G on G.projectID = Projects.projectID
+    INNER JOIN GroupAssignment GA on GA.groupID = G.groupID
+    WHERE GA.userID = ${req.params.userid}`;
 
     db.all(sql, [], (err, rows) => {
         if (err) {
@@ -754,7 +787,8 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
     let sql = `SELECT Groups.*, Projects.projectName
                FROM Groups
                LEFT JOIN Projects on Projects.projectID = Groups.projectID
-               WHERE Groups.projectID = ${req.params.projectid}`;
+               WHERE Groups.projectID = ${req.params.projectid}
+               ORDER BY Groups.groupName`;
 
     db.all(sql, [], (err, rows) => {
         if (err) {
@@ -902,6 +936,108 @@ app.post('/deletetimecard', async (req, res, next) => {
     });
 });
 
+//Returns a list of all courses for an instructor
+app.get('/getinstructorcourses/:userID', async (req, res) =>
+{
+   let sql = `SELECT 
+                  courseID, courseName, instructorID, description
+              FROM
+                  Courses
+              WHERE
+                  instructorID = ${req.params.userID}
+                  AND 
+                  isActive = 1
+              ORDER BY 
+                  courseName`;
+   db.all(sql, [], (err, rows) => {
+       if (err)
+       {
+           return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+       }
+       res.send(JSON.stringify(rows));
+   });
+});
+//Returns a list of all course requests for a course that have been accepted
+app.get('/getcoursestudents/:courseID', async (req, res) => {
+
+    let sql = `SELECT DISTINCT CR.requestID,
+                      C.courseName,
+                      U.firstName || ' ' || U.lastName as studentName,
+                      CR.status,
+                      CR.isActive
+               FROM CourseRequest as CR
+                        LEFT JOIN Users U on CR.userID = U.userID
+                        LEFT JOIN Courses C on CR.courseID = C.courseID
+               WHERE CR.status = 1
+                 AND CR.isActive = 1
+                 AND CR.courseID = ${req.params.courseID}
+               GROUP BY studentName
+               ORDER BY studentName`;
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
+//Returns a list of projects for an instructor
+app.get('/getinstructorprojects/:userID', async (req, res) => {
+    let sql = `SELECT
+                   P.projectName,
+                   C.courseName,
+                   P.description,
+                   P.projectID
+               FROM Projects P
+                        LEFT JOIN Courses C on P.courseID = C.courseID
+               WHERE
+                   C.instructorID = ${req.params.userID}
+                 AND
+                   P.isActive = 1
+                 AND
+                   C.isActive = 1
+               ORDER BY
+                   C.courseName, P.projectName`;
+    db.all(sql, [], (err, rows) => {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        res.send(JSON.stringify(rows));
+    });
+});
+
+//Updates a timecard
+app.post('/updatetimecard', async (req, res, next) => {
+
+    let sql = `UPDATE TimeCard
+               SET
+
+                   timeIn = ?,
+                   timeOut = ?,
+                   description = ?
+               WHERE
+                   timeslotID = ?`;
+
+    let data = [];
+    data[0] = req.body["timeIn"];
+    data[1] = req.body["timeOut"];
+    data[2] = req.body["description"];
+    data[3] = req.body["timeslotID"];
+    db.run(sql, data, function(err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        else
+        {
+            return res.status(200).json({message: 'User registered'});
+        }
+    });
+
+});
 
 
 app.listen(PORT, HOST);
