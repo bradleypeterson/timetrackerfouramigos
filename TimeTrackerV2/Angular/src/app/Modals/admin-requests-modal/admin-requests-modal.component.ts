@@ -18,7 +18,7 @@ export class AdminRequestsModalComponent implements OnInit {
     requestSearchTerm: '',
   });
 
-  requests: IAdminRequest[] = [];
+
 
   constructor(
     private httpService: HttpService,
@@ -26,10 +26,13 @@ export class AdminRequestsModalComponent implements OnInit {
     public requestService: AdminRequestService,
   ) {}
 
+  requests: IAdminRequest[] = [];
+  refreshListener: Subscription | undefined;
+
   ngOnInit(): void {
-    this.requestService.requestSource.subscribe((requestList: IAdminRequest[]) => {
+    this.refreshListener = this.requestService.sharedRequests.subscribe((requests) => {
       this.refresh();
-    });
+    })
   }
 
   onSubmit() {

@@ -107,7 +107,7 @@ export class AdminRequestService {
       }
     });
 
-    this.httpService.updateAdminRequests(this.modifiedRequests).subscribe(() => {this.modifiedRequests = []; this.getRequests(); this.requestSource.next(this.filteredRequests);});
+    this.httpService.updateAdminRequests(this.modifiedRequests).subscribe(() => {this.modifiedRequests = []; this.getRequests(); this.requestSource.next(this.filteredRequests); });
 
 
   }
