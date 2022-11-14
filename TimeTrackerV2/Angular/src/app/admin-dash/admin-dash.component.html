@@ -45,7 +45,6 @@
               </tr>
               </thead>
               <tbody>
-              <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
               <tr *ngFor="let user of filtered_users" (click)="showModal(user)">
                 <td >{{user.username}}</td>
                 <td >{{user.lastName}}, {{user.firstName}}</td>
@@ -77,12 +76,11 @@
 
           </header>
 
-          <div class="row grey-background">
-            <div class="col-auto text-center requestModalNotification" (click)="requestService.showModal()">
+            <div class="col-auto text-center grey-background requestModalNotification" (click)="requestService.showModal()">
               <p id="amount-of-requests">{{requestService.requests.length}}</p>
+              <br/>
               <p id="requests-text">Pending Requests</p>
             </div>
-          </div>
 
         </div>
 

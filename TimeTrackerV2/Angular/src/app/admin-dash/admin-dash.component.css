@@ -46,29 +46,34 @@ table tr td{
 /*Used for content in the right container for requests*/
 
 #right-container{
-  height: fit-content;
+  height: 100%;
   width: 100%;
   padding-bottom: 13px;
 }
 
 .requestModalNotification {
   cursor: pointer;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
 }
 
 #amount-of-requests {
   font-size: 90pt;
-  padding: 0;
-  margin: 0;
+  height: 1em;
+  padding-top: 20%;
 }
 
 #requests-text {
   font-size: 30pt;
+  height: 1em;
 }
 
 .grey-background {
   background: rgb(152,152,152);
   background: linear-gradient(0deg, rgba(152,152,152,1) 0%, rgba(204,204,204,1) 5%, rgba(255,255,255,1) 65%);
   border: 1px solid black;
+  display: block;
 }
 
 
