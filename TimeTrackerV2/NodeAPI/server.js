@@ -26,8 +26,10 @@ app.use(session({
     secret: "4amigos number 1!",
     saveUninitialized: false,
     cookie: {
+        SameSite:  false,
         maxAge: SEVENDAYS,
         sameSite: true,
+        Domain: "",
     }
 }));
 
@@ -39,7 +41,15 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', (req, res) => {
-    console.log(req.session);
+
+    console.log("Session ID");
+    console.log(req.sessionID + "\n");
+
+
+    //console.log(req.session);
+
+    console.log(req.sessionStore.sessions);
+
   return res.send('Hello World');
 });
 
@@ -506,23 +516,24 @@ app.post(`/updateAdminRequests`, async (req, res) => {
             if(err){
                 stat = 500;
                 msg = err.message;
-                //res.status(500).json({error: err.message});
+                res.status(500).json({error: err.message});
             } else {
                 stat = 200;
                 msg = "Data Updated successfully!";
-                //res.status(200).json({message: "Data updated successfully"});
+                res.status(200).json({message: "Data updated successfully"});
             }
         });
 
      });
 
-    if (stat === 500) {
-        return res.status(stat).json({error: msg});
-    }
-
-    if (stat === 200){
-        return res.status(stat).json({message: msg});
-    }
+    // if (stat === 500) {
+    //     return res.status(stat).json({error: msg});
+    // }
+    //
+    // if (stat === 200){
+    //     console.log("We got a stat of 200");
+    //     return res.status(stat).json({message: msg});
+    // }
 
 });
 
@@ -610,6 +621,9 @@ app.post('/login', async (req, res, next) => {
       1000, 64, `sha512`).toString(`hex`);
 
       if(rows['password'] === hash) {
+
+          console.log(req.sessionID + "\n");
+
         return res.status(200).json({user: rows});
       } else {
         return res.status(401).json({message: 'Username or password is incorrect.'});

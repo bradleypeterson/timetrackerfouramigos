@@ -107,8 +107,10 @@ export class AdminRequestService {
       }
     });
 
-    this.httpService.updateAdminRequests(this.modifiedRequests).subscribe(() => {this.modifiedRequests = []; this.getRequests(); this.requestSource.next(this.filteredRequests); });
-
+    this.httpService.updateAdminRequests(this.modifiedRequests).subscribe(() => {
+      this.modifiedRequests = [];
+      this.getRequests();
+    });
 
   }
 
@@ -120,8 +122,33 @@ export class AdminRequestService {
       return;
     }
 
+    searchTerm = searchTerm.toLowerCase();
+    console.log("filter: " + searchTerm);
+
     this.filteredRequests = this.requests.filter((request: IAdminRequest) => {
-      return request.username == searchTerm;
+      return request.username?.toLowerCase() == searchTerm;
+    })
+
+
+
+  }
+
+  radioFilter(type: string){
+
+    console.log(type);
+
+    if (type == 'all') {
+      this.filteredRequests = this.requests;
+    } else {
+
+      this.filteredRequests = this.requests.filter((request: IAdminRequest) => {
+        return request.type?.toLowerCase() == type;
+      })
+
+    }
+
+    this.filteredRequests.forEach((o) => {
+      console.log(o);
     })
 
     this.requestSource.next(this.filteredRequests);

@@ -21,7 +21,6 @@ export class AdminDashComponent implements OnInit {
 
   modal: boolean = false;
 
-
   constructor(
     private httpService: HttpService,
     private formBuilder: FormBuilder,
@@ -117,7 +116,6 @@ export class AdminDashComponent implements OnInit {
     });
 
   }
-
 
 }
 

@@ -75,17 +75,17 @@
           <div class="row">
 
             <div class="col-auto">
-              <input type="radio" id="All" name="searchRequestRadio" value="All">
+              <input type="radio" id="All" name="searchRequestRadio" value="All" (click)="requestService.radioFilter('all')">
               <label for="All"> All </label>
             </div>
 
             <div class="col-auto">
-              <input type="radio" id="Password" name="searchRequestRadio" value="Password" >
+              <input type="radio" id="Password" name="searchRequestRadio" value="Password" (click)="requestService.radioFilter('student')" >
               <label for="Password"> Student </label>
             </div>
 
             <div class="col-auto">
-              <input type="radio" id="Account" name="searchRequestRadio" value="Account">
+              <input type="radio" id="Account" name="searchRequestRadio" value="Account" (click)="requestService.radioFilter('instructor')">
               <label for="Account"> Instructor </label>
             </div>
 

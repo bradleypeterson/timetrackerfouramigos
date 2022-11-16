@@ -20,6 +20,7 @@ export class AdminRequestsModalComponent implements OnInit {
 
 
 
+
   constructor(
     private httpService: HttpService,
     private formBuilder: FormBuilder,
@@ -31,38 +32,34 @@ export class AdminRequestsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshListener = this.requestService.sharedRequests.subscribe((requests) => {
-      this.refresh();
+      this.requests = requests;
     })
   }
 
   onSubmit() {
+
     let searchTerm: string = this.requestSearchForm.value['requestSearchTerm'];
+
+    if (searchTerm == null){
+      return;
+    }
+
+    if (searchTerm == ""){
+      this.requestService.filter("");
+      return;
+    }
 
     let regex = new RegExp('^[a-zA-Z0-9 _]*$');
     let test = regex.test(searchTerm);
 
     if (test){
-      if (searchTerm == "" || searchTerm == null){
-        this.requestService.filter("");
-      } else  {
-        this.requestService.filter(searchTerm.trim());
-      }
+        this.requestService.filter(searchTerm);
     } else {
-      alert("Invalid search input! Letters, numbers, and spaces only!");
+        alert("Invalid search input! Letters, numbers, and spaces only!");
     }
-
-    this.requestService.requestSource.subscribe((requestList: IAdminRequest[]) => {
-      this.refresh();
-    });
 
     this.requestSearchForm.reset();
 
   }
-
-  refresh(){
-    this.requests = this.requestService.filteredRequests;
-  }
-
-
 
 }
