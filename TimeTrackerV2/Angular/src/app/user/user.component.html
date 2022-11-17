@@ -47,29 +47,38 @@
         </div>
       </div>
     </div>
+
     <div class="col-12 col-md-6 mt-4">
       <div class="row">
+        <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
         <div class="col-5 text-right pr-1 pl-0">
-          <label class="mb-2 mt-1" for="currentPassword">Current Password</label>
-          <br />
-          <label class="mb-2 mt-1" for="newPassword">New Password</label>
-          <br />
-          <label class="mb-2 mt-1" for="repeatPassword">Repeat Password</label>
+          
+          <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">   
+            <label class="mb-2 mt-2" for="currPassword">Current Password </label>
+            <input class="mb-2" ng-model="password" formControlName="currentpassword" type="password" id="currentpass" name="currentPassword" />
+          </div>
+
+          <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">   
+            <label class="mb-2 mt-2" for="newPassword">New Password </label>
+            <input class="mb-2" ng-model="password" formControlName="newpassword" type="password" id="newpass" name="newPassword" />
+          </div>
+
+          <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">   
+            <label class="mb-2 mt-2" for="repeatPassword">Repeat Password </label>
+            <input class="mb-2" ng-model="password" formControlName="repeatpassword" type="password" id="repass" name="repeatPassword" />
+          </div>
+
+         
         </div>
-        <div class="col pl-0">
-          <!-- ng-model="viewUser.currentPassword" ng-disabled="$parent.user.type === 'A'" -->
-          <input class="mb-1" type="password" name="currentPassword" />
-          <br />
-          <!-- ng-model="viewUser.newPassword" -->
-          <input class="mb-1" type="password" name="newPassword" />
-          <br />
-          <!-- ng-model="viewUser.repeatPassword" -->
-          <input class="mb-1" type="password" name="repeatPassword" />
-        </div>
+
         <div class="row mt-2 mx-auto">
-          <!-- ng-click="changePassword()" -->
-          <button type="button" class="btn btn-primary col mr-1">Change Password</button>
+          <button type="submit" class="btn btn-primary col ml-1">Change Password</button>
         </div>
+
+        </form>
+
+
+
       </div>
     </div>
   </div>

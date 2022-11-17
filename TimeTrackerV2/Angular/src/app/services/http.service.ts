@@ -121,6 +121,14 @@ export class HttpService {
 
   }
 
+  // changes password
+  //Submits user data to register the user on the server.
+  changePass(payload: any): Observable<any> {
+
+    return this.http.post<any>(this.apiUrl + 'changepass', payload, this.httpOptions);
+
+  }
+
   //Creates a course for the user
   createCourse(payload: any): Observable<any> {
     return this.http.post<any>(this.apiUrl + 'createCourse', payload, this.httpOptions);
