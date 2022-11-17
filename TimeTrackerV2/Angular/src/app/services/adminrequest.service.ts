@@ -21,6 +21,9 @@ export class AdminRequestService {
   requestSource = new BehaviorSubject<IAdminRequest[]>([]);
   sharedRequests = this.requestSource.asObservable();
 
+  userAccountSource = new BehaviorSubject<number>(-1);
+  sharedAccountSource = this.userAccountSource.asObservable();
+
   constructor(private httpService: HttpService) {
     this.getRequests();
   }
@@ -97,6 +100,7 @@ export class AdminRequestService {
 
   }
 
+  //Saves any request that has been altered and sends them to the database to be saved
   saveModifiedRequests(){
 
     this.requests.forEach((request) => {
@@ -114,6 +118,7 @@ export class AdminRequestService {
 
   }
 
+  //Fires when the user searched for a request using the search text box
   filter(searchTerm: string){
 
     //Returns all users if the search bar is blank
@@ -122,20 +127,18 @@ export class AdminRequestService {
       return;
     }
 
-    searchTerm = searchTerm.toLowerCase();
-    console.log("filter: " + searchTerm);
+    searchTerm = searchTerm.toLowerCase();;
 
     this.filteredRequests = this.requests.filter((request: IAdminRequest) => {
       return request.username?.toLowerCase() == searchTerm;
-    })
+    });
 
-
+    this.requestSource.next(this.filteredRequests);
 
   }
 
+  //Fires when any of the radio buttons are pressed to filter the request table
   radioFilter(type: string){
-
-    console.log(type);
 
     if (type == 'all') {
       this.filteredRequests = this.requests;
@@ -147,12 +150,15 @@ export class AdminRequestService {
 
     }
 
-    this.filteredRequests.forEach((o) => {
-      console.log(o);
-    })
-
     this.requestSource.next(this.filteredRequests);
 
+  }
+
+  //Opens modal for the user when the account button is clicked on the request modal
+  //Whole request has to be passed in otherwise the html wont compile for some reason
+  openAccount(request: IAdminRequest){
+    this.userAccountSource.next(request?.userID as number);
+    this.closeModal();
   }
 
   //For debugging

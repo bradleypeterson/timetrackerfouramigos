@@ -1,6 +1,6 @@
 export interface IAdminRequest {
   requestID?: number;
-  userID?: string;
+  userID?: number;
   requestType?: string
   status?: string;
   isActive?: boolean;

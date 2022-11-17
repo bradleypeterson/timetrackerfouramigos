@@ -4,7 +4,7 @@
   <header>
     <div id="header-container">
       <div id="requests">
-        <h1>Requests</h1>
+        <h1 style="font-size: 32pt;">Requests</h1>
       </div>
 
       <div id="closeBtnTop">
@@ -40,9 +40,11 @@
               <div class="dot" *ngIf="request.status == 'denied'" style="background-color: red;"></div>
             </td>
             <td>{{request.username}}</td>
-            <td>{{request.type}}</td>
+            <td *ngIf="request.type == 'Basic'">Student</td>
+            <td *ngIf="request.type != 'Basic'">{{request.type}}</td>
             <td>{{request.requestType}}</td>
-            <td>Account Button</td>
+            <td><button class="btn btn-outline-primary" (click)="requestService.openAccount(request)">Account</button></td>
+<!--            -->
             <td>
               <button class="btn btn-outline-success modify-btn" (click)="requestService.modifyRequest('approved', request)">✓</button> |
               <button class="btn btn-outline-danger modify-btn" (click)="requestService.modifyRequest('denied', request)">X</button>
@@ -76,7 +78,7 @@
 
             <div class="col-auto">
               <input type="radio" id="All" name="searchRequestRadio" value="All" (click)="requestService.radioFilter('all')">
-              <label for="All"> All </label>
+              <label for="All" (click)="requestService.radioFilter('all')"> All </label>
             </div>
 
             <div class="col-auto">

@@ -454,30 +454,16 @@ app.post('/deleteuserbyid/:userid', async (req, res) => {
 //Resets the passed in users password to a default value
 app.post('/resetpassword/:userid', async (req, res) => {
 
-    let defaultPassword = 'wildcat123';
+    let resetStatus = resetPassword(req.params.userid);
 
-    let salt = crypto.randomBytes(16).toString('hex');
-
-    let hash = crypto.pbkdf2Sync(defaultPassword, salt,
-        1000, 64, `sha512`).toString(`hex`);
-
-    let data = []
-
-    data.push(hash);
-    data.push(salt);
-
-    sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${req.params.userid}`;
-
-    db.run(sql, data,(err) => {
-        if(err){
-            return res.status(500).json({error: err.message});
-        } else {
-            return res.status(200).json({message: "Password reset"});
-        }
-    });
-
+    if (!resetStatus.passed) {
+        return res.status(500).json({error: resetStatus.msg});
+    } else {
+        return res.status(200).json({message: resetStatus.msg});
+    }
 
 });
+
 
 //Gets a list of all active admin requests from the database and returns them
 app.get(`/getAdminRequests`, async (req, res) => {
@@ -504,36 +490,52 @@ app.get(`/getAdminRequests`, async (req, res) => {
 //Updates the admin request database with any requests that have been changed by an admin
 app.post(`/updateAdminRequests`, async (req, res) => {
 
-    let stat;
-    let msg;
+    let errors = []
+
+    //Processes the account changes or password resets from the admin requests
+    //Adds an error to the error array if there are any failures and returns early.
+    req.body.forEach((request) => {
+
+        if (request.status === 'approved') {
+
+            if (request.requestType === 'password') {
+
+                if (!resetPassword(request.userID).passed){
+                    errors.push(1);
+                }
+            }
+
+            if (request.requestType === 'account'){
+
+                if (!updateAccountType(request.userID, request.type).passed){
+                    errors.push(1);
+                }
+
+            }
+
+        }
+    });
+
+    if (errors.length > 0){
+        return res.status(500).json({error: "Failed To Process one or more requests"});
+    }
+
+    //Updates the admin request table
     req.body.forEach((request) =>{
         console.log(request);
 
-        let sql = `UPDATE AdminRequests SET status = '${request.status}', isActive = ${request.isActive}, reviewerID = ${request.reviewerID} 
+        let sql = `UPDATE AdminRequests SET status = '${request.status}', isActive = ${request.isActive}, reviewerID = ${request.reviewerID}
                      WHERE requestID = ${request.requestID};`
 
         db.run(sql, (err) => {
             if(err){
-                stat = 500;
-                msg = err.message;
-                res.status(500).json({error: err.message});
+                return res.status(500).json({error: err.message});
             } else {
-                stat = 200;
-                msg = "Data Updated successfully!";
-                res.status(200).json({message: "Data updated successfully"});
+                return res.status(200).json({message: "Data updated successfully"});
             }
         });
 
      });
-
-    // if (stat === 500) {
-    //     return res.status(stat).json({error: msg});
-    // }
-    //
-    // if (stat === 200){
-    //     console.log("We got a stat of 200");
-    //     return res.status(stat).json({message: msg});
-    // }
 
 });
 
@@ -1048,6 +1050,61 @@ app.post('/updatetimecard', async (req, res, next) => {
         else
         {
             return res.status(200).json({message: 'User registered'});
+        }
+    });
+
+});
+
+//Resets the users password to a default password;
+const resetPassword = ((userID) => {
+
+    let defaultPassword = 'wildcat123';
+
+    let salt = crypto.randomBytes(16).toString('hex');
+
+    let hash = crypto.pbkdf2Sync(defaultPassword, salt,
+        1000, 64, `sha512`).toString(`hex`);
+
+    let data = []
+
+    data.push(hash);
+    data.push(salt);
+
+    sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${userID}`;
+
+    console.log("In Reset Password");
+    console.log("Data: " + data[0] + ", " + data[1] + ", userID: " + userID);
+
+    db.run(sql, data,(err) => {
+        if(err){
+            return {passed: false, msg: err.message}
+        } else {
+            return {passed: true, msg: "Password Reset!"}
+        }
+    });
+
+});
+
+//Updates the user type from a student to an instructor or vice versa
+const updateAccountType = ((userID, accountType) => {
+
+    let updatedType = '';
+
+    if (accountType === 'Basic') {
+        updatedType = 'Instructor';
+    }
+
+    if (accountType === 'Instructor'){
+        updatedType = 'Basic';
+    }
+
+    let sql = `UPDATE Users SET type = '${updatedType}' WHERE userID = ${userID};`
+
+    db.run(sql, (err) => {
+        if(err){
+            return {passed: false, msg: err.message}
+        } else {
+            return {passed: true, msg: "Account Updated!"}
         }
     });
 

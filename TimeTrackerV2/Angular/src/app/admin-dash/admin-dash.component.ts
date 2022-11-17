@@ -21,6 +21,22 @@ export class AdminDashComponent implements OnInit {
 
   modal: boolean = false;
 
+  openedFromRequests: boolean = false;
+
+  openRequestModal = this.requestService.sharedAccountSource.subscribe((userID: number) => {
+
+    if (userID == -1){
+      return;
+    }
+
+    let user = this.users.find((user: IUser) => {
+      return user.userID == userID;
+    })
+
+    this.openedFromRequests = true;
+    this.showModal(user as IUser);
+  })
+
   constructor(
     private httpService: HttpService,
     private formBuilder: FormBuilder,
@@ -36,7 +52,6 @@ export class AdminDashComponent implements OnInit {
   ngOnInit(): void {
 
     this.getUsers();
-    this.getRequests();
 
   }
 
@@ -48,9 +63,6 @@ export class AdminDashComponent implements OnInit {
     });
   }
 
-  getRequests() {
-
-  }
 
   //Fires when the search button is clicked
   //Searches the table for any user that matches the search data
@@ -79,7 +91,8 @@ export class AdminDashComponent implements OnInit {
   showModal(user: IUser) {
 
     this.modalService.create(user);
-    this.modalService.showModal();
+    this.modalService.showModal(this.openedFromRequests);
+    this.openedFromRequests = false;
   }
 
   //filters users based on which radio button is selected
@@ -90,7 +103,13 @@ export class AdminDashComponent implements OnInit {
       if (filterType == 'all') {
         return user;
       } else {
-        return user.type == filterType;
+
+        if (user.type?.toLowerCase() == filterType.toLowerCase()) {
+          console.log("Returned:");
+          console.log(user);
+        }
+
+        return user.type?.toLowerCase() == filterType.toLowerCase();
       }
 
     })

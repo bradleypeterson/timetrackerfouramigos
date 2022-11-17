@@ -31,9 +31,9 @@ export class AdminModalComponent implements OnInit {
 
   }
 
-  @HostListener('click') closeModal() {
-    this.modalService.showModal();
-  }
+  // @HostListener('click') closeModal() {
+  //   this.modalService.showModal();
+  // }
 
   //If slider is checked then the edit button can be pressed
   enableEdit(event: any){

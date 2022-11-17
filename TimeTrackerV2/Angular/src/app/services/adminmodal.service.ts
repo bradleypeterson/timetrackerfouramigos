@@ -3,6 +3,7 @@ import {IUser} from "../interfaces/IUser";
 import {HttpService} from "./http.service"
 
 import { BehaviorSubject } from 'rxjs/';
+import {AdminRequestService} from "./adminrequest.service";
 
 @Injectable({
   providedIn: 'root'
@@ -14,18 +15,26 @@ export class AdminModalService {
 
   msg: string = "";
 
+  openedFromRequests: boolean = false;
+
   private _refreshSource = new BehaviorSubject<boolean>(false)
   _refresh = this._refreshSource.asObservable();
 
 
-  constructor( private httpService: HttpService) { }
+  constructor( private httpService: HttpService,
+               private requestService: AdminRequestService) { }
 
-  showModal(){
+  showModal(_openedFromRequests: boolean){
     this.modalDisplay = true;
+    this.openedFromRequests = _openedFromRequests;
   }
 
   closeModal(){
     this.modalDisplay = false;
+    if (this.openedFromRequests){
+      this.openedFromRequests = false;
+      this.requestService.showModal();
+    }
   }
 
   create(user: IUser){
@@ -53,7 +62,6 @@ export class AdminModalService {
   //Deletes the user based on a passed in user
   //Emits true event if deletion was successful
   deleteUser(user: IUser) {
-
 
     this.httpService.deleteUser(user).subscribe(  {
       next: data => {
