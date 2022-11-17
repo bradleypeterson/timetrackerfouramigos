@@ -122,10 +122,13 @@ app.get('/getactivecourserequests', async (req, res, next) => {
 
 // get all course requests for a student, which are accepted
 app.get('/getusercourserequests/:userid', async (req, res, next) => {
-  let sql = `SELECT CourseRequest.*
-            FROM CourseRequest
-            LEFT JOIN Users U on U.userID = CourseRequest.userID
-            WHERE U.userID = ${req.params.userid}`;
+  // let sql = `SELECT CourseRequest.*
+  //           FROM CourseRequest
+  //           LEFT JOIN Users U on U.userID = CourseRequest.userID
+  //           WHERE U.userID = ${req.params.userid}`;
+    let sql = `SELECT *
+            FROM CourseRequest CR
+            WHERE CR.userID = ${req.params.userid}`;
   db.all(sql, [], (err, rows) => {
       if(err)
       {
@@ -135,7 +138,34 @@ app.get('/getusercourserequests/:userid', async (req, res, next) => {
   });
 });
 
+//Lets a user leave a course
 
+app.post('/leavecourse', async (req, res, next) => {
+    let sql = `UPDATE CourseRequest
+               SET
+                   status = false,
+                   isActive = false
+               WHERE
+                   userID = ?
+                   AND
+                   courseID = ?`;
+
+    let data = [];
+    data[0] = req.body["userID"];
+    data[1] = req.body["courseID"];
+    db.run(sql, data, function(err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        else
+        {
+            return res.status(200).json({message: 'User registered'});
+        }
+    });
+
+});
 
 //Updates passed course request
 app.post('/updatecourserequest', async (req, res, next) => {
@@ -749,18 +779,36 @@ app.get('/getgroupassignments/:userID', async (req, res) => {
 
 //Gets a list of all groups a user is in
 app.get('/getusergroups/:userID', async (req, res) => {
+//     let sql = `SELECT DISTINCT
+//                    G.groupID,
+//                    G.groupName,
+//                    G.isActive,
+//                    P.projectID,
+//                    P.projectName
+//                FROM
+//                    GroupAssignment AS GA
+//                        LEFT JOIN Groups G on GA.groupID = G.groupID
+//                        LEFT JOIN Projects P on G.projectID = P.projectID
+//                WHERE
+//                    GA.userID = ${req.params.userID}`;
     let sql = `SELECT
-                   G.groupID,
-                   G.groupName,
-                   G.isActive,
-                   P.projectID,
-                   P.projectName
-               FROM
-                   GroupAssignment AS GA
-                       LEFT JOIN Groups G on GA.groupID = G.groupID
-                       LEFT JOIN Projects P on G.projectID = P.projectID
-               WHERE
-                   GA.userID = ${req.params.userID}`;
+                    G.groupID,
+                    G.groupName,
+                    G.isActive,
+                    P.projectID,
+                    P.projectName
+                FROM
+                    GroupAssignment AS GA
+                        LEFT JOIN Groups G on GA.groupID = G.groupID
+                        LEFT JOIN Projects P on G.projectID = P.projectID
+                        LEFT JOIN CourseRequest CR on GA.userID = CR.userID
+                
+                WHERE
+                        GA.userID = ${req.params.userID}
+                        AND
+                        CR.isActive = true
+                        AND
+                        CR.status = true`;
     db.all(sql, [], (err, rows) => {
 
         if (err) {
@@ -768,7 +816,6 @@ app.get('/getusergroups/:userID', async (req, res) => {
         }
         res.send(JSON.stringify(rows));
     });
-
 });
 
 //Gets a list of all users in a group

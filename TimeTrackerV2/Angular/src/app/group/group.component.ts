@@ -42,6 +42,7 @@ export class GroupComponent implements OnInit {
   public descriptionAuto: any;
   public isClocked: any;
   public isNegative: any;
+  public isInstructor: boolean = false;
 
   public pieData: PieChartData[] = [];
   public title = "Hours Per Member"
@@ -75,8 +76,8 @@ export class GroupComponent implements OnInit {
     this.isClocked = false;
     this.isNegative = true;
     this.item = localStorage.getItem('currentGroup');
-    console.log("The current group is: " + this.item);
-    if (this.item) {
+    if (this.item)
+    {
       this.item = JSON.parse(this.item);
       this.groupName = this.item[0];
     }
@@ -108,6 +109,15 @@ export class GroupComponent implements OnInit {
     this.httpService.getUser(payload).subscribe((_user: any) =>
     {
       this.currUser = _user;
+      console.log("user.type: " + _user.type);
+      if(_user.type == "Instructor")
+      {
+        this.isInstructor = true;
+      }
+      else
+      {
+        this.isInstructor = false;
+      }
       this.getGroupUsers();
     });
   }

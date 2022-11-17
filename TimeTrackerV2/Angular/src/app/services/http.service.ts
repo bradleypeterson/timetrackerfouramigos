@@ -230,5 +230,11 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + `updatetimecard`, payload, this.httpOptions);
   }
 
+  //Leaves course based on userID and courseID
+  leaveCourse(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'leavecourse', payload, this.httpOptions);
+  }
+
 
 }

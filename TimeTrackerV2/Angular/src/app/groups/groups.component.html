@@ -21,19 +21,19 @@
 <!--    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>-->
 <!--    <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay"></tr>-->
 <!--  </table>-->
-  <table class="table table-responsive-lg table-hover table-striped">
+  <table class="table table-responsive-lg table-hover">
     <thead>
-    <tr>
-      <th>Group ID</th>
-      <th>Group Name</th>
-      <th>Is Active</th>
-      <th>Project</th>
+    <tr style="cursor: default">
+      <th class="fw-light h6">Group ID</th>
+      <th class="fw-light h6">Group Name</th>
+      <th class="fw-light h6">Is Active</th>
+      <th class="fw-light h6">Project</th>
     </tr>
     </thead>
     <tbody>
     <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
-    <tr *ngFor="let group of groups">
-      <td (click)="setGroupAndMove(group)" >{{group.groupID}}</td>
+    <tr class="pointer" *ngFor="let group of groups"  (click)="setGroupAndMove(group)" >
+      <td>{{group.groupID}}</td>
       <td >{{group.groupName}}</td>
       <td *ngIf="group.isActive">Active</td>
       <td *ngIf="!group.isActive">Not Active</td>

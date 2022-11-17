@@ -56,10 +56,10 @@
         <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
           <div *ngSwitchCase="true"
                style="background-color: lightgreen; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
-            <input type="checkbox" (change)="acceptRequest(courseRequest)" checked/></div>
+            <input class="pointer" type="checkbox" (change)="acceptRequest(courseRequest)" checked/></div>
           <div *ngSwitchCase="false"
                style="background-color: #FFCCCB; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
-            <input type="checkbox" (change)="acceptRequest(courseRequest)"/></div>
+            <input class="pointer" type="checkbox" (change)="acceptRequest(courseRequest)"/></div>
         </td>
         <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
           <div *ngSwitchCase="true"
@@ -83,11 +83,11 @@
     <table class="mat-table-sticky table-hover" style="width: 100%;" mat-table [dataSource]="dataSourceCourses" multiTemplateDataRows>
       <ng-container matColumnDef="students">
         <th mat-header-cell *matHeaderCellDef></th>
-        <td class="smallCell" mat-cell *matCellDef>+</td>
+        <td class="smallCell pointer" mat-cell *matCellDef>+</td>
       </ng-container>
       <ng-container matColumnDef="courseName">
         <th mat-header-cell *matHeaderCellDef class="h6">Name</th>
-        <td mat-cell *matCellDef="let course" (click)="gotoCourse(course)">{{course.courseName}}</td>
+        <td class="pointer" mat-cell *matCellDef="let course" (click)="gotoCourse(course)">{{course.courseName}}</td>
       </ng-container>
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef class="h6">Description</th>
@@ -124,11 +124,11 @@
     <table class="mat-table-sticky table-hover" style="width: 100%;" mat-table [dataSource]="dataSourceProject" multiTemplateDataRows>
       <ng-container matColumnDef="groups">
         <th mat-header-cell *matHeaderCellDef></th>
-        <td class="smallCell" mat-cell *matCellDef>+</td>
+        <td class="smallCell pointer" mat-cell *matCellDef>+</td>
       </ng-container>
       <ng-container matColumnDef="projectName">
         <th mat-header-cell *matHeaderCellDef class="h6">Name</th>
-        <td mat-cell *matCellDef="let project" (click)="gotoProject(project)">{{project.projectName}}</td>
+        <td class="pointer" mat-cell *matCellDef="let project" (click)="gotoProject(project)">{{project.projectName}}</td>
       </ng-container>
       <ng-container matColumnDef="courseName">
         <th mat-header-cell *matHeaderCellDef class="h6">Course</th>
@@ -146,7 +146,7 @@
               <table class="mat-table-sticky table-hover" style="width: 100%" mat-table [dataSource]="project.groups">
                 <ng-container matColumnDef="groupName">
                   <th mat-header-cell *matHeaderCellDef>Group</th>
-                  <td mat-cell *matCellDef="let group" (click)="gotoGroup(group)">{{group.groupName}}</td>
+                  <td class="pointer" mat-cell *matCellDef="let group" (click)="gotoGroup(group)">{{group.groupName}}</td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="innerGroupDisplay"></tr>
                 <tr mat-row *matRowDef="let row; columns: innerGroupDisplay"></tr>

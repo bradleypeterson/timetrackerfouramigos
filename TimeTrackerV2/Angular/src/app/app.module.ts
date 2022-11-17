@@ -21,6 +21,7 @@ import {MatRippleModule} from "@angular/material/core";
 import {MatDialogModule} from "@angular/material/dialog";
 import { EditTimeDialogComponent } from './Modals/edit-time-dialog/edit-time-dialog.component';
 import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
 
 
 @NgModule({
@@ -37,21 +38,22 @@ import {MatInputModule} from "@angular/material/input";
 
   ],
   entryComponents: [EditTimeDialogComponent],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatTableModule,
-    MatRippleModule,
-    NgxChartsModule,
-    MatDialogModule,
-    MatInputModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatTableModule,
+        MatRippleModule,
+        NgxChartsModule,
+        MatDialogModule,
+        MatInputModule,
+        MatSelectModule
+    ],
   providers: [FormBuilder],
   bootstrap: [AppComponent]
 })
