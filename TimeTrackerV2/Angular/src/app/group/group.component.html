@@ -3,15 +3,17 @@
     <h1 class="mt-8 dashboard-titles">Group: {{group.groupName}}</h1>
     <div style="color: green; font-size: 3rem" [hidden]="isClocked == false">Clocked In</div>
   </div>
-  <div style="height: 30rem">
-    <ngx-charts-pie-chart
-      [legendTitle]="title"
-      [legend]="true"
-      [labels]="true"
-      [gradient]="true"
-      [explodeSlices]="true"
-      [results]="pieData"></ngx-charts-pie-chart>
-  </div>
+<!--  <div style="height: 30rem">-->
+<!--    <ngx-charts-pie-chart-->
+<!--      [legendTitle]="title"-->
+<!--      [legend]="true"-->
+<!--      [labels]="true"-->
+<!--      [gradient]="true"-->
+<!--      [explodeSlices]="true"-->
+<!--      [results]="pieData"></ngx-charts-pie-chart>-->
+<!--  </div>-->
+
+  <app-charts></app-charts>
 
   <div class="row mt-4">
     <!-- Clock in/Clock out  -->

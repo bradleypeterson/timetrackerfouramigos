@@ -22,6 +22,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import { EditTimeDialogComponent } from './Modals/edit-time-dialog/edit-time-dialog.component';
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
+import { ChartsComponent } from './group/charts/charts.component';
 
 
 @NgModule({
@@ -35,6 +36,7 @@ import {MatSelectModule} from "@angular/material/select";
     AdminModalComponent,
     InstructorComponent,
     EditTimeDialogComponent,
+    ChartsComponent,
 
   ],
   entryComponents: [EditTimeDialogComponent],

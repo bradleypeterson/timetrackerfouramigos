@@ -830,7 +830,9 @@ app.get('/getgroupusers/:groupID', async (req, res) => {
                        LEFT JOIN Groups G on GA.groupID = G.groupID
                        LEFT JOIN Users U on GA.userID = U.userID
                WHERE
-                   GA.groupID = ${req.params.groupID}`;
+                   GA.groupID = ${req.params.groupID}
+               ORDER BY 
+                   U.userID`;
     db.all(sql, [], (err, rows) => {
 
         if (err) {
@@ -849,7 +851,9 @@ app.post('/getusergrouptimecards', async (req, res) => {
                FROM
                    TimeCard
                WHERE
-                   userID = ? AND groupID = ?`;
+                   userID = ? AND groupID = ?
+               ORDER BY     
+                   userID`;
     let data = [];
     data[0] = req.body["userID"];
     data[1] = req.body["groupID"];
