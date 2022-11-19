@@ -23,6 +23,7 @@ import { EditTimeDialogComponent } from './Modals/edit-time-dialog/edit-time-dia
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import { ChartsComponent } from './group/charts/charts.component';
+import { ResetPassComponent } from './login/reset-pass/reset-pass.component';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import { ChartsComponent } from './group/charts/charts.component';
     InstructorComponent,
     EditTimeDialogComponent,
     ChartsComponent,
+    ResetPassComponent,
 
   ],
   entryComponents: [EditTimeDialogComponent],

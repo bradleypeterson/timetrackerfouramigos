@@ -48,9 +48,6 @@ export class GroupComponent implements OnInit, AfterViewInit {
   public isNegative: any;
   public isInstructor: boolean = false;
 
-  // public pieData: PieChartData[] = [];
-  // public title = "Hours Per Member"
-
   public membersDisplay = ["username", "firstName", "lastName"];
   public timeDisplay = ["timeIn", "timeOut", "hours", "description"];
   public members: IUser[] = [];
@@ -115,7 +112,6 @@ export class GroupComponent implements OnInit, AfterViewInit {
     this.httpService.getUser(payload).subscribe((_user: any) =>
     {
       this.currUser = _user;
-      console.log("user.type: " + _user.type);
       if(_user.type == "Instructor")
       {
         this.isInstructor = true;
@@ -175,7 +171,6 @@ export class GroupComponent implements OnInit, AfterViewInit {
       }
       this.loadTime(_timecard, user);
       this.charts.getTotalTimes(_timecard, user);
-      //this.getTotalTimes(_timecard, user);
 
     });
   }
@@ -261,11 +256,6 @@ export class GroupComponent implements OnInit, AfterViewInit {
   //Pops up a modal for the user to edit
   editTime(date: any): void
   {
-    console.log("timeIn: " + new Date(date.timeIn));
-    console.log("timeOut: " + date.timeOut);
-    console.log("parse timeIn: " + this.parseDate(date.timeIn));
-    console.log("parse timeOut: " + this.parseDate(date.timeOut));
-    //let dialog = this.dialog.open(EditTimeDialogComponent, {data: {timeIn: new Date(date.timeIn).toISOString().replace("Z", ""), timeOut: new Date(date.timeOut).toISOString().replace("Z", ""), description: date.description}});
     let dialog = this.dialog.open(EditTimeDialogComponent, {data: {timeIn: this.parseDate(date.timeIn), timeOut: this.parseDate(date.timeOut), description: date.description}});
     dialog.afterClosed().subscribe(result => {
       //Check if the dialog was closed or saved

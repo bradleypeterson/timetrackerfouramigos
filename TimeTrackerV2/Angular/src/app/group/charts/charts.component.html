@@ -1,0 +1,35 @@
+<div style="height: 30rem">
+  <ngx-charts-pie-chart
+    [legendTitle]="pieTitle"
+    [legend]="true"
+    [labels]="true"
+    [gradient]="true"
+    [explodeSlices]="true"
+    [results]="pieData"></ngx-charts-pie-chart>
+</div>
+
+<div style="height: 30rem">
+<!--  <ngx-charts-area-chart-->
+<!--    [legendTitle]="lineTitle"-->
+<!--    [legend]="true"-->
+<!--    [showXAxisLabel]="true"-->
+<!--    [showYAxisLabel]="true"-->
+<!--    [xAxis]="true"-->
+<!--    [yAxis]="true"-->
+<!--    [xAxisLabel]="xAxisLabel"-->
+<!--    [yAxisLabel]="yAxisLabel"-->
+<!--    [timeline]="true"-->
+<!--    [results]="lineData">-->
+<!--  </ngx-charts-area-chart>-->
+  <ngx-charts-bar-vertical-2d
+    [legendTitle]="lineTitle"
+    [legend]="true"
+    [showXAxisLabel]="true"
+    [showYAxisLabel]="true"
+    [xAxis]="true"
+    [yAxis]="true"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [results]="lineData">
+  </ngx-charts-bar-vertical-2d>
+</div>

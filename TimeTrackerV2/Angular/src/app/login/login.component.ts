@@ -1,21 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommsService } from '../comms.service';
 import { HttpService } from '../services/http.service';
 import {IUser} from "../interfaces/IUser";
+import {ResetPassComponent} from "./reset-pass/reset-pass.component";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(ResetPassComponent) resetComp: any;
 
   public errMsg = '';
   userName!: string;
   userTypeHolder?: IUser;
+  public display = false;
 
   constructor(private data: CommsService,
     private formBuilder: FormBuilder,
@@ -28,6 +32,11 @@ export class LoginComponent implements OnInit {
   {
     //Subscribes to the CommsService for username updates
     this.data.currentUserName.subscribe(userName => this.userName = userName);
+  }
+
+  ngAfterViewInit(): void
+  {
+    this.display = this.resetComp.display
   }
 
   checkoutForm = this.formBuilder.group({
@@ -80,6 +89,11 @@ export class LoginComponent implements OnInit {
         this.errMsg = error['error']['message'];
       }
     });
+  }
+
+  showReset()
+  {
+    this.display = (this.display) ? false : true;
   }
 
 }
