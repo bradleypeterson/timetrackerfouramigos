@@ -580,6 +580,17 @@ app.post('/login', async (req, res, next) => {
   });
 });
 
+//Sends a request to change password
+app.post("/requestPassword", async (req, res, next) => {
+
+    let sql = ""
+
+    let data = [];
+
+    // Can't use dictionaries for queries so order matters!
+    data[0] = req.body["username"];
+});
+
 app.post('/createGroup', async (req, res, next) => {
     function isEmpty(str) {
         return (!str || str.length === 0);
@@ -605,8 +616,6 @@ app.post('/createGroup', async (req, res, next) => {
         }
     });
 });
-
-app.get
 
 app.post('/createCourse', async (req, res, next) => {
   function isEmpty(str) {

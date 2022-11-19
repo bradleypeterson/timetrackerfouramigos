@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void
   {
-    this.display = this.resetComp.display
+
   }
 
   checkoutForm = this.formBuilder.group({
@@ -91,9 +91,16 @@ export class LoginComponent implements OnInit, AfterViewInit {
     });
   }
 
+  //Changes display to login or reset password
   showReset()
   {
     this.display = (this.display) ? false : true;
+  }
+
+  //Checks if the user has and active or accepted reset password request
+  checkReset()
+  {
+
   }
 
 }

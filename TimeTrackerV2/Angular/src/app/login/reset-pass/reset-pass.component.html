@@ -1,31 +1,23 @@
 <div id="resetPass" ng-cloak>
   <div class="row no-gutters">
     <div class="col"></div> <!-- Extra col div for some auto bootstrap centering -->
-    <div class="card mt-5 col-2">
+    <div class="card mt-5 col-4">
       <div class="card-header"><h1>Reset Password</h1></div>
       <div class="card-body">
+        <h2 [hidden]="!requestSent" [class]="sentClass">Request Sent</h2>
+        <div class="card-text m-1">
+          To change password you must request a password change and the system admin will accept your request.
+          After your request has been approved your password will be set to <span class="text-primary">weber123!</span> temporarily.
+          Once you login you can change your password.
+        </div>
         <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
-          <div>
-            <p style="color: red;">{{ errMsg }}</p>
+          <div class="input-group mt-1 mb-1">
+            <div class="input-group-prepend"><span class="input-group-text" style="width: 40px; border: none; border-bottom-left-radius: 0;"><i class="fa fa-user" aria-hidden="true"></i></span></div>
+            <input formControlName="usernameReset" id="usernameReset" type="text" class="form-control bg-light" style="border: none; border-bottom-right-radius: 0;" name="usernameReset" placeholder="Username">
           </div>
-          <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" style="width: 40px; border: none; border-bottom-left-radius: 0;"><i class="fa fa-lock" aria-hidden="true"></i></span></div>
-            <input formControlName="password" id="newpassword" type="text" class="form-control bg-light"
-                   style="border: none; border-bottom-right-radius: 0;" name="newpassword" placeholder="New Password">
-          </div>
-          <div class="input-group" style="margin-top: 1px;">
-            <div class="input-group-prepend"><span class="input-group-text" style="width:40px; border: none; border-top-left-radius: 0;"><i class="fa fa-lock" aria-hidden="true"></i></span></div>
-            <input formControlName="confirmPassword" id="confirmpassword" type="password" class="form-control bg-light"
-                   style="border: none; border-top-right-radius: 0;" name="confirmpassword" placeholder="Confirm Password">
-          </div>
-          <div (click)="changeDisplay()" class="link-primary pointer">Login</div>
-          <div class="row mt-2 pl-3 pr-3">
-            <button type="button" class="btn btn-info col mr-1" [routerLink]="['/register',]">Register</button>
-            <button type="submit" class="btn btn-primary col ml-1">Login</button>
-            <!--              Material example-->
-            <!--              <button mat-button color="warn">Click Me</button> Material Example-->
-          </div>
+          <button type="submit" class="btn btn-primary mt-1 mb-1">Request Change</button>
         </form>
+        <div (click)="changeDisplay()" class="link-primary pointer m-1">Back to Login</div>
       </div>
     </div>
     <div class="col"></div> <!-- Extra col div for some auto bootstrap centering -->
