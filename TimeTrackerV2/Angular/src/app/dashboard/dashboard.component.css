@@ -39,3 +39,7 @@
 .instructor-name {
   font-size: 1em;
 }
+
+.hover:hover {
+  background-color: #d2d2d2;
+}

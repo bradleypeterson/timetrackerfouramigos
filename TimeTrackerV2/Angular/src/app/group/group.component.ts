@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Router} from '@angular/router';
 import { User } from '../user.model';
@@ -11,6 +11,7 @@ import {ITimeCard} from "../interfaces/ITimeCard";
 import {MatTableDataSource} from "@angular/material/table";
 import { MatDialog} from "@angular/material/dialog";
 import {EditTimeDialogComponent} from "../Modals/edit-time-dialog/edit-time-dialog.component";
+import {ChartsComponent} from "./charts/charts.component";
 
 @Component({
   selector: 'app-group',
@@ -25,7 +26,10 @@ import {EditTimeDialogComponent} from "../Modals/edit-time-dialog/edit-time-dial
   ],
 })
 
-export class GroupComponent implements OnInit {
+export class GroupComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(ChartsComponent) charts: any;
+
   public pageTitle = 'TimeTrackerV2 | Group'
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
@@ -42,9 +46,7 @@ export class GroupComponent implements OnInit {
   public descriptionAuto: any;
   public isClocked: any;
   public isNegative: any;
-
-  public pieData: PieChartData[] = [];
-  public title = "Hours Per Member"
+  public isInstructor: boolean = false;
 
   public membersDisplay = ["username", "firstName", "lastName"];
   public timeDisplay = ["timeIn", "timeOut", "hours", "description"];
@@ -75,8 +77,8 @@ export class GroupComponent implements OnInit {
     this.isClocked = false;
     this.isNegative = true;
     this.item = localStorage.getItem('currentGroup');
-    console.log("The current group is: " + this.item);
-    if (this.item) {
+    if (this.item)
+    {
       this.item = JSON.parse(this.item);
       this.groupName = this.item[0];
     }
@@ -94,10 +96,12 @@ export class GroupComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void
+  ngAfterViewInit(): void
   {
     this.getUser();
   }
+
+  ngOnInit(): void {}
 
   //Get all users info based on local storage username
   getUser(): void
@@ -108,6 +112,14 @@ export class GroupComponent implements OnInit {
     this.httpService.getUser(payload).subscribe((_user: any) =>
     {
       this.currUser = _user;
+      if(_user.type == "Instructor")
+      {
+        this.isInstructor = true;
+      }
+      else
+      {
+        this.isInstructor = false;
+      }
       this.getGroupUsers();
     });
   }
@@ -140,7 +152,9 @@ export class GroupComponent implements OnInit {
       groupID: this.group.groupID,
       userID: user.userID
     }
-    this.pieData = [];
+    // this.pieData = [];
+    this.charts.pieData = [];
+    this.charts.lineData = [];
     this.timeCardData = [];
     this.httpService.getTimeCards(payload).subscribe((_timecard: any) =>
     {
@@ -156,7 +170,7 @@ export class GroupComponent implements OnInit {
         });
       }
       this.loadTime(_timecard, user);
-      this.getTotalTimes(_timecard, user);
+      this.charts.getTotalTimes(_timecard, user);
 
     });
   }
@@ -204,21 +218,6 @@ export class GroupComponent implements OnInit {
     return tempDate
   }
 
-  //Gets the total time for each user and sets the pie chart
-  getTotalTimes(timeCards: ITimeCard[], user: IUser): void
-  {
-    let totalTime = 0;
-    let name = user.firstName + " " + user.lastName;
-    timeCards.forEach(timeCard =>
-    {
-      let newIn = new Date(parseInt(timeCard.timeIn as string));
-      let newOut = new Date(parseInt(timeCard.timeOut as string));
-      let hours = (newOut.getTime() - newIn.getTime())/ 3600000;
-      totalTime += hours;
-    });
-    this.pieData = [...this.pieData, {name: name, value: totalTime}];
-  }
-
   //Leave the current group
   leaveGroup(): void
   {
@@ -257,8 +256,7 @@ export class GroupComponent implements OnInit {
   //Pops up a modal for the user to edit
   editTime(date: any): void
   {
-    let dialog = this.dialog.open(EditTimeDialogComponent, {data: {timeIn: new Date(date.timeIn).toISOString().slice(0, -1), timeOut: new Date(date.timeOut).toISOString().slice(0, -1), description: date.description}});
-
+    let dialog = this.dialog.open(EditTimeDialogComponent, {data: {timeIn: this.parseDate(date.timeIn), timeOut: this.parseDate(date.timeOut), description: date.description}});
     dialog.afterClosed().subscribe(result => {
       //Check if the dialog was closed or saved
       if(result != "false" && result != undefined)
@@ -274,9 +272,28 @@ export class GroupComponent implements OnInit {
         });
 
       }
-
-
     });
+  }
+
+  //Parses a string so the input can accept the date
+  parseDate(arg: string): string
+  {
+    let date = new Date(arg);
+    return this.pad(date.getFullYear()) +
+      '-' + this.pad(date.getMonth() + 1) +
+      '-' + this.pad(date.getDate()) +
+      'T' + this.pad(date.getHours()) +
+      ':' + this.pad(date.getMinutes()) +
+      ':' + this.pad(date.getSeconds()) +
+      '.' + (date.getMilliseconds() / 1000).toFixed(3).slice(2, 5);
+  }
+  //Helper function to parseDate that adds extra 0's if needed
+  pad(number: number): any
+  {
+    if (number < 10) {
+      return '0' + number;
+    }
+    return number;
   }
 
   //Adds a new clock time to the database
@@ -416,12 +433,6 @@ export class GroupComponent implements OnInit {
       }
     }
   }
-}
-
-export interface PieChartData
-{
-  name?: string;
-  value?: number;
 }
 export class IDateTimeCard
 {

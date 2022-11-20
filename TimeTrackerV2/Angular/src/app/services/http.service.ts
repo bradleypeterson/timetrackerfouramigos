@@ -224,10 +224,22 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + `resetPassword/${user.userID}`, user, this.httpOptions);
   }
 
+  //Request a password reset
+  requestPassword(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + `requestPassword`, payload, this.httpOptions);
+  }
+
   //Updates the given timecard
   updateTimeCard(payload: any): Observable<any>
   {
     return this.http.post<any>(this.apiUrl + `updatetimecard`, payload, this.httpOptions);
+  }
+
+  //Leaves course based on userID and courseID
+  leaveCourse(payload: any): Observable<any>
+  {
+    return this.http.post<any>(this.apiUrl + 'leavecourse', payload, this.httpOptions);
   }
 
 

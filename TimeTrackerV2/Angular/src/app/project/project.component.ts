@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { HttpService } from '../services/http.service';
 import { ICourse } from '../interfaces/ICourse';
@@ -23,10 +23,12 @@ export class ProjectComponent implements OnInit {
   public projectDescription;
   public userTypeHolder: IUser;
   public groups: IGroup[] = [];
+  public allProjects: IProject[] = [];
   public joinedGroups: IGroupAssignment[] = [];
   public isJoinable: boolean = true;
+  public selectedOption: any
 
-  private project: IProject = history.state.data; // holds the current project data
+  public project: IProject = history.state.data; // holds the current project data
 
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
 
@@ -40,7 +42,7 @@ export class ProjectComponent implements OnInit {
     private http: HttpClient,
     private formBuilder: FormBuilder,
     private router: Router,
-    private httpService: HttpService,
+    private httpService: HttpService
   )
   {
     this.item = localStorage.getItem('currentProject');
@@ -73,7 +75,10 @@ export class ProjectComponent implements OnInit {
 
   ngOnInit(): void
   {
+    this.projectName = this.project.projectName
+    this.selectedOption = this.project.projectName
     this.getUser();
+    this.getProjects();
   }
 
   getUser()
@@ -120,6 +125,13 @@ export class ProjectComponent implements OnInit {
           }
         });
       });
+    });
+  }
+
+  getProjects(): void
+  {
+    this.httpService.getProjectsByCourseID(this.project.courseID as number).subscribe(_projects => {
+      this.allProjects = _projects;
     });
   }
 
@@ -217,6 +229,16 @@ export class ProjectComponent implements OnInit {
     this.router.navigate(['./group'], {state:{data: group}});
 
   }
-
+  //Moves the page to the project page and passes it the current project
+  setProjectAndMove()
+  {
+    console.log("Set project: " + this.project.projectName)
+    this.getUser();
+    this.getProjects();
+  }
+  compare(one: any, two: any): boolean
+  {
+    return one.projectID === two.projectID;
+  }
 
 }

@@ -21,6 +21,9 @@ import {MatRippleModule} from "@angular/material/core";
 import {MatDialogModule} from "@angular/material/dialog";
 import { EditTimeDialogComponent } from './Modals/edit-time-dialog/edit-time-dialog.component';
 import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import { ChartsComponent } from './group/charts/charts.component';
+import { ResetPassComponent } from './login/reset-pass/reset-pass.component';
 
 
 @NgModule({
@@ -34,24 +37,27 @@ import {MatInputModule} from "@angular/material/input";
     AdminModalComponent,
     InstructorComponent,
     EditTimeDialogComponent,
+    ChartsComponent,
+    ResetPassComponent,
 
   ],
   entryComponents: [EditTimeDialogComponent],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatTableModule,
-    MatRippleModule,
-    NgxChartsModule,
-    MatDialogModule,
-    MatInputModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatTableModule,
+        MatRippleModule,
+        NgxChartsModule,
+        MatDialogModule,
+        MatInputModule,
+        MatSelectModule
+    ],
   providers: [FormBuilder],
   bootstrap: [AppComponent]
 })
