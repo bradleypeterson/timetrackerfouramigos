@@ -145,6 +145,13 @@ export class AdminRequestService {
     } else {
 
       this.filteredRequests = this.requests.filter((request: IAdminRequest) => {
+
+        if (type === 'student') {
+          if (request.type === 'Basic' || request.type === 'Student') {
+              return true;
+          }
+        }
+
         return request.type?.toLowerCase() == type;
       })
 

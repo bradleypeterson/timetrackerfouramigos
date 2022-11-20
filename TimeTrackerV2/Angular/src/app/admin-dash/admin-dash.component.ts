@@ -42,8 +42,7 @@ export class AdminDashComponent implements OnInit {
     private formBuilder: FormBuilder,
     public modalService: AdminModalService,
     public requestService: AdminRequestService,
-  ) {
-  }
+  ) {}
 
   searchForm = this.formBuilder.group({
     searchTerm: '',

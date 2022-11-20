@@ -13,13 +13,13 @@
         </div>
         <div class="col pl-0">
           <!-- ng-model="viewUser.username" ng-model-options="{debounce: 750}" ng-change="saveUser()" -->
-          <input class="mb-1" type="text" name="username" placeholder="{{user['username']}}" />
+          <input class="mb-1" type="text" name="username" id="username" placeholder="{{user['username']}}" />
           <br />
           <!-- ng-model="viewUser.firstName" ng-model-options="{debounce: 750}" ng-change="saveUser()" -->
-          <input class="mb-1" type="text" name="firstName" placeholder="{{user['firstName']}}"/>
+          <input class="mb-1" type="text" name="firstName" id="firstName" placeholder="{{user['firstName']}}"/>
           <br />
           <!-- ng-model="viewUser.lastName" ng-model-options="{debounce: 750}" ng-change="saveUser()" -->
-          <input class="mb-1" type="text" name="lastName" placeholder="{{user['lastName']}}"/>
+          <input class="mb-1" type="text" name="lastName" id="lastName" placeholder="{{user['lastName']}}"/>
         </div>
         <div class="mx-auto">
           <div class="pretty p-svg p-curve mr-4">
@@ -44,26 +44,35 @@
     </div>
     <div class="col-12 col-md-6 mt-4">
       <div class="row">
-        <div class="col-5 text-right pr-1 pl-0">
-          <label class="mb-2 mt-1" for="currentPassword">Current Password</label>
-          <br />
-          <label class="mb-2 mt-1" for="newPassword">New Password</label>
-          <br />
-          <label class="mb-2 mt-1" for="repeatPassword">Repeat Password</label>
-        </div>
-        <div class="col pl-0">
-          <!-- ng-model="viewUser.currentPassword" ng-disabled="$parent.user.type === 'A'" -->
-          <input class="mb-1" type="password" name="currentPassword" />
-          <br />
-          <!-- ng-model="viewUser.newPassword" -->
-          <input class="mb-1" type="password" name="newPassword" />
-          <br />
-          <!-- ng-model="viewUser.repeatPassword" -->
-          <input class="mb-1" type="password" name="repeatPassword" />
-        </div>
+
+          <div class="col-5 text-right pr-1 pl-0">
+                <label class="mb-2 mt-1" for="currentPassword">Current Password</label>
+                <br />
+                <label class="mb-2 mt-1" for="newPassword">New Password</label>
+                <br />
+                <label class="mb-2 mt-1" for="repeatPassword">Repeat Password</label>
+          </div>
+
+          <div class="col pl-0">
+
+            <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
+
+              <input class="mb-1" type="password" name="currentPassword" id="currentPassword" formControlName="changePasswordTerm" required/>
+              <br />
+              <!-- ng-model="viewUser.newPassword" -->
+              <input class="mb-1" type="password" name="newPassword" id="newPassword" formControlName="changePasswordTerm" required/>
+              <br />
+              <!-- ng-model="viewUser.repeatPassword" -->
+              <input class="mb-1" type="password" name="repeatPassword" id="repeatPassword" formControlName="changePasswordTerm" required/>
+              <br />
+              <button type="submit" class="btn btn-primary col mr-1" style="width: fit-content; margin-top: 5px;">Change Password</button>
+            </form>
+
+           </div>
+
         <div class="row mt-2 mx-auto">
           <!-- ng-click="changePassword()" -->
-          <button type="button" class="btn btn-primary col mr-1">Change Password</button>
+
         </div>
       </div>
     </div>

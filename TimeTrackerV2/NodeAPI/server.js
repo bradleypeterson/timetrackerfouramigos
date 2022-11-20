@@ -490,7 +490,6 @@ app.get(`/getAdminRequests`, async (req, res) => {
 //Updates the admin request database with any requests that have been changed by an admin
 app.post(`/updateAdminRequests`, async (req, res) => {
 
-    let errors = []
 
     //Processes the account changes or password resets from the admin requests
     //Adds an error to the error array if there are any failures and returns early.
@@ -499,41 +498,50 @@ app.post(`/updateAdminRequests`, async (req, res) => {
         if (request.status === 'approved') {
 
             if (request.requestType === 'password') {
-
-                if (!resetPassword(request.userID).passed){
-                    errors.push(1);
-                }
+                 resetPassword(request.userID);
             }
 
             if (request.requestType === 'account'){
-
-                if (!updateAccountType(request.userID, request.type).passed){
-                    errors.push(1);
-                }
-
+                updateAccountType(request.userID, request.type);
             }
-
         }
     });
 
-    if (errors.length > 0){
-        return res.status(500).json({error: "Failed To Process one or more requests"});
-    }
+    let db_error = false;
+    let  error_msg = "";
 
     //Updates the admin request table
     req.body.forEach((request) =>{
-        console.log(request);
 
-        let sql = `UPDATE AdminRequests SET status = '${request.status}', isActive = ${request.isActive}, reviewerID = ${request.reviewerID}
-                     WHERE requestID = ${request.requestID};`
+        if (!db_error) {
 
-        db.run(sql, (err) => {
-            if(err){
-                return res.status(500).json({error: err.message});
-            } else {
-                return res.status(200).json({message: "Data updated successfully"});
+
+            let sql = `UPDATE AdminRequests
+                       SET status     = '${request.status}',
+                           isActive   = ${request.isActive},
+                           reviewerID = ${request.reviewerID}
+                       WHERE requestID = ${request.requestID};`;
+
+            db.run(sql, (err) => {
+                if (err) {
+                    //
+                    db_error = true;
+                    error_msg = err.message;
+                } else {
+
+                    if (request === req.body.at(-1)) {
+
+                        return res.status(200).json({message: "Data updated successfully"});
+
+                    }
+                }
+            });
+
+            if (db_error) {
+                return res.status(500).json({error: error_msg});
             }
-        });
+
+        }
 
      });
 
@@ -1072,16 +1080,14 @@ const resetPassword = ((userID) => {
 
     sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${userID}`;
 
-    console.log("In Reset Password");
-    console.log("Data: " + data[0] + ", " + data[1] + ", userID: " + userID);
-
     db.run(sql, data,(err) => {
         if(err){
             return {passed: false, msg: err.message}
         } else {
-            return {passed: true, msg: "Password Reset!"}
+            return  {passed: true, msg: "Password Reset!"}
         }
     });
+
 
 });
 
@@ -1102,7 +1108,7 @@ const updateAccountType = ((userID, accountType) => {
 
     db.run(sql, (err) => {
         if(err){
-            return {passed: false, msg: err.message}
+            return  {passed: false, msg: err.message}
         } else {
             return {passed: true, msg: "Account Updated!"}
         }
