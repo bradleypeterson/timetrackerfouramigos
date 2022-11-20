@@ -52,20 +52,22 @@
       <div class="row">
         <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
         <div class="col-5 text-right pr-1 pl-0">
-          
+          <div>
+            <p style="color: red;">{{ errMsg }}</p>
+          </div>
           <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">   
-            <label class="mb-2 mt-2" for="currPassword">Current Password </label>
-            <input class="mb-2" ng-model="password" formControlName="currentpassword" type="password" id="currentpass" name="currentPassword" />
+            <label class="mb-2 mt-2" for="currentpassword">Current Password </label>
+            <input class="mb-2" ng-model="password" formControlName="currentpassword" type="password" id="currentpassword" name="currentpassword" />
           </div>
 
           <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">   
-            <label class="mb-2 mt-2" for="newPassword">New Password </label>
-            <input class="mb-2" ng-model="password" formControlName="newpassword" type="password" id="newpass" name="newPassword" />
+            <label class="mb-2 mt-2" for="newpassword">New Password </label>
+            <input class="mb-2" ng-model="password" formControlName="newpassword" type="password" id="newpassword" name="newpassword" />
           </div>
 
           <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">   
-            <label class="mb-2 mt-2" for="repeatPassword">Repeat Password </label>
-            <input class="mb-2" ng-model="password" formControlName="repeatpassword" type="password" id="repass" name="repeatPassword" />
+            <label class="mb-2 mt-2" for="repeatpassword">Repeat Password </label>
+            <input class="mb-2" ng-model="password" formControlName="repeatpassword" type="password" id="repeatpassword" name="repeatpassword" />
           </div>
 
          

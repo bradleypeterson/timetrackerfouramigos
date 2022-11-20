@@ -122,9 +122,8 @@ export class HttpService {
   }
 
   // changes password
-  //Submits user data to register the user on the server.
   changePass(payload: any): Observable<any> {
-
+    console.log(payload);
     return this.http.post<any>(this.apiUrl + 'changepass', payload, this.httpOptions);
 
   }

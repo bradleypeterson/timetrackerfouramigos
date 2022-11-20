@@ -13,6 +13,8 @@ import { HttpService } from '../services/http.service';
 })
 export class UserComponent implements OnInit {
 
+  public errMsg = '';
+
   user: IUser = JSON.parse(localStorage.getItem('currentUser') as string);
 
   constructor(
@@ -28,7 +30,8 @@ export class UserComponent implements OnInit {
 
   passwordForm = this.formBuilder.group({
     currentpassword: '',
-    repeatPassword: '',
+    newpassword: '',
+    repeatpassword: '',
   });
 
   public pageTitle = 'TimeTrackerV2 | User'
@@ -56,16 +59,26 @@ export class UserComponent implements OnInit {
   }
 
   onSubmit() {
-    /*let currPass = ((document.getElementById("currpass") as HTMLInputElement).value);
-    let newPass = ((document.getElementById("newpass") as HTMLInputElement).value);
-    let repPass = ((document.getElementById("repass") as HTMLInputElement).value);
-    */
 
     let payload = {
       
-      password: this.passwordForm.value['password'],
-      repeatPassword: this.passwordForm.value['repeatPassword'],
+      currentpassword: this.passwordForm.value['currentpassword'],
+      newpassword: this.passwordForm.value['newpassword'],
+      repeatpassword: this.passwordForm.value['repeatpassword'],
+      userID: this.user.userID,
     }
+    console.log(payload);
+
+    this.httpService.changePass(payload).subscribe({
+      next: data => {
+        this.errMsg = "";
+        //this.router.navigate(['./']);
+        location.reload();
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
 
 
   }
