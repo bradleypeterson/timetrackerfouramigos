@@ -17,6 +17,8 @@ export class UserComponent implements OnInit {
 
   user: IUser = JSON.parse(localStorage.getItem('currentUser') as string);
 
+  public isActive = this.user.isActive;
+
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -67,13 +69,12 @@ export class UserComponent implements OnInit {
       repeatpassword: this.passwordForm.value['repeatpassword'],
       userID: this.user.userID,
     }
-    console.log(payload);
 
     this.httpService.changePass(payload).subscribe({
       next: data => {
         this.errMsg = "";
-        //this.router.navigate(['./']);
-        location.reload();
+        //location.reload();
+        this.passwordForm.reset(); //Clears the form data after submitting the data.
       },
       error: error => {
         this.errMsg = error['error']['message'];
@@ -82,5 +83,31 @@ export class UserComponent implements OnInit {
 
 
   }
+
+
+  changeActive() {
+    let payload = {
+      activeStat: !this.isActive,
+      userID: this.user.userID,
+    }
+
+    console.log(payload);
+
+    this.httpService.changeActive(payload).subscribe({
+      next: data => {
+        this.errMsg = "";
+        //location.reload();
+        this.isActive = !this.isActive;
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
+
+
+  }
+
+
+
 
 }

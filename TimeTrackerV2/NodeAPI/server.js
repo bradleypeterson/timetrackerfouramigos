@@ -540,6 +540,7 @@ app.post('/changepass', async (req, res, next) => {
     // get the current password from database
     let sql1 = `SELECT * FROM Users WHERE userID = ?`;
 
+    // make sure the current password is correct
     db.get(sql1, [req.body["userID"]], (err, rows) => {
         if (err) {
             console.log(rows);
@@ -552,10 +553,9 @@ app.post('/changepass', async (req, res, next) => {
             let hash = crypto.pbkdf2Sync(req.body["currentpassword"], salt,  
             1000, 64, `sha512`).toString(`hex`);
 
-            if(rows['password'] === hash) {
-                //return res.status(200).json({user: rows});
-            } else {
+            if(rows['password'] != hash) {
                 return res.status(400).json({message: 'Current password is incorrect.'});
+                //return res.status(200).json({user: rows});
             }
         } 
         else {
@@ -579,6 +579,7 @@ app.post('/changepass', async (req, res, next) => {
 
     console.log(data);
 
+    // set the new password
     db.run(`UPDATE Users SET password = ?, salt = ? WHERE userID = ?`, data, function(err, rows)
     {
         if (err)
@@ -587,16 +588,50 @@ app.post('/changepass', async (req, res, next) => {
         }
         else
         {
-            return res.status(200).json({message: 'password updated'});
+            return res.status(200).json({message: "Password updated"});
         }
     });
 
     
 
+});
+
+
+// change active status
+app.post('/changeactive', async (req, res, next) => {
+
+    /*function isEmpty(str) {
+        return (!str || str.length === 0 );
+    }
+    
+    if(
+        isEmpty(req.body["activeStat"]) ||
+        isEmpty(req.body["userID"])) {
+        return res.status(400).json({message: 'Missing one or more required arguments.'});
+    }*/
+
+    let data = [];
+    data[0] = req.body['activeStat'];
+    data[1] = req.body["userID"];
+
+    // change the user active status
+    db.run(`UPDATE Users SET isActive = ? WHERE userID = ?`, data, function(err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        else
+        {
+            return res.status(200).json({message: "User active status is changed"});
+        }
+    });
 
 
 
 });
+
+
 
 app.post('/login', async (req, res, next) => {
   function isEmpty(str) {
