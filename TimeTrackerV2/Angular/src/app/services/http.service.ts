@@ -239,4 +239,8 @@ export class HttpService {
     return this.http.post<IAdminRequest[]>(this.apiUrl + 'updateAdminRequests', requests, this.httpOptions);
   }
 
+  updatePassword(payload: any): Observable<any>{
+    return this.http.post<any>(this.apiUrl + `updatePassword`, payload, this.httpOptions);
+  }
+
 }

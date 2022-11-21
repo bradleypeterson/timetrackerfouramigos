@@ -41,15 +41,6 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', (req, res) => {
-
-    console.log("Session ID");
-    console.log(req.sessionID + "\n");
-
-
-    //console.log(req.session);
-
-    console.log(req.sessionStore.sessions);
-
   return res.send('Hello World');
 });
 
@@ -454,7 +445,7 @@ app.post('/deleteuserbyid/:userid', async (req, res) => {
 //Resets the passed in users password to a default value
 app.post('/resetpassword/:userid', async (req, res) => {
 
-    let resetStatus = resetPassword(req.params.userid);
+    let resetStatus = resetPassword(req.params.userid, null);
 
     if (!resetStatus.passed) {
         return res.status(500).json({error: resetStatus.msg});
@@ -544,6 +535,37 @@ app.post(`/updateAdminRequests`, async (req, res) => {
         }
 
      });
+
+});
+
+app.post(`/updatePassword`, async (req, res) => {
+
+    let changePassword = req.body.newPass;
+    let userID = req.body.user;
+
+    console.log(changePassword);
+    console.log(userID);
+
+    let salt = crypto.randomBytes(16).toString('hex');
+
+    let hash = crypto.pbkdf2Sync(changePassword, salt,
+        1000, 64, `sha512`).toString(`hex`);
+
+    let data = []
+
+    data.push(hash);
+    data.push(salt);
+
+    sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${userID}`;
+
+        db.run(sql, data,(err) => {
+            if(err){
+                return res.status(500).json({error: error_msg});
+            } else {
+                return res.status(200).json({message: "Password Reset!"});
+
+            }
+        });
 
 });
 
@@ -670,7 +692,6 @@ app.post('/createGroup', async (req, res, next) => {
     });
 });
 
-app.get
 
 app.post('/createCourse', async (req, res, next) => {
   function isEmpty(str) {
@@ -1064,13 +1085,19 @@ app.post('/updatetimecard', async (req, res, next) => {
 });
 
 //Resets the users password to a default password;
-const resetPassword = ((userID) => {
+const resetPassword = ((userID, newPass) => {
 
-    let defaultPassword = 'wildcat123';
+    let changePassword = '';
+
+    if (newPass != null){
+        changePassword = newPass;
+    } else {
+        changePassword = 'wildcat123';
+    }
 
     let salt = crypto.randomBytes(16).toString('hex');
 
-    let hash = crypto.pbkdf2Sync(defaultPassword, salt,
+    let hash = crypto.pbkdf2Sync(changePassword, salt,
         1000, 64, `sha512`).toString(`hex`);
 
     let data = []

@@ -46,8 +46,6 @@
       <div class="row">
 
           <div class="col-5 text-right pr-1 pl-0">
-                <label class="mb-2 mt-1" for="currentPassword">Current Password</label>
-                <br />
                 <label class="mb-2 mt-1" for="newPassword">New Password</label>
                 <br />
                 <label class="mb-2 mt-1" for="repeatPassword">Repeat Password</label>
@@ -57,23 +55,17 @@
 
             <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
 
-              <input class="mb-1" type="password" name="currentPassword" id="currentPassword" formControlName="changePasswordTerm" required/>
+              <input class="mb-1" type="password" name="newPassword" id="newPassword" formControlName="newPassword" required/>
               <br />
-              <!-- ng-model="viewUser.newPassword" -->
-              <input class="mb-1" type="password" name="newPassword" id="newPassword" formControlName="changePasswordTerm" required/>
+
+              <input class="mb-1" type="password" name="repeatPassword" id="repeatPassword" formControlName="repeatPassword" required/>
               <br />
-              <!-- ng-model="viewUser.repeatPassword" -->
-              <input class="mb-1" type="password" name="repeatPassword" id="repeatPassword" formControlName="changePasswordTerm" required/>
-              <br />
+
               <button type="submit" class="btn btn-primary col mr-1" style="width: fit-content; margin-top: 5px;">Change Password</button>
             </form>
 
            </div>
 
-        <div class="row mt-2 mx-auto">
-          <!-- ng-click="changePassword()" -->
-
-        </div>
       </div>
     </div>
   </div>
