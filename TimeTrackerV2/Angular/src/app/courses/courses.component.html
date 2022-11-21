@@ -1,25 +1,13 @@
 <div id="courses" class="position-relative container" ng-cloak>
   <div class="row">
     <h1 class="mt-8 dashboard-titles">Courses</h1>
-    <div class="ml-auto mr-0 mt-4 mb-2">
-      <!-- ng-model="search" -->
-      <input class="mr-2" type="text" name="search" placeholder="Search..." style="width: 130px;" />
-      <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" -->
-      <div class="pretty p-switch p-slim mr-1">
-        <!-- ng-model="config.showInactiveCourses" -->
-        <input type="checkbox" />
-        <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" -->
-        <div class="float-left mr-2 mt-2 state">
-          <label>Show Inactive</label>
-        </div>
-      </div>
-      <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" ng-click="createCourse()" -->
-      <!-- (click)="createCourse()" -->
-      <button (click)="revealForm()" [hidden]="isInstructor == false">
+    <div class="ml-auto mr-0 mt-4 mb-2" [hidden]="isInstructor == false">
+      <h2 class="mr-2" style="display: inline" >Create Course</h2>
+      <button (click)="revealForm()">
         <div class="fa fa-plus mr-2 big-button align-bottom" title="Create a new course."></div>
       </button>
-
     </div>
+<!--    <input class="mr-2" type="text" name="search" placeholder="Search..." style="width: 130px;" />-->
     <div [hidden]="bvis == false">
 
      <div class="card-body">
@@ -49,9 +37,9 @@
   <h2 class="mt-3 float-left">All Courses</h2>
   <table class="table table-responsive-lg table-hover">
     <thead>
-      <tr>
-        <th>Course Name</th>
-        <th>Instructor</th>
+      <tr style="cursor: default">
+        <th class="fw-light h6">Course Name</th>
+        <th class="fw-light h6">Instructor</th>
         <th></th>
       </tr>
     </thead>
@@ -61,20 +49,20 @@
         <td (click)="setCourseAndMove(course)">{{course.courseName}}</td>
         <td>{{course.firstName}} {{course.lastName}}</td>
           <td [hidden]="isInstructor == true">
-            <button [disabled]="!course.display" id="joinbtn" (click)="joinCourse(course)" [hidden]="!course.display" class="btn btn-primary mr-1">Join Course</button>
-            <button [disabled]="!course.pending" id="pendingbtn" [hidden]="!course.pending" class="btn btn-warning mr-1">pending</button>
-            <button [disabled]="!course.leave" id="leavebtn" [hidden]="!course.leave" class="btn btn-danger mr-1">Leave Course</button>
+            <button [disabled]="!course.display" id="joinbtn" (click)="joinCourse(course, $event)" [hidden]="!course.display" class="btn btn-primary mr-1">Join Course</button>
+            <button [disabled]="!course.pending" id="pendingbtn" [hidden]="!course.pending" class="btn btn-warning mr-1">Pending</button>
+            <button [disabled]="!course.leave" id="leavebtn" (click)="leaveCourse(course, $event)" [hidden]="!course.leave" class="btn btn-danger mr-1">Leave Course</button>
         </td>
 
     </tbody>
   </table>
 
   <div [hidden]="isInstructor == true">
-    <h4 class="mt-3 float-left">Your Courses</h4>
+    <h2 class="mt-3 float-left">Your Courses</h2>
     <table class="table table-hover">
       <thead>
-      <tr>
-        <th>Course Name</th>
+      <tr style="cursor: default">
+        <th class="fw-light h6">Course Name</th>
         <th></th>
       </tr>
       </thead>

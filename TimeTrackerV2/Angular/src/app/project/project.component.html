@@ -1,83 +1,72 @@
 <div id="project" class="container" ng-cloak>
   <div class="row position-relative">
     <!-- ng-model-options="{debounce: 750}" ng-change="saveProject()" ng-model="project.projectName" ng-readonly="$parent.user.type !== 'A' && $parent.user.type !== 'I'" -->
-    <h1 class="mt-8 dashboard-titles"><input class="input-header" type="text" name="projectName" [(ngModel)]="projectName"/></h1>
-    <div></div>
-    <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" -->
-    <div class="mt-3 pretty p-switch p-slim col-sm-2 col-12 header-checkbox">
-      <!--  ng-model="project.isActive" ng-change="saveProject()" -->
-      <input type="checkbox"/>
-      <div class="mt-2 state float-right">
-        <label>Active</label>
-      </div>
-    </div>
+    <h1 class="mt-8 dashboard-titles">{{project.projectName}}</h1>
+    <mat-form-field appearance="fill">
+      <mat-label>Project</mat-label>
+      <mat-select [(value)]="project" [compareWith]="compare" (selectionChange)="setProjectAndMove()">
+        <mat-option *ngFor="let p of allProjects" [value]="p">
+          {{p.projectName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
-
-
-  <div class="row mt-4">
-<!--    <div class="col-sm-6 col-md-5 col-lg-4 col-12">-->
-<!--      <canvas id="projectHours" width="400" height="400"></canvas>-->
-<!--      <img class="noDataFound" id="noProjectData" src="noDataFound-310x310.png" alt="No Data Entered" width="400" height="400">-->
-<!--    </div>-->
-
-
+  <div class="row">
     <div class="col-sm col-12">
-      <div class="position-relative">
-        <h2 class="mt-3 float-left">Groups</h2>
-        <!-- ng-click="createGroup()" -->
-
-
-        <button (click)="revealForm()" [hidden]="isInstructor == false">
-          <i class="fa fa-plus mt-2 mr-2 my-auto small-button" title="Create a new group."></i>
-        </button>
-
+      <div class="row" [hidden]="isInstructor == false">
+        <div class="ml-auto mr-0 mt-4 mb-2">
+          <h2 class="mr-2" style="display: inline">Create Group</h2>
+          <button (click)="revealForm()" [hidden]="isInstructor == false">
+            <div class="fa fa-plus mr-2 big-button align-bottom" title="Create a new group."></div>
+          </button>
+        </div>
+<!--        Create Group Form-->
         <div [hidden]="bvis == false">
 
-        <div class="card-body">
-          <form [formGroup]="groupForm" (ngSubmit)="createGroup()">
-            <div>
-              <p style="color: red;">{{ errMsg }}</p>
-            </div>
-            <div class="input-group">
-              <input id="groupName" formControlName="groupName" type="text" class="form-control bg-light" style="border: none; border-bottom-right-radius: 0;" name="groupName" placeholder="Group Name" ng-model="groupName">
-            </div>
-            <div class="row mt-2 pl-3 pr-3">
+          <div class="card-body">
+            <form [formGroup]="groupForm" (ngSubmit)="createGroup()">
+              <div>
+                <p style="color: red;">{{ errMsg }}</p>
+              </div>
+              <div class="input-group">
+                <input id="groupName" formControlName="groupName" type="text" class="form-control bg-light"
+                       style="border: none; border-bottom-right-radius: 0;" name="groupName" placeholder="Group Name"
+                       ng-model="groupName">
+              </div>
+              <div class="row mt-2 pl-3 pr-3">
 
-              <button (click)="hideForm()" type="button" class="btn btn-danger col mr-1" >Cancel</button>
+                <button (click)="hideForm()" type="button" class="btn btn-danger col mr-1">Cancel</button>
 
-              <button type="submit" class="btn btn-primary col ml-1">Create Group</button>
-            </div>
+                <button type="submit" class="btn btn-primary col ml-1">Create Group</button>
+              </div>
 
-          </form>
-        </div>
-        </div>
-
-          <!-- ng-if="$parent.user.type === 'A' || $parent.user.type === 'I'" -->
-          <div class="float-right mt-4 mr-5 pretty p-switch p-slim top-right-checkbox">
-            <!-- ng-model="config.showInactiveGroups" ng-change="updateChart()" -->
-            <input type="checkbox" />
-            <div class="float-left mr-3 mt-2 state">
-              <label>Show Inactive</label>
-            </div>
+            </form>
           </div>
+        </div>
       </div>
-
-
     </div>
-      <table class="table table-responsive-lg table-hover"  id="divTable">
-        <thead>
-          <tr>
-            <th>Group Name</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let group of groups">
-            <td (click)="group.display === true ? setGroupAndMove(group) : false">{{group.groupName}}</td>
-            <td><button [disabled]="group.display" (click)="joinGroup(group, $event)" [hidden]="isInstructor == true || group.display" class="btn btn-primary mr-1">Join Group</button>
-            <button [disabled]="!group.display" (click)="leaveGroup(group, $event)" [hidden]="isInstructor == true || !group.display" class="btn btn-danger mr-1">Leave Group</button></td>
-        </tbody>
-      </table>
+<!--    Group Table-->
+    <h2 class="mt-3 float-left">Groups</h2>
+    <table class="table table-responsive-lg table-hover" id="divTable">
+      <thead>
+      <tr style="cursor: default">
+        <th class="fw-light h6">Group Name</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="pointer" *ngFor="let group of groups" (click)="group.display === true ? setGroupAndMove(group) : false">
+        <td>{{group.groupName}}</td>
+        <td>
+          <button [disabled]="group.display" (click)="joinGroup(group, $event)"
+                  [hidden]="isInstructor == true || group.display" class="btn btn-primary mr-1">Join Group
+          </button>
+          <button [disabled]="!group.display" (click)="leaveGroup(group, $event)"
+                  [hidden]="isInstructor == true || !group.display" class="btn btn-danger mr-1">Leave Group
+          </button>
+        </td>
+      </tbody>
+    </table>
 
   </div>
 </div>

@@ -5,8 +5,8 @@ import { AppRoutingModule, RoutingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
-
-
+import { MatButtonModule } from '@angular/material/button';
+import { NgxChartsModule} from "@swimlane/ngx-charts";
 
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminDashComponent } from './admin-dash/admin-dash.component';
@@ -24,6 +24,9 @@ import { EditTimeDialogComponent } from './Modals/edit-time-dialog/edit-time-dia
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
 import {NgxChartsModule} from "@swimlane/ngx-charts";
+import {MatSelectModule} from "@angular/material/select";
+import { ChartsComponent } from './group/charts/charts.component';
+import { ResetPassComponent } from './login/reset-pass/reset-pass.component';
 
 
 @NgModule({
@@ -38,24 +41,27 @@ import {NgxChartsModule} from "@swimlane/ngx-charts";
     InstructorComponent,
     EditTimeDialogComponent,
     AdminRequestsModalComponent,
+    ChartsComponent,
+    ResetPassComponent,
 
   ],
   entryComponents: [EditTimeDialogComponent],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatTableModule,
-    MatRippleModule,
-    NgxChartsModule,
-    MatDialogModule,
-    MatInputModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatTableModule,
+        MatRippleModule,
+        NgxChartsModule,
+        MatDialogModule,
+        MatInputModule,
+        MatSelectModule
+    ],
   providers: [FormBuilder],
   bootstrap: [AppComponent]
 })

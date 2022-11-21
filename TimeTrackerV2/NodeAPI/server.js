@@ -3,35 +3,22 @@ const express = require('express');
 const mongoose = require('mongoose'); 
 const crypto = require('crypto'); 
 const sqlite3 = require('sqlite3').verbose();
-const session = require('express-session');
-const body_parser = require('body-parser');
+
 
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
-const SEVENDAYS = 1000 * 60 * 60 * 24 * 7
 
 // Database
 const db = new sqlite3.Database('./database/main.db');
 
-
+// App
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use(session({
-    name: 'sid',
-    resave: false,
-    secret: "4amigos number 1!",
-    saveUninitialized: false,
-    cookie: {
-        SameSite:  false,
-        maxAge: SEVENDAYS,
-        sameSite: true,
-        Domain: "",
-    }
-}));
+
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -653,9 +640,6 @@ app.post('/login', async (req, res, next) => {
       1000, 64, `sha512`).toString(`hex`);
 
       if(rows['password'] === hash) {
-
-          console.log(req.sessionID + "\n");
-
         return res.status(200).json({user: rows});
       } else {
         return res.status(401).json({message: 'Username or password is incorrect.'});
@@ -664,6 +648,17 @@ app.post('/login', async (req, res, next) => {
       return res.status(401).json({message: 'Username or password is incorrect.'});
     }
   });
+});
+
+//Sends a request to change password
+app.post("/requestPassword", async (req, res, next) => {
+
+    let sql = ""
+
+    let data = [];
+
+    // Can't use dictionaries for queries so order matters!
+    data[0] = req.body["username"];
 });
 
 app.post('/createGroup', async (req, res, next) => {
@@ -864,18 +859,36 @@ app.get('/getgroupassignments/:userID', async (req, res) => {
 
 //Gets a list of all groups a user is in
 app.get('/getusergroups/:userID', async (req, res) => {
+//     let sql = `SELECT DISTINCT
+//                    G.groupID,
+//                    G.groupName,
+//                    G.isActive,
+//                    P.projectID,
+//                    P.projectName
+//                FROM
+//                    GroupAssignment AS GA
+//                        LEFT JOIN Groups G on GA.groupID = G.groupID
+//                        LEFT JOIN Projects P on G.projectID = P.projectID
+//                WHERE
+//                    GA.userID = ${req.params.userID}`;
     let sql = `SELECT
-                   G.groupID,
-                   G.groupName,
-                   G.isActive,
-                   P.projectID,
-                   P.projectName
-               FROM
-                   GroupAssignment AS GA
-                       LEFT JOIN Groups G on GA.groupID = G.groupID
-                       LEFT JOIN Projects P on G.projectID = P.projectID
-               WHERE
-                   GA.userID = ${req.params.userID}`;
+                    G.groupID,
+                    G.groupName,
+                    G.isActive,
+                    P.projectID,
+                    P.projectName
+                FROM
+                    GroupAssignment AS GA
+                        LEFT JOIN Groups G on GA.groupID = G.groupID
+                        LEFT JOIN Projects P on G.projectID = P.projectID
+                        LEFT JOIN CourseRequest CR on GA.userID = CR.userID
+                
+                WHERE
+                        GA.userID = ${req.params.userID}
+                        AND
+                        CR.isActive = true
+                        AND
+                        CR.status = true`;
     db.all(sql, [], (err, rows) => {
 
         if (err) {
@@ -898,7 +911,9 @@ app.get('/getgroupusers/:groupID', async (req, res) => {
                        LEFT JOIN Groups G on GA.groupID = G.groupID
                        LEFT JOIN Users U on GA.userID = U.userID
                WHERE
-                   GA.groupID = ${req.params.groupID}`;
+                   GA.groupID = ${req.params.groupID}
+               ORDER BY 
+                   U.userID`;
     db.all(sql, [], (err, rows) => {
 
         if (err) {
@@ -917,7 +932,9 @@ app.post('/getusergrouptimecards', async (req, res) => {
                FROM
                    TimeCard
                WHERE
-                   userID = ? AND groupID = ?`;
+                   userID = ? AND groupID = ?
+               ORDER BY     
+                   userID`;
     let data = [];
     data[0] = req.body["userID"];
     data[1] = req.body["groupID"];
@@ -1147,4 +1164,3 @@ const updateAccountType = ((userID, accountType) => {
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
 require('./database/seed.js');
-const {maxAge} = require("express-session/session/cookie");
