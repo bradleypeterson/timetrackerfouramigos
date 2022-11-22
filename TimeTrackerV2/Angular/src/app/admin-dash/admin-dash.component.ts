@@ -62,7 +62,6 @@ export class AdminDashComponent implements OnInit {
     });
   }
 
-
   //Fires when the search button is clicked
   //Searches the table for any user that matches the search data
   //Uses regex to remove any special characters

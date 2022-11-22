@@ -127,7 +127,7 @@ export class AdminRequestService {
       return;
     }
 
-    searchTerm = searchTerm.toLowerCase();;
+    searchTerm = searchTerm.toLowerCase();
 
     this.filteredRequests = this.requests.filter((request: IAdminRequest) => {
       return request.username?.toLowerCase() == searchTerm;
@@ -167,17 +167,6 @@ export class AdminRequestService {
     this.userAccountSource.next(request?.userID as number);
     this.closeModal();
   }
-
-  //For debugging
-  printRequests(){
-    this.requests.forEach((o) => {
-      console.log(o);
-    });
-
-    console.log("\n");
-  }
-
-
 
 
 }
