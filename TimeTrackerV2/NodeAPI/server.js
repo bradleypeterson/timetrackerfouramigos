@@ -616,6 +616,123 @@ app.post('/register', async (req, res, next) => {
   });
 });
 
+// change the password
+app.post('/changepass', async (req, res, next) => {
+
+    function isEmpty(str) {
+        return (!str || str.length === 0 );
+      }
+    
+    if(
+        isEmpty(req.body["currentpassword"]) ||
+        isEmpty(req.body["newpassword"]) ||
+        isEmpty(req.body["repeatpassword"]) ||
+        isEmpty(req.body["userID"])) {
+        return res.status(400).json({message: 'Missing one or more required arguments.'});
+    }
+
+
+    // Validate passwords match
+    if(req.body["newpassword"] !== req.body["repeatpassword"]) {
+        return res.status(400).json({message: 'Given passwords do not match'});
+    }
+      
+    // get the current password from database
+    let sql1 = `SELECT * FROM Users WHERE userID = ?`;
+
+    // make sure the current password is correct
+    db.get(sql1, [req.body["userID"]], (err, rows) => {
+        if (err) {
+            console.log(rows);
+        return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+
+        if(rows) {
+            salt = rows['salt']
+
+            let hash = crypto.pbkdf2Sync(req.body["currentpassword"], salt,  
+            1000, 64, `sha512`).toString(`hex`);
+
+            if(rows['password'] != hash) {
+                return res.status(400).json({message: 'Current password is incorrect.'});
+                //return res.status(200).json({user: rows});
+            }
+        } 
+        else {
+            return res.status(400).json({message: 'Current password is incorrect.'});
+        }
+    });
+
+
+    // salt the password
+    let salt2 = crypto.randomBytes(16).toString('hex');
+    
+    // hash is what will be in the database for the password
+    let hash2 = crypto.pbkdf2Sync(req.body["newpassword"], salt2,  
+      1000, 64, `sha512`).toString(`hex`);
+
+
+    let data = [];
+    data[0] = hash2;
+    data[1] = salt2;
+    data[2] = req.body["userID"];
+
+    console.log(data);
+
+    // set the new password
+    db.run(`UPDATE Users SET password = ?, salt = ? WHERE userID = ?`, data, function(err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        else
+        {
+            return res.status(200).json({message: "Password updated"});
+        }
+    });
+
+    
+
+});
+
+
+// change active status
+app.post('/changeactive', async (req, res, next) => {
+
+    /*function isEmpty(str) {
+        return (!str || str.length === 0 );
+    }
+    
+    if(
+        isEmpty(req.body["activeStat"]) ||
+        isEmpty(req.body["userID"])) {
+        return res.status(400).json({message: 'Missing one or more required arguments.'});
+    }*/
+
+    let data = [];
+    data[0] = req.body['activeStat'];
+    data[1] = req.body["userID"];
+
+    // change the user active status
+    db.run(`UPDATE Users SET isActive = ? WHERE userID = ?`, data, function(err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        else
+        {
+            return res.status(200).json({message: "User active status is changed"});
+        }
+    });
+
+
+
+});
+
+
+
 app.post('/login', async (req, res, next) => {
   function isEmpty(str) {
     return (!str || str.length === 0 );

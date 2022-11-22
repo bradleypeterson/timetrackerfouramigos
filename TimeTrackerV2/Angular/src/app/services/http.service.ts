@@ -122,6 +122,19 @@ export class HttpService {
 
   }
 
+  // changes password
+  changePass(payload: any): Observable<any> {
+    console.log(payload);
+    return this.http.post<any>(this.apiUrl + 'changepass', payload, this.httpOptions);
+
+  }
+
+  changeActive(payload: any): Observable<any> {
+    console.log(payload);
+    return this.http.post<any>(this.apiUrl + 'changeactive', payload, this.httpOptions);
+
+  }
+
   //Creates a course for the user
   createCourse(payload: any): Observable<any> {
     return this.http.post<any>(this.apiUrl + 'createCourse', payload, this.httpOptions);
