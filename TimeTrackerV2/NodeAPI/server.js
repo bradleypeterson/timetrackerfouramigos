@@ -788,19 +788,7 @@ app.get('/getgroupassignments/:userID', async (req, res) => {
 
 //Gets a list of all groups a user is in
 app.get('/getusergroups/:userID', async (req, res) => {
-//     let sql = `SELECT DISTINCT
-//                    G.groupID,
-//                    G.groupName,
-//                    G.isActive,
-//                    P.projectID,
-//                    P.projectName
-//                FROM
-//                    GroupAssignment AS GA
-//                        LEFT JOIN Groups G on GA.groupID = G.groupID
-//                        LEFT JOIN Projects P on G.projectID = P.projectID
-//                WHERE
-//                    GA.userID = ${req.params.userID}`;
-    let sql = `SELECT
+    let sql = `SELECT DISTINCT
                     G.groupID,
                     G.groupName,
                     G.isActive,
@@ -810,7 +798,7 @@ app.get('/getusergroups/:userID', async (req, res) => {
                     GroupAssignment AS GA
                         LEFT JOIN Groups G on GA.groupID = G.groupID
                         LEFT JOIN Projects P on G.projectID = P.projectID
-                        LEFT JOIN CourseRequest CR on GA.userID = CR.userID
+                        LEFT JOIN CourseRequest CR on GA.userID = CR.userID AND P.courseID = CR.courseID
                 
                 WHERE
                         GA.userID = ${req.params.userID}
