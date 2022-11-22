@@ -16,19 +16,68 @@ export class UserComponent implements OnInit {
   public errMsg = '';
 
   user: IUser = JSON.parse(localStorage.getItem('currentUser') as string);
+  
+  public userTypeHolder: IUser;
 
   public isActive = this.user.isActive;
+  public isInstructor: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private httpService: HttpService,
     public modalService: AdminModalService,
-  ) { }
+  ) { 
+    this.userTypeHolder = new class implements IUser
+    {
+      firstName?: string;
+      userID?: number;
+      isActive?: boolean;
+      lastName?: string;
+      password?: string;
+      salt?: string;
+      type?: string;
+      username?: string;
+    }
+  }
 
   ngOnInit(): void {
+    //this.getUser();
+    //this.setActive();
     
   }
+
+  /*getUser() {
+    let payload = {
+      username: this.user.username,
+    }
+    //Gets user from database
+    this.httpService.getUser(payload).subscribe((_user: any) =>
+    {
+      this.userTypeHolder = _user;
+      //Allow user to create courses if they are an instructor
+      if(this.userTypeHolder.type == "Instructor")
+      {
+        this.isInstructor = true;
+      }
+      else
+      {
+        this.isInstructor = false;
+      }
+    });
+  }*/
+
+  /*setActive() {
+    if (this.userTypeHolder.isActive == true) {
+      this.isActive = true;
+      this.userActive = "active";
+    }
+    else {
+      this.isActive = false;
+      this.userActive = "inactive";
+    }
+    console.log(this.isActive);
+  }*/
 
   passwordForm = this.formBuilder.group({
     currentpassword: '',
@@ -96,8 +145,12 @@ export class UserComponent implements OnInit {
     this.httpService.changeActive(payload).subscribe({
       next: data => {
         this.errMsg = "";
+
+        this.user = JSON.parse(localStorage.getItem('currentUser') as string);
+        this.isActive = this.user.isActive;
         //location.reload();
-        this.isActive = !this.isActive;
+        //this.getUser();
+        //this.setActive();
       },
       error: error => {
         this.errMsg = error['error']['message'];
