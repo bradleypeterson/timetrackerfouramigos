@@ -25,8 +25,9 @@ export class ProjectComponent implements OnInit {
   public groups: IGroup[] = [];
   public allProjects: IProject[] = [];
   public joinedGroups: IGroupAssignment[] = [];
-  public isJoinable: boolean = true;
-  public selectedOption: any
+  public selectedOption: any;
+  public pointer = "pointer";
+  public nothing = "";
 
   public project: IProject = history.state.data; // holds the current project data
 

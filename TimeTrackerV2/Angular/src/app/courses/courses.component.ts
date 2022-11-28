@@ -21,10 +21,11 @@ export class CoursesComponent implements OnInit {
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
   public userCourses: ICourse[] = [];
-  public activeCR: ICourseRequest[] = [];
   public courseRequests: ICourseRequest[] = [];
   public userTypeHolder: IUser;
   public default = 0;
+  public pointer = "pointer";
+  public nothing = "";
 
   // for getting the course that was clicked on
   public currCourse?: ICourse;

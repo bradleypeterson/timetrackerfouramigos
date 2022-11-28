@@ -793,13 +793,14 @@ app.get('/getusergroups/:userID', async (req, res) => {
                     G.groupName,
                     G.isActive,
                     P.projectID,
-                    P.projectName
+                    P.projectName,
+                    C.courseName
                 FROM
                     GroupAssignment AS GA
                         LEFT JOIN Groups G on GA.groupID = G.groupID
                         LEFT JOIN Projects P on G.projectID = P.projectID
                         LEFT JOIN CourseRequest CR on GA.userID = CR.userID AND P.courseID = CR.courseID
-                
+                        LEFT JOIN Courses C on CR.courseID = C.courseID
                 WHERE
                         GA.userID = ${req.params.userID}
                         AND
