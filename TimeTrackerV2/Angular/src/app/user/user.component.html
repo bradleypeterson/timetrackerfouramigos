@@ -1,28 +1,26 @@
 <!-- ng-cloak ng-if="loaded" -->
-<div id="user">
-  <h3 class="mt-2">First Name Last Name</h3>
+<div id="user" class="position-relative container" ng-cloak>
   <div class="row">
-    <div class="col-12 col-md-6 mt-4">
-      <div class="row">
-        <div class="col-5 text-right pr-1 pl-0">
-          <label class="mb-2 mt-1" for="username">Username</label>
-          <br />
-          <label class="mb-2 mt-1" for="firstName">First Name</label>
-          <br />
-          <label class="mb-2 mt-1" for="lastName">Last Name</label>
+    <h1 class="mt-8 dashboard-titles">{{user['firstName']}} {{user['lastName']}}</h1>
+    <div class=" col-md-4">
+        <div style="width: fit-content;">
+          <div class="m-3">
+            <mat-label class="me-2 float-start" for="username">Username</mat-label>
+            <input matInput class="float-end" type="text" name="username" placeholder="{{user['username']}}" />
+          </div>
+          <br>
+          <div class="m-3">
+            <mat-label class="me-2 float-start" for="firstName">First Name</mat-label>
+            <input matInput class="float-end" type="text" name="firstName" placeholder="{{user['firstName']}}"/>
+          </div>
+          <br>
+          <div class="m-3">
+            <mat-label class="me-2 float-start" for="lastName">Last Name</mat-label>
+            <input matInput class="float-end" type="text" name="lastName" placeholder="{{user['lastName']}}"/>
+          </div>
         </div>
-        <div class="col pl-0">
-          <!-- ng-model="viewUser.username" ng-model-options="{debounce: 750}" ng-change="saveUser()" -->
-          <input class="mb-1" type="text" name="username" placeholder="{{user['username']}}" />
-          <br />
-          <!-- ng-model="viewUser.firstName" ng-model-options="{debounce: 750}" ng-change="saveUser()" -->
-          <input class="mb-1" type="text" name="firstName" placeholder="{{user['firstName']}}"/>
-          <br />
-          <!-- ng-model="viewUser.lastName" ng-model-options="{debounce: 750}" ng-change="saveUser()" -->
-          <input class="mb-1" type="text" name="lastName" placeholder="{{user['lastName']}}"/>
-        </div>
-        <div class="mx-auto">
-          <div class="pretty p-svg p-curve mr-4">
+        <div style="width: fit-content" class="mt-5 ms-3">
+          <div class="pretty p-svg p-curve mt-1">
             <!-- ng-model="viewUser.isActive" ng-change="saveUser()" ng-disabled="$parent.user.type !== 'A'" -->
             <input type="checkbox" [checked]="user['isActive']" />
             <div class="state p-primary">
@@ -31,41 +29,40 @@
               </svg>
               <label>Active</label>
             </div>
+
           </div>
-          <label>Type: </label>
-          <!-- ng-model="viewUser.type" ng-change="saveUser()" ng-disabled="$parent.user.type !== 'A'" -->
-          <select>
-            <option value="S">Student</option>
-            <option value="I">Instructor</option>
-            <option value="A">Admin</option>
-          </select>
+          <div class="float-end">
+            <label class="me-2">Type: </label>
+            <!-- ng-model="viewUser.type" ng-change="saveUser()" ng-disabled="$parent.user.type !== 'A'" -->
+            <select>
+              <option value="S">Student</option>
+              <option value="I">Instructor</option>
+              <option value="A">Admin</option>
+            </select>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div style="width: fit-content;">
+          <div class="m-3">
+            <mat-label class="me-2 float-start" for="currentPassword">Current Password</mat-label>
+            <input matInput class="float-end" type="password" name="currentPassword" />
+          </div>
+          <br />
+          <div class="m-3">
+            <mat-label class="me-2 float-start" for="newPassword">New Password</mat-label>
+            <input matInput class="float-end" type="password" name="newPassword" />
+          </div>
+          <br />
+          <div class="m-3">
+            <mat-label class="me-2 float-start" for="repeatPassword">Repeat Password</mat-label>
+            <input matInput class="float-end" type="password" name="repeatPassword" />
+          </div>
+          <div class="m-3">
+            <!-- ng-click="changePassword()" -->
+            <button type="button" class="mt-3 btn btn-primary">Change Password</button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-12 col-md-6 mt-4">
-      <div class="row">
-        <div class="col-5 text-right pr-1 pl-0">
-          <label class="mb-2 mt-1" for="currentPassword">Current Password</label>
-          <br />
-          <label class="mb-2 mt-1" for="newPassword">New Password</label>
-          <br />
-          <label class="mb-2 mt-1" for="repeatPassword">Repeat Password</label>
-        </div>
-        <div class="col pl-0">
-          <!-- ng-model="viewUser.currentPassword" ng-disabled="$parent.user.type === 'A'" -->
-          <input class="mb-1" type="password" name="currentPassword" />
-          <br />
-          <!-- ng-model="viewUser.newPassword" -->
-          <input class="mb-1" type="password" name="newPassword" />
-          <br />
-          <!-- ng-model="viewUser.repeatPassword" -->
-          <input class="mb-1" type="password" name="repeatPassword" />
-        </div>
-        <div class="row mt-2 mx-auto">
-          <!-- ng-click="changePassword()" -->
-          <button type="button" class="btn btn-primary col mr-1">Change Password</button>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
