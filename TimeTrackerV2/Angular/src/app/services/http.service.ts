@@ -225,9 +225,9 @@ export class HttpService {
   }
 
   //Request a password reset
-  requestPassword(payload: any): Observable<any>
+  requestPassword(username: string): Observable<any>
   {
-    return this.http.post<any>(this.apiUrl + `requestPassword`, payload, this.httpOptions);
+    return this.http.get<any>(this.apiUrl + `requestPassword/${username}`, this.httpOptions);
   }
 
   //Updates the given timecard

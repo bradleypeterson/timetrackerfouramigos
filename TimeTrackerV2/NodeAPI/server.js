@@ -581,14 +581,56 @@ app.post('/login', async (req, res, next) => {
 });
 
 //Sends a request to change password
-app.post("/requestPassword", async (req, res, next) => {
+app.get("/requestPassword/:username", async (req, res, next) => {
+    let sql = `SELECT userID, username, firstName, lastName, type, isActive FROM Users WHERE username = "${req.params.username}"`;
+    db.get(sql, (err, rows) => {
+        if (rows)
+        {
+            //Check AdminRequest table for a pending or approved request
+            let checkSql = `SELECT * FROM AdminRequests WHERE userID = ? AND isActive = 1`;
+            let checkData = [];
+            checkData[0] = rows["userID"];
 
-    let sql = ""
+            //Check if the user has a pending or accepted password reset request
+            db.get(checkSql, checkData, (err, checkrows) =>
+            {
+                if (err)
+                {
+                    return res.status(400).json({"error": err.message});
+                }
+                if(checkrows)
+                {
+                    if (checkrows["status"] === "1")
+                    {
+                        return res.status(200).json({message: 'accepted'});
+                    }
+                    else if(checkrows["status"] === "0")
+                    {
+                        return res.status(200).json({message: 'pending'});
+                    }
+                }
+                else
+                {
+                    let sql2 = `INSERT INTO AdminRequests (userID, requestType, status, isActive, reviewerID)
+                                    VALUES (?, 'password', false, true, null)`
+                    let data = [];
+                    data[0] = rows["userID"];
+                    db.get(sql2, data, function(err, insertrows) {
+                        if (err)
+                        {
+                            return res.status(400).json({"error": err.message });
+                        }
+                        return res.status(200).json({message: 'success'});
+                    });
+                }
 
-    let data = [];
-
-    // Can't use dictionaries for queries so order matters!
-    data[0] = req.body["username"];
+            });
+        }
+        else
+        {
+            return res.status(200).json({message: 'incorrect'});
+        }
+    });
 });
 
 app.post('/createGroup', async (req, res, next) => {
