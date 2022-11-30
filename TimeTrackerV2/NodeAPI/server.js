@@ -556,6 +556,30 @@ app.post(`/updatePassword`, async (req, res) => {
 
 });
 
+//Retrieves a users courses, projects, and groups information
+app.get(`/getcourseandgroupinfobyid/:userid`, async (req, res) => {
+
+    let sql = `SELECT GA.userID, G.groupID, G.groupName, P.projectName, P.courseID, C.courseName, C.instructorID, U2.firstName, U2.lastName  FROM GroupAssignment GA
+    LEFT JOIN Groups G on GA.groupID = G.groupID
+    LEFT JOIN Users U on GA.userID = U.userID
+    LEFT JOIN Projects P on G.projectID = P.projectID
+    LEFT JOIN Courses C on P.courseID = C.courseID
+    LEFT JOIN Users U2 ON C.instructorID = U2.userID
+    WHERE GA.userID = ${req.params.userid};`
+
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            res.status(400).json({ "error": err.message });
+        } else {
+            return res.send(JSON.stringify(rows));
+        }
+
+    });
+
+
+})
+
 //-------------------------------------------------------
 
 app.post('/register', async (req, res, next) => {

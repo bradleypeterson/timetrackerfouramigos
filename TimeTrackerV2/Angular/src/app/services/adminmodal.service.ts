@@ -4,6 +4,7 @@ import {HttpService} from "./http.service"
 
 import { BehaviorSubject } from 'rxjs/';
 import {AdminRequestService} from "./adminrequest.service";
+import { ICourseAndGroupInfo} from "../interfaces/ICourseAndGroupInfo";
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +18,18 @@ export class AdminModalService {
 
   openedFromRequests: boolean = false;
 
+  courseInfo = []
+  projectInfo = []
+  groupInfo = []
+
+
   private _refreshSource = new BehaviorSubject<boolean>(false)
   _refresh = this._refreshSource.asObservable();
 
 
   constructor( private httpService: HttpService,
-               private requestService: AdminRequestService) { }
+               private requestService: AdminRequestService,
+              ) { }
 
   showModal(_openedFromRequests: boolean){
     this.modalDisplay = true;
@@ -39,6 +46,8 @@ export class AdminModalService {
 
   create(user: IUser){
     this.user = user;
+    this.getTableData()
+
   }
 
   //Calls the httpService to update the user's data on the database
@@ -89,5 +98,34 @@ export class AdminModalService {
   //Yells at the admin-dash component to refresh the table data
   invokeRefresh(){
     this._refreshSource.next(true);
+  }
+
+  getTableData(){
+    this.httpService.getCourseAndGroupInfoByID(this.user.userID).subscribe((info) => {
+      this.separateCoursesInfo(info);
+    });
+  }
+
+  separateCoursesInfo(info: any){
+    info.forEach((item: any) => {
+
+
+      console.log(info);
+      let course = {
+        courseID: item.courseID,
+        courseName: item.courseName,
+        instructorLastName: item.lastName,
+        instructorFirstName: item.firstName,
+      }
+
+      console.log("Course");
+      console.log(course);
+
+      // if (this.courseInfo.length < 1){
+      //     // @ts-ignore
+      //   this.courseInfo.push(course);
+      // }
+
+    })
   }
 }

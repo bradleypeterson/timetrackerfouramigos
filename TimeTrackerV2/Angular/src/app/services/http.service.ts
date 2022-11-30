@@ -9,6 +9,7 @@ import {IGroup} from "../interfaces/IGroup";
 import {IGroupAssignment} from "../interfaces/IGroupAssignment";
 import {animate} from "@angular/animations";
 import {IAdminRequest} from "../interfaces/IAdminRequest";
+import {ICourseAndGroupInfo} from "../interfaces/ICourseAndGroupInfo";
 
 
 
@@ -266,6 +267,11 @@ export class HttpService {
 
   updatePassword(payload: any): Observable<any>{
     return this.http.post<any>(this.apiUrl + `updatePassword`, payload, this.httpOptions);
+  }
+
+  //Gets information about a users courses, projects, and groups.
+  getCourseAndGroupInfoByID(userID: number): Observable<any>{
+    return this.http.get<any>(this.apiUrl + `getcourseandgroupinfobyid/${userID}`, this.httpOptions);
   }
 
 }
