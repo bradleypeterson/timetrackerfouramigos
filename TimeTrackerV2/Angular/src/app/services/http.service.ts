@@ -242,5 +242,11 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + 'leavecourse', payload, this.httpOptions);
   }
 
+  //get user cookie data
+  getCookie(): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + 'getCookie');
+  }
+
 
 }
