@@ -24,7 +24,7 @@ import {IProject} from "../interfaces/IProject";
 export class InstructorComponent implements OnInit {
   //Refactor into separate classes
 
-  //#region Class Variables
+  //region Class Variables
 
   public errMsg = '';
   public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
@@ -48,9 +48,9 @@ export class InstructorComponent implements OnInit {
   public dataSourceProject: MatTableDataSource<any> = new MatTableDataSource<any>();
   public groupsData: ProjectDataSource[] = [];
   public tempProject: IProject;
-  //#endregion
+  //endregion
 
-  //#region Initial Functions
+  //region Initial Functions
 
   constructor(private httpService: HttpService, private router: Router,)
   {
@@ -87,9 +87,9 @@ export class InstructorComponent implements OnInit {
     });
 
   }
-  //#endregion Func
+  //endregion Func
 
-  //#region CourseRequest List
+  //region CourseRequest List
 
   //Gets a list of all Course Requests
   getCourseRequestList(): void
@@ -154,9 +154,9 @@ export class InstructorComponent implements OnInit {
     });
   }
 
-  //#endregion
+  //endregion
 
-  //#region Courses List
+  //region Courses List
 
   //Gets a list of all courses for an instructor
   getCourses(): void
@@ -197,9 +197,9 @@ export class InstructorComponent implements OnInit {
     this.router.navigate(['./course'], {state:{data: this.tempCourse}});
   }
 
-  //#endregion
+  //endregion
 
-  //#region Projects List
+  //region Projects List
   //Gets the list of projects for an instructor
   getProjects(): void
   {
@@ -242,11 +242,11 @@ export class InstructorComponent implements OnInit {
   {
     this.router.navigate(['./group'], {state:{data: group}});
   }
-  //#endregion
+  //endregion
 
 }
 
-//#region Interfaces
+//region Interfaces
 export interface CourseDataSource
 {
   courseName?: string;
@@ -264,4 +264,4 @@ export interface ProjectDataSource
   groups?: IGroup[] | MatTableDataSource<IGroup>
 }
 
-//#endregion
+//endregion

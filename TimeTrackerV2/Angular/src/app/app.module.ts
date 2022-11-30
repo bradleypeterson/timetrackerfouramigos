@@ -6,22 +6,27 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
-import { NgxChartsModule} from "@swimlane/ngx-charts";
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminDashComponent } from './admin-dash/admin-dash.component';
 import { RegisterComponent } from './register/register.component';
 import { InstructorComponent } from './instructor/instructor.component';
 import { GroupsComponent } from './groups/groups.component';
-import { AdminModalComponent } from './modals/admin-modal/admin-modal.component';
+import { AdminModalComponent } from './Modals/admin-modal/admin-modal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatToolbarModule} from "@angular/material/toolbar";
-import {MatTableModule} from "@angular/material/table";
-import {MatRippleModule} from "@angular/material/core";
-import {MatDialogModule} from "@angular/material/dialog";
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTableModule } from '@angular/material/table';
+import { MatRippleModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { EditTimeDialogComponent } from './Modals/edit-time-dialog/edit-time-dialog.component';
-import {MatInputModule} from "@angular/material/input";
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { ChartsComponent } from './group/charts/charts.component';
+import { ResetPassComponent } from './login/reset-pass/reset-pass.component';
 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -34,7 +39,8 @@ import {MatInputModule} from "@angular/material/input";
     AdminModalComponent,
     InstructorComponent,
     EditTimeDialogComponent,
-
+    ChartsComponent,
+    ResetPassComponent,
   ],
   entryComponents: [EditTimeDialogComponent],
   imports: [
@@ -50,9 +56,17 @@ import {MatInputModule} from "@angular/material/input";
     MatRippleModule,
     NgxChartsModule,
     MatDialogModule,
-    MatInputModule
+    MatInputModule,
+    MatSelectModule,
   ],
-  providers: [FormBuilder],
-  bootstrap: [AppComponent]
+  providers: [
+    FormBuilder,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -58,14 +58,17 @@ export class CoursesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCourses();
-    this.getUserRequests();
     this.getUserCourses();
 
   }
 
   //Gets all the courses from the database, can be called to update the list of courses without reloading the page
   getCourses(): void {
-    this.httpService.getCourses().subscribe((_courses: any) => { this.courses = _courses });
+    this.httpService.getCourses().subscribe((_courses: any) =>
+    {
+      this.courses = _courses;
+      this.getUserRequests();
+    });
 
     let payload = {
       username: this.user.username,
@@ -84,20 +87,12 @@ export class CoursesComponent implements OnInit {
         this.isInstructor = false;
       }
     });
-
-    
-    
-
-
-
   }
 
 
-  getUserCourses(): void {
-
-    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.userCourses = _courses; console.log(this.userCourses)});
-
-
+  getUserCourses(): void
+  {
+    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.userCourses = _courses; });
   }
 
 
@@ -107,52 +102,55 @@ export class CoursesComponent implements OnInit {
     //Gets a list of all group assignments the user has and sets the visibility
     this.httpService.getUserCourseRequests(this.user.userID).subscribe((_courseRequests: ICourseRequest[]) =>
     {
-      
+
       this.courseRequests = _courseRequests;
       this.courses.forEach(value =>
       {
-        
-
         // if it's the user's course request and the course matches and there's a course request
         if(this.courseRequests.some(x => value.courseID === x.courseID)) {
-          
-          console.log("Status = ", this.courseRequests.some(x => x.status));
-          console.log("Active = ", this.courseRequests.some(x => x.isActive));
+          console.log("User has course: " + value.courseName);
+          // console.log("Status = ", this.courseRequests.some(x => x.status));
+          // console.log("Active = ", this.courseRequests.some(x => x.isActive));
 
           // if pending: status is 0, active is 1
           // if rejected: status is 0, active is 0
           // if accepted: statis is 1, active is 1
-          
-          // if it was accecpted
-          if(this.courseRequests.some(x => x.isActive == true && x.status == true))
+
+          // Accepted
+          if(this.courseRequests.some(x => x.isActive == true && x.status == true && value.courseID == x.courseID))
           {
+            console.log("Course was accepted: " + value.courseName);
             value.leave = true; // the leave button shows
             value.display = false;
             value.pending = false;
             this.default = 1;
           }
-          // if it's still active
-          /*if(this.courseRequests.some(x => x.isActive == true && x.status == false))
+          // Pending
+          else if(this.courseRequests.some(x => x.isActive == true && x.status == false && value.courseID == x.courseID))
           {
-            console.log("pending btn");
+            console.log("Course is pending: " + value.courseName);
             value.display = false;
             value.pending = true; // the pending button shows
             value.leave = false;
             this.default = 2;
-          }*/
-          // if it's not accepted nor active
-          //if(this.courseRequests.some(x=> (x.status == false && x.isActive === false))) {
-          else {
+          }
+          // Deleted
+          else
+          {
+            console.log("Course is deleted: " + value.courseName);
             value.display = true; // the join button shows
             value.pending = false;
             value.leave = false;
             this.default = 3;
           }
         }
-        else {
+        // User hasn't joined
+        else
+        {
+          console.log("User doesn't has course: " + value.courseName);
           value.display = true;
           value.pending = false;
-          value.leave = false; 
+          value.leave = false;
         }
       });
     });
@@ -185,8 +183,8 @@ export class CoursesComponent implements OnInit {
   }
 
   // pass in the course that was clicked on
-  joinCourse(cId : any): void {
-
+  joinCourse(cId : any, event: any): void {
+    event.target.disable = true;
     // make sure they aren't an instructor
     if(this.isInstructor == false) {
       // create payload to hold courseRequest data
@@ -207,15 +205,33 @@ export class CoursesComponent implements OnInit {
           //this.router.navigate(['./']);
           //location.reload(); // refresh the page
           this.getCourses();
-          this.getUserRequests();
+          this.getUserCourses();
         },
         error: error => {
           this.errMsg = error['error']['message'];
         }
       });
     }
-
-
+  }
+  //Leaves the selected course
+  leaveCourse(course: any, event: any): void
+  {
+    event.target.disable = true;
+    let payload = {
+      userID: this.userTypeHolder.userID,
+      courseID: course.courseID
+    }
+    console.log("userID: " + payload.userID + " courseID: " + payload.courseID);
+    this.httpService.leaveCourse(payload).subscribe({
+      next: data => {
+        this.errMsg = "";
+        this.getCourses();
+        this.getUserCourses();
+      },
+      error: error => {
+        this.errMsg = error['error']['message'];
+      }
+    });
 
   }
 

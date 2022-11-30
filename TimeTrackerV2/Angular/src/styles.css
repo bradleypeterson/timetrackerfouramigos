@@ -377,6 +377,9 @@ pretty .state .check-label label:after, .pretty .state .check-label label:before
   color: #007bff;
   font-weight: 600;
 }
+.pointer{
+  cursor: pointer;
+}
 
   .navbar img {
     margin: 0 16px;
