@@ -25,6 +25,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
@@ -51,6 +52,14 @@ app.use(
 
 app.get('/', (req, res) => {
     return res.send('Hello World');
+});
+
+app.get('/getCookie', (req, res) => {
+    if (req.session.user) {
+        return res.send(req.session.user.loggedIn);
+    } else {
+        return res.send(null);
+    }
 });
 
 //Joins a group based on user id and group id
@@ -699,7 +708,10 @@ app.post('/login', async (req, res, next) => {
 
             if (rows['password'] === hash) {
                 //set user session variable
+                //res.cookie('userid',rows['userID'], {maxAge:86400, httpOnly: true});
+
                 ssn = req.session;
+                //res.send(req.cookies)
                 ssn.user = { loggedIn: rows };
                 ssn.save();
                 return res.status(200).json({ user: rows });
