@@ -18,13 +18,22 @@ export class AdminModalService {
 
   openedFromRequests: boolean = false;
 
-  courseInfo = []
-  projectInfo = []
-  groupInfo = []
+  courseInfo: object[] = []
+  projectInfo: object[]  = []
+  groupInfo: object[] = []
 
 
   private _refreshSource = new BehaviorSubject<boolean>(false)
   _refresh = this._refreshSource.asObservable();
+
+  private _courseInfoSource = new BehaviorSubject<object[]>(this.courseInfo);
+  _courseSource = this._courseInfoSource.asObservable();
+
+  private _projectInfoSource = new BehaviorSubject<object[]>(this.projectInfo);
+  _projectSource = this._projectInfoSource.asObservable();
+
+  private _groupInfoSource = new BehaviorSubject<object[]>(this.groupInfo);
+  _groupSource = this._groupInfoSource.asObservable();
 
 
   constructor( private httpService: HttpService,
@@ -102,15 +111,24 @@ export class AdminModalService {
 
   getTableData(){
     this.httpService.getCourseAndGroupInfoByID(this.user.userID).subscribe((info) => {
+
+      //console.log(info);
+
       this.separateCoursesInfo(info);
+      this.separateProjectInfo(info);
+      this.separateGroupInfo(info);
+
+      this._courseInfoSource.next(this.courseInfo);
+      this._projectInfoSource.next(this.projectInfo);
+      this._groupInfoSource.next(this.groupInfo);
+
+
     });
   }
 
   separateCoursesInfo(info: any){
     info.forEach((item: any) => {
 
-
-      console.log(info);
       let course = {
         courseID: item.courseID,
         courseName: item.courseName,
@@ -118,14 +136,63 @@ export class AdminModalService {
         instructorFirstName: item.firstName,
       }
 
-      console.log("Course");
-      console.log(course);
+      let found: boolean = false;
 
-      // if (this.courseInfo.length < 1){
-      //     // @ts-ignore
-      //   this.courseInfo.push(course);
-      // }
+      this.courseInfo.forEach((_course) => {
+
+        // @ts-ignore
+        if (_course.courseID == course.courseID){
+          found = true;
+        }
+      });
+
+      if (!found){
+        this.courseInfo.push(course);
+      }
 
     })
   }
+
+  separateProjectInfo(info: any){
+
+    info.forEach((item: any) => {
+
+      let project: object = {
+        projectID: item.projectID,
+        projectName: item.projectName,
+        courseName: item.courseName,
+      }
+
+      let found: boolean = false;
+
+      this.projectInfo.forEach((_project) =>{
+        // @ts-ignore
+        if (_project.projectID == project.projectID) {
+            found = true;
+        }
+      });
+
+      if (!found){
+        this.projectInfo.push(project);
+      }
+    })
+
+  }
+
+  separateGroupInfo(info: any){
+
+    info.forEach((item: any) => {
+
+      let group: object = {
+        groupID: item.groupID,
+        groupName: item.groupName,
+        courseName: item.courseName,
+      }
+
+      this.groupInfo.push(group);
+
+    });
+
+  }
+
 }

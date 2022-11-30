@@ -21,7 +21,7 @@
       <div id="content-left">
 
         <div id="user-data-table-container" class="user-info-table-container">
-          <table class="table table-sm table-borderless user-info-table" id="user-data-table">
+          <table class="table  table-borderless user-info-table" id="user-data-table">
             <thead>
             <tr>
               <th>Info</th>
@@ -29,7 +29,7 @@
             </tr>
             </thead>
             <tbody>
-            <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
+
             <tr>
               <td >{{user.firstName}}</td>
               <td> <input type="text" id="edit_firstname" [hidden]="isHidden" placeholder="First name"></td>
@@ -88,22 +88,22 @@
 
 <!--        Table for stats of user if the user is a student-->
         <div id="user-stats-table-container" class="user-info-table-container">
-          <table class="table table-sm table-hover table-borderless user-info-table" id="user-stats-table">
+          <table class="table table-hover table-borderless user-info-table" id="user-stats-table">
             <tbody>
             <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
             <tr>
               <td >Number of Courses: </td>
-              <td> Courses number</td>
+              <td> {{courses.length}}</td>
             </tr>
 
             <tr>
               <td >Number of Projects:</td>
-              <td> Projects number</td>
+              <td> {{projects.length}}</td>
             </tr>
 
             <tr>
               <td >Number of Groups: </td>
-              <td> Groups number</td>
+              <td> {{groups.length}}</td>
             </tr>
 
 
@@ -112,9 +112,6 @@
           </table>
         </div>
 
-        <div id="eval-info">
-          <p>Number of Evals Assigned: 1 Number of Evals Completed: 1</p>
-        </div>
 
         <div id="save-delete-info" [hidden]="isHidden">
           <div class="row red">
@@ -148,9 +145,9 @@
             <tbody>
 
 <!--            wrap in a for loop to display all of the courses-->
-              <tr>
-                <td>test course name</td>
-                <td>test instructor name</td>
+            <tr *ngFor="let course of courses">
+                <td>{{course.courseName}}</td>
+                <td>{{course.instructorLastName}}, {{course.instructorFirstName}}</td>
               </tr>
 
 
@@ -171,10 +168,9 @@
             </thead>
             <tbody>
 
-            <!--            wrap in a for loop to display all of the courses-->
-            <tr>
-              <td>test Project name</td>
-              <td>test Course name</td>
+            <tr *ngFor="let project of projects">
+              <td>{{project.projectName}}</td>
+              <td>{{project.courseName}}</td>
             </tr>
 
 
@@ -195,10 +191,9 @@
             </thead>
             <tbody>
 
-            <!--            wrap in a for loop to display all of the courses-->
-            <tr>
-              <td>test Group name</td>
-              <td>test Course name</td>
+            <tr *ngFor="let group of groups">
+              <td>{{group.groupName}}</td>
+              <td>{{group.courseName}}</td>
             </tr>
 
 

@@ -559,7 +559,7 @@ app.post(`/updatePassword`, async (req, res) => {
 //Retrieves a users courses, projects, and groups information
 app.get(`/getcourseandgroupinfobyid/:userid`, async (req, res) => {
 
-    let sql = `SELECT GA.userID, G.groupID, G.groupName, P.projectName, P.courseID, C.courseName, C.instructorID, U2.firstName, U2.lastName  FROM GroupAssignment GA
+    let sql = `SELECT GA.userID, G.groupID, G.groupName, P.ProjectID, P.projectName, P.courseID, C.courseName, C.instructorID, U2.firstName, U2.lastName  FROM GroupAssignment GA
     LEFT JOIN Groups G on GA.groupID = G.groupID
     LEFT JOIN Users U on GA.userID = U.userID
     LEFT JOIN Projects P on G.projectID = P.projectID

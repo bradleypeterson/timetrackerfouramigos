@@ -19,6 +19,32 @@ export class AdminModalComponent implements OnInit {
 
   refreshListener: Subscription | undefined;
 
+
+  courses: any[] = [];
+  courseInfo = this.modalService._courseSource.subscribe((item) => {
+
+    item.forEach((obj) => {
+      this.courses.push(obj);
+    });
+
+  });
+
+  projects: any[] = [];
+  projectInfo = this.modalService._projectSource.subscribe((item) =>{
+
+      item.forEach((obj) => {
+        this.projects.push(obj);
+      });
+  })
+
+  groups: any[] = [];
+  groupInfo = this.modalService._groupSource.subscribe((item) =>{
+
+    item.forEach((obj) => {
+      this.groups.push(obj);
+    });
+  })
+
   constructor(
     public modalService: AdminModalService,
   ) { }
@@ -28,12 +54,7 @@ export class AdminModalComponent implements OnInit {
     this.refreshListener = this.modalService._refresh.subscribe(bool => {
       this.refresh.emit(bool);
     })
-
   }
-
-  // @HostListener('click') closeModal() {
-  //   this.modalService.showModal();
-  // }
 
   //If slider is checked then the edit button can be pressed
   enableEdit(event: any){
@@ -42,6 +63,7 @@ export class AdminModalComponent implements OnInit {
     if (!this.enableEditing){
       this.isHidden = true;
     }
+
   }
 
   //allows for editing once the edit button has been pressed
