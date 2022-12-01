@@ -14,6 +14,9 @@ import { HttpService } from '../services/http.service';
 export class UserComponent implements OnInit {
 
   public errMsg = '';
+  public errColor = "";
+  public showChangedName = false;
+
 
   user: IUser = JSON.parse(localStorage.getItem('currentUser') as string);
 
@@ -104,8 +107,9 @@ export class UserComponent implements OnInit {
     if (userName != "") {
       this.user.username = userName;
     }
-
     this.modalService.updateUser(this.user);
+
+    this.showChangedName = true;
 
   }
 
@@ -121,18 +125,19 @@ export class UserComponent implements OnInit {
 
     this.httpService.changePass(payload).subscribe({
       next: data => {
-        this.errMsg = "";
-        //location.reload();
+        //this.errMsg = "";
         this.passwordForm.reset(); //Clears the form data after submitting the data.
+        this.errColor = "text-success"
+        this.errMsg = "Changed Password"
       },
       error: error => {
+        this.errColor = "text-danger"
         this.errMsg = error['error']['message'];
       }
     });
 
 
   }
-
 
   changeActive() {
     let payload = {

@@ -15,7 +15,6 @@ export class ResetPassComponent implements OnInit, AfterViewInit {
 
   public requestMessage = "";
   public requestSent = false;
-  public requestColor = ""
   public errMsg = '';
   public sentClass = "";
 
