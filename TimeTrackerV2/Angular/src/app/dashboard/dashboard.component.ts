@@ -18,7 +18,7 @@ import { IProject } from '../interfaces/IProject';
 
 export class DashboardComponent implements  OnInit
 {
-  public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
+  public user: IUser[] = [];
   public courses: ICourse[] = [];
   public courseRequests: ICourseRequest[] = [];
   public userTypeHolder: IUser;
@@ -27,6 +27,9 @@ export class DashboardComponent implements  OnInit
   public gSize = 0;
   public cSize = 0;
   public pSize = 0;
+  public uID = 0;
+  public username = "";
+  public uType = "";
 
   //Allow course creation if the user is an Instructor
   public isInstructor: boolean = false;
@@ -52,7 +55,19 @@ export class DashboardComponent implements  OnInit
 
   ngOnInit(): void 
   {
-    this.getUserCourses();
+    //get user cookie data
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      this.uID = _users.userID;
+      this.username = _users.username;
+      this.uType = _users.type;
+      console.log(this.user);
+      console.log(this.uID);
+      console.log(this.username);
+
+      this.getUserCourses();
+    });
+
     
     
     // get user groups
@@ -67,11 +82,24 @@ export class DashboardComponent implements  OnInit
 
   getUserCourses(): void {
 
+    console.log("username = ", this.username);
+    
     let payload = {
-      username: this.user.username,
+      username: this.username,
     }
+    
+    // check if user is an instructor
+    if (this.uType == "Instructor") {
+      this.isInstructor = true;
+    }
+    else
+    {
+      this.isInstructor = false;
+    }
+
+
     //Gets user from database
-    this.httpService.getUser(payload).subscribe((_user: any) =>
+    /*this.httpService.getUser(payload).subscribe((_user: any) =>
     {
       this.userTypeHolder = _user;
       //Allow user to create courses if they are an instructor
@@ -83,14 +111,16 @@ export class DashboardComponent implements  OnInit
       {
         this.isInstructor = false;
       }
-      //Get the groups the user is in
-      this.getUserGroups(this.userTypeHolder.userID as number);
+      
+    });*/
 
-      this.getUserProjects(this.userTypeHolder.userID as number);
-    });
+    //Get the groups the user is in
+    this.getUserGroups(this.uID as number);
+
+    this.getUserProjects(this.uID as number);
 
     
-    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.courses = _courses; this.cSize = this.courses.length; console.log(this.courses); });
+    this.httpService.getUserCourses(this.uID).subscribe((_courses: any) => { this.courses = _courses; this.cSize = this.courses.length; console.log(this.courses); });
 
 
 
