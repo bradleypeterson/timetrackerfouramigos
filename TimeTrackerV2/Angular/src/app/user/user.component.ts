@@ -17,49 +17,36 @@ export class UserComponent implements OnInit {
   public errColor = "";
   public showChangedName = false;
 
+  public user: any;
+  public fname = "";
+  public lname = "";
+  public username = "";
 
-  user: IUser = JSON.parse(localStorage.getItem('currentUser') as string);
-
-  public userTypeHolder: IUser;
-
-  public isActive = this.user.isActive;
+  public isActive = false;
   public isInstructor: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private httpService: HttpService,
-    public modalService: AdminModalService,
-  ) {
-    this.userTypeHolder = new class implements IUser
-    {
-      firstName?: string;
-      userID?: number;
-      isActive?: boolean;
-      lastName?: string;
-      password?: string;
-      salt?: string;
-      type?: string;
-      username?: string;
-    }
-  }
+    public modalService: AdminModalService,){}
 
   ngOnInit(): void {
-    //this.getUser();
+    this.getUser();
     //this.setActive();
 
   }
 
-  /*getUser() {
-    let payload = {
-      username: this.user.username,
-    }
+  getUser()
+  {
     //Gets user from database
-    this.httpService.getUser(payload).subscribe((_user: any) =>
-    {
-      this.userTypeHolder = _user;
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      this.fname = _users.firstName;
+      this.lname = _users.lastName;
+      this.username = _users.username;
       //Allow user to create courses if they are an instructor
-      if(this.userTypeHolder.type == "Instructor")
+      if (_users.type == "Instructor")
       {
         this.isInstructor = true;
       }
@@ -67,8 +54,10 @@ export class UserComponent implements OnInit {
       {
         this.isInstructor = false;
       }
+      this.isActive = _users.isActive;
     });
-  }*/
+  }
+
 
   /*setActive() {
     if (this.userTypeHolder.isActive == true) {
@@ -150,11 +139,7 @@ export class UserComponent implements OnInit {
     this.httpService.changeActive(payload).subscribe({
       next: data => {
         this.errMsg = "";
-
-        this.user = JSON.parse(localStorage.getItem('currentUser') as string);
-        this.isActive = this.user.isActive;
-        //location.reload();
-        //this.getUser();
+        this.getUser();
         //this.setActive();
       },
       error: error => {

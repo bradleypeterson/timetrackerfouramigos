@@ -14,10 +14,11 @@ import {IUser} from "./interfaces/IUser";
 })
 export class AppComponent implements OnInit
 {
-  title = 'TimeTrackerV2';
-  userName: string = "";
-  login: string = "Login";
-  isInstructor: boolean = false;
+  public title = 'TimeTrackerV2';
+  public userName: string = "";
+  public login: string = "Login";
+  public user: IUser;
+  public isInstructor: boolean = false;
 
 
   constructor(private data: CommsService, private router: Router, private httpService: HttpService)
@@ -26,12 +27,39 @@ export class AppComponent implements OnInit
     this.data.currentUserName.subscribe(userName => this.userName = userName);
     this.data.currentLogin.subscribe(login => this.login = login);
     this.data.currentInstructor.subscribe(isInstructor => this.isInstructor = isInstructor);
+    this.user = new class implements IUser
+    {
+      firstName?: string;
+      id?: number;
+      isActive?: boolean;
+      lastName?: string;
+      password?: string;
+      salt?: string;
+      type?: string;
+      username?: string;
+    }
   }
 
   ngOnInit(): void
   {
 
   }
+
+  // getUser(): void
+  // {
+  //   this.httpService.getCookie().subscribe((_users: any) => {
+  //     this.user = _users;
+  //     //Allow user to create courses if they are an instructor
+  //     if(_users.type == "Instructor")
+  //     {
+  //       this.isInstructor = true;
+  //     }
+  //     else
+  //     {
+  //       this.isInstructor = false;
+  //     }
+  //   });
+  // }
 
   onLogin(): void
   {

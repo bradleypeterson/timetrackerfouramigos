@@ -35,7 +35,7 @@ export class ChartsComponent implements OnInit {
 
   //region Charts
 
-//each group is a data if the date already exists add the name and hours to it otherwise create a new date and add
+  //each group is a data if the date already exists add the name and hours to it otherwise create a new date and add
   //Gets the total time for each user and sets the pie chart
   getTotalTimes(timeCards: ITimeCard[], user: IUser): void
   {
