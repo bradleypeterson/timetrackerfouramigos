@@ -16,7 +16,7 @@ export class UserComponent implements OnInit {
   public errMsg = '';
 
   user: IUser = JSON.parse(localStorage.getItem('currentUser') as string);
-  
+
   public userTypeHolder: IUser;
 
   public isActive = this.user.isActive;
@@ -27,7 +27,7 @@ export class UserComponent implements OnInit {
     private router: Router,
     private httpService: HttpService,
     public modalService: AdminModalService,
-  ) { 
+  ) {
     this.userTypeHolder = new class implements IUser
     {
       firstName?: string;
@@ -44,7 +44,7 @@ export class UserComponent implements OnInit {
   ngOnInit(): void {
     //this.getUser();
     //this.setActive();
-    
+
   }
 
   /*getUser() {
@@ -112,7 +112,7 @@ export class UserComponent implements OnInit {
   onSubmit() {
 
     let payload = {
-      
+
       currentpassword: this.passwordForm.value['currentpassword'],
       newpassword: this.passwordForm.value['newpassword'],
       repeatpassword: this.passwordForm.value['repeatpassword'],
@@ -158,6 +158,19 @@ export class UserComponent implements OnInit {
     });
 
 
+  }
+
+  requestToBeInstructor(){
+    this.httpService.requestToBeInstructor({userID: this.user.userID, userName: this.user.username}).subscribe( {
+        next: data => {
+          alert('Request Submitted!');
+        },
+      error: error => {
+          if (error['error']['error'] == "Request already awaiting approval!"){
+            alert(error['error']['error']);
+          }
+      }
+    });
   }
 
 

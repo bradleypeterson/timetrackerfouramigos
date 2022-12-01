@@ -13,8 +13,6 @@ let db = new sqlite3.Database(
     }
 );
 
-db.run(`DROP TABLE TimeCard;`);
-
 db.run(`CREATE TABLE IF NOT EXISTS Users(userID INTEGER PRIMARY KEY, 
                             username TEXT NOT NULL,
                             password TEXT NOT NULL,

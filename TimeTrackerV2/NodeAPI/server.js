@@ -176,6 +176,16 @@ app.get('/getusercourserequests/:userid', async (req, res, next) => {
 });
 
 
+app.post('/leavecourse', async (req, res, next) => {
+    let sql = `UPDATE CourseRequest
+               SET
+                   status = false,
+                   isActive = false
+               WHERE
+                   userID = ?
+                   AND
+                   courseID = ?`;
+
     let data = [];
     data[0] = req.body['userID'];
     data[1] = req.body['courseID'];
@@ -477,6 +487,153 @@ app.post('/resetpassword/:userid', async (req, res) => {
         }
     });
 });
+
+//Gets a list of all active admin requests from the database and returns them
+app.get(`/getAdminRequests`, async (req, res) => {
+
+    let sql = `SELECT AdminRequests.*, Users.username, Users.type
+               FROM AdminRequests
+               LEFT JOIN Users on Users.userID = AdminRequests.userID
+               WHERE AdminRequests.isActive = true`;
+
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            res.status(400).json({ "error": err.message });
+        } else {
+
+            res.send(JSON.stringify(rows));
+
+        }
+
+    });
+
+});
+
+//Updates the admin request database with any requests that have been changed by an admin
+app.post(`/updateAdminRequests`, async (req, res) => {
+
+
+    //Processes the account changes or password resets from the admin requests
+    //Adds an error to the error array if there are any failures and returns early.
+    req.body.forEach((request) => {
+
+        if (request.status === 'approved') {
+
+            if (request.requestType === 'password') {
+                resetPassword(request.userID);
+            }
+
+            if (request.requestType === 'account'){
+                updateAccountType(request.userID, request.type);
+            }
+        }
+    });
+
+    let db_error = false;
+    let  error_msg = "";
+
+    //Updates the admin request table
+    req.body.forEach((request) =>{
+
+        if (!db_error) {
+
+
+            let sql = `UPDATE AdminRequests
+                       SET status     = '${request.status}',
+                           isActive   = ${request.isActive},
+                           reviewerID = ${request.reviewerID}
+                       WHERE requestID = ${request.requestID};`;
+
+            db.run(sql, (err) => {
+                if (err) {
+                    //
+                    db_error = true;
+                    error_msg = err.message;
+                } else {
+
+                    if (request === req.body.at(-1)) {
+
+                        return res.status(200).json({message: "Data updated successfully"});
+
+                    }
+                }
+            });
+
+            if (db_error) {
+                return res.status(500).json({error: error_msg});
+            }
+
+        }
+
+    });
+
+});
+
+app.post(`/updatePassword`, async (req, res) => {
+
+    let changePassword = req.body.newPass;
+    let userID = req.body.user;
+
+    console.log(changePassword);
+    console.log(userID);
+
+    let salt = crypto.randomBytes(16).toString('hex');
+
+    let hash = crypto.pbkdf2Sync(changePassword, salt,
+        1000, 64, `sha512`).toString(`hex`);
+
+    let data = []
+
+    data.push(hash);
+    data.push(salt);
+
+    sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${userID}`;
+
+    db.run(sql, data,(err) => {
+        if(err){
+            return res.status(500).json({error: error_msg});
+        } else {
+            return res.status(200).json({message: "Password Reset!"});
+
+        }
+    });
+
+});
+
+//Submits a request to the admin request table for a student
+app.post(`/requestToBeInstructor`, async (req, res) => {
+    let userID = req.body.userID;
+    let username = req.body.userName;
+
+    let requestCheckSql = `SELECT * FROM AdminRequests WHERE userID = ${userID} AND status = 'pending' AND requestType = 'account';`;
+
+    db.all(requestCheckSql, [], (err, rows) => {
+
+        if (err) {
+            return res.status(400).json({ "error": err.message });
+        } else {
+
+            if (rows.length < 1) {
+
+                let sql = `INSERT INTO AdminRequests (userID, requestType, status, isActive)
+                           values (${userID}, 'account', 'pending', true);`
+
+                db.run(sql, (err) => {
+                    if (err) {
+                        return res.status(500).json({error: err.message});
+                    } else {
+                        return res.status(200).json({message: "Request Sent!"});
+                    }
+                });
+            } else {
+                return res.status(400).json({error: "Request already awaiting approval!"});
+            }
+        }
+
+    });
+
+})
 
 //-------------------------------------------------------
 

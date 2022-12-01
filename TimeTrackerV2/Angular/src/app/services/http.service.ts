@@ -280,4 +280,8 @@ export class HttpService {
     return this.http.get<any>(this.apiUrl + `getcourseandgroupinfobyid/${userID}`, this.httpOptions);
   }
 
+  requestToBeInstructor(payload: any): Observable<any>{
+    return this.http.post<any>(this.apiUrl + `requestToBeInstructor`, payload, this.httpOptions);
+  }
+
 }
