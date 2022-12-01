@@ -82,3 +82,14 @@ db.run(
                         '0dc02b66b207ebf3b6a789af5e835007'
                     WHERE NOT EXISTS(SELECT 1 FROM Users WHERE username = 'Admin')`
 );
+
+
+db.run(`CREATE TABLE IF NOT EXISTS AdminRequests(
+                                requestID INTEGER PRIMARY KEY, 
+                                userID INTEGER NOT NULL, 
+                                requestType TEXT NOT NULL,
+                                status Text NOT NULL,
+                                isActive BOOL NOT NULL,
+                                reviewerID INTEGER);`
+
+);

@@ -6,9 +6,11 @@ const sqlite3 = require('sqlite3').verbose();
 const session = require('express-session');
 const { authUser, authRole } = require('./basicAuth.js');
 
+
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
+
 
 // Database
 const db = new sqlite3.Database('./database/main.db');
@@ -173,7 +175,6 @@ app.get('/getusercourserequests/:userid', async (req, res, next) => {
     });
 });
 
-//Lets a user leave a course
 
 app.post('/leavecourse', async (req, res, next) => {
     let sql = `UPDATE CourseRequest
@@ -487,6 +488,178 @@ app.post('/resetpassword/:userid', async (req, res) => {
     });
 });
 
+//Gets a list of all active admin requests from the database and returns them
+app.get(`/getAdminRequests`, async (req, res) => {
+
+    let sql = `SELECT AdminRequests.*, Users.username, Users.type
+               FROM AdminRequests
+               LEFT JOIN Users on Users.userID = AdminRequests.userID
+               WHERE AdminRequests.isActive = true`;
+
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            res.status(400).json({ "error": err.message });
+        } else {
+
+            res.send(JSON.stringify(rows));
+
+        }
+
+    });
+
+});
+
+//Updates the admin request database with any requests that have been changed by an admin
+app.post(`/updateAdminRequests`, async (req, res) => {
+
+
+    //Processes the account changes or password resets from the admin requests
+    //Adds an error to the error array if there are any failures and returns early.
+    req.body.forEach((request) => {
+
+        if (request.status === 'approved') {
+
+            if (request.requestType === 'password') {
+                resetPassword(request.userID);
+            }
+
+            if (request.requestType === 'account'){
+                updateAccountType(request.userID, request.type);
+            }
+        }
+    });
+
+    let db_error = false;
+    let  error_msg = "";
+
+    //Updates the admin request table
+    req.body.forEach((request) =>{
+
+        if (!db_error) {
+
+
+            let sql = `UPDATE AdminRequests
+                       SET status     = '${request.status}',
+                           isActive   = ${request.isActive},
+                           reviewerID = ${request.reviewerID}
+                       WHERE requestID = ${request.requestID};`;
+
+            db.run(sql, (err) => {
+                if (err) {
+                    //
+                    db_error = true;
+                    error_msg = err.message;
+                } else {
+
+                    if (request === req.body.at(-1)) {
+
+                        return res.status(200).json({message: "Data updated successfully"});
+
+                    }
+                }
+            });
+
+            if (db_error) {
+                return res.status(500).json({error: error_msg});
+            }
+
+        }
+
+    });
+
+});
+
+app.post(`/updatePassword`, async (req, res) => {
+
+    let changePassword = req.body.newPass;
+    let userID = req.body.user;
+
+    console.log(changePassword);
+    console.log(userID);
+
+    let salt = crypto.randomBytes(16).toString('hex');
+
+    let hash = crypto.pbkdf2Sync(changePassword, salt,
+        1000, 64, `sha512`).toString(`hex`);
+
+    let data = []
+
+    data.push(hash);
+    data.push(salt);
+
+    sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${userID}`;
+
+    db.run(sql, data,(err) => {
+        if(err){
+            return res.status(500).json({error: error_msg});
+        } else {
+            return res.status(200).json({message: "Password Reset!"});
+
+        }
+    });
+
+});
+
+//Submits a request to the admin request table for a student
+app.post(`/requestToBeInstructor`, async (req, res) => {
+    let userID = req.body.userID;
+    let username = req.body.userName;
+
+    let requestCheckSql = `SELECT * FROM AdminRequests WHERE userID = ${userID} AND status = 'pending' AND requestType = 'account';`;
+
+    db.all(requestCheckSql, [], (err, rows) => {
+
+        if (err) {
+            return res.status(400).json({ "error": err.message });
+        } else {
+
+            if (rows.length < 1) {
+
+                let sql = `INSERT INTO AdminRequests (userID, requestType, status, isActive)
+                           values (${userID}, 'account', 'pending', true);`
+
+                db.run(sql, (err) => {
+                    if (err) {
+                        return res.status(500).json({error: err.message});
+                    } else {
+                        return res.status(200).json({message: "Request Sent!"});
+                    }
+                });
+            } else {
+                return res.status(400).json({error: "Request already awaiting approval!"});
+            }
+        }
+
+    });
+
+})
+
+//Gets the course, projects, and group information for the admin modal tables
+app.get(`/getcourseandgroupinfobyid/:userid`, (req, res) => {
+
+    let userID = req.params.userid;
+
+    let sql = `SELECT GA.userID, G.groupID, G.groupName, P.projectID, P.projectName, P.courseID, C.courseName, C.instructorID, U2.firstName, U2.lastName  FROM GroupAssignment GA
+    LEFT JOIN Groups G on GA.groupID = G.groupID
+    LEFT JOIN Users U on GA.userID = U.userID
+    LEFT JOIN Projects P on G.projectID = P.projectID
+    LEFT JOIN Courses C on P.courseID = C.courseID
+    LEFT JOIN Users U2 ON C.instructorID = U2.userID
+    WHERE GA.userID = ${userID};`
+
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            res.status(400).json({ "error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+
+    });
+
+})
+
 //-------------------------------------------------------
 
 app.post('/register', async (req, res, next) => {
@@ -562,6 +735,123 @@ app.post('/register', async (req, res, next) => {
         );
     });
 });
+
+// change the password
+app.post('/changepass', async (req, res, next) => {
+
+    function isEmpty(str) {
+        return (!str || str.length === 0 );
+      }
+
+    if(
+        isEmpty(req.body["currentpassword"]) ||
+        isEmpty(req.body["newpassword"]) ||
+        isEmpty(req.body["repeatpassword"]) ||
+        isEmpty(req.body["userID"])) {
+        return res.status(400).json({message: 'Missing one or more required arguments.'});
+    }
+
+
+    // Validate passwords match
+    if(req.body["newpassword"] !== req.body["repeatpassword"]) {
+        return res.status(400).json({message: 'Given passwords do not match'});
+    }
+
+    // get the current password from database
+    let sql1 = `SELECT * FROM Users WHERE userID = ?`;
+
+    // make sure the current password is correct
+    db.get(sql1, [req.body["userID"]], (err, rows) => {
+        if (err) {
+            console.log(rows);
+        return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+
+        if(rows) {
+            salt = rows['salt']
+
+            let hash = crypto.pbkdf2Sync(req.body["currentpassword"], salt,
+            1000, 64, `sha512`).toString(`hex`);
+
+            if(rows['password'] != hash) {
+                return res.status(400).json({message: 'Current password is incorrect.'});
+                //return res.status(200).json({user: rows});
+            }
+        }
+        else {
+            return res.status(400).json({message: 'Current password is incorrect.'});
+        }
+    });
+
+
+    // salt the password
+    let salt2 = crypto.randomBytes(16).toString('hex');
+
+    // hash is what will be in the database for the password
+    let hash2 = crypto.pbkdf2Sync(req.body["newpassword"], salt2,
+      1000, 64, `sha512`).toString(`hex`);
+
+
+    let data = [];
+    data[0] = hash2;
+    data[1] = salt2;
+    data[2] = req.body["userID"];
+
+    console.log(data);
+
+    // set the new password
+    db.run(`UPDATE Users SET password = ?, salt = ? WHERE userID = ?`, data, function(err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        else
+        {
+            return res.status(200).json({message: "Password updated"});
+        }
+    });
+
+
+
+});
+
+
+// change active status
+app.post('/changeactive', async (req, res, next) => {
+
+    /*function isEmpty(str) {
+        return (!str || str.length === 0 );
+    }
+
+    if(
+        isEmpty(req.body["activeStat"]) ||
+        isEmpty(req.body["userID"])) {
+        return res.status(400).json({message: 'Missing one or more required arguments.'});
+    }*/
+
+    let data = [];
+    data[0] = req.body['activeStat'];
+    data[1] = req.body["userID"];
+
+    // change the user active status
+    db.run(`UPDATE Users SET isActive = ? WHERE userID = ?`, data, function(err, rows)
+    {
+        if (err)
+        {
+            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+        }
+        else
+        {
+            return res.status(200).json({message: "User active status is changed"});
+        }
+    });
+
+
+
+});
+
+
 
 app.post('/login', async (req, res, next) => {
     function isEmpty(str) {
@@ -1107,6 +1397,66 @@ app.post('/updatetimecard', async (req, res, next) => {
         }
     });
 });
+
+//Resets the users password to a default password;
+const resetPassword = ((userID, newPass) => {
+
+    let changePassword = '';
+
+    if (newPass != null){
+        changePassword = newPass;
+    } else {
+        changePassword = 'wildcat123';
+    }
+
+    let salt = crypto.randomBytes(16).toString('hex');
+
+    let hash = crypto.pbkdf2Sync(changePassword, salt,
+        1000, 64, `sha512`).toString(`hex`);
+
+    let data = []
+
+    data.push(hash);
+    data.push(salt);
+
+    sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${userID}`;
+
+    db.run(sql, data,(err) => {
+        if(err){
+            return {passed: false, msg: err.message}
+        } else {
+            return  {passed: true, msg: "Password Reset!"}
+        }
+    });
+
+
+});
+
+//Updates the user type from a student to an instructor or vice versa
+const updateAccountType = ((userID, accountType) => {
+
+    let updatedType = '';
+
+    if (accountType === 'Basic') {
+        updatedType = 'Instructor';
+    }
+
+    if (accountType === 'Instructor'){
+        updatedType = 'Basic';
+    }
+
+    let sql = `UPDATE Users SET type = '${updatedType}' WHERE userID = ${userID};`
+
+    db.run(sql, (err) => {
+        if(err){
+            return  {passed: false, msg: err.message}
+        } else {
+            return {passed: true, msg: "Account Updated!"}
+        }
+    });
+
+});
+
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

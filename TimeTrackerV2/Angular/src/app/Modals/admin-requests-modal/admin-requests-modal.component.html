@@ -1,0 +1,122 @@
+<div id="modal-container">
+
+
+  <header>
+    <div id="header-container">
+      <div id="requests">
+        <h1 style="font-size: 32pt;">Requests</h1>
+      </div>
+
+      <div id="closeBtnTop">
+        <i id="close" (click)="requestService.closeModal()">X</i>
+      </div>
+
+    </div>
+
+  </header>
+
+
+    <div id="main-container">
+
+      <div id="content-left">
+
+        <table class="table table-hover table-striped" id="requestsTable">
+          <thead>
+          <tr>
+            <th> </th>
+            <th>Username</th>
+            <th>Type</th>
+            <th>Request</th>
+            <th>Account</th>
+            <th>Approve/Deny</th>
+          </tr>
+          </thead>
+          <tbody>
+
+          <tr *ngFor="let request of requests">
+            <td id="circle">
+              <div class="dot" *ngIf="request.status == 'pending'" style="background-color: lightgray;"></div>
+              <div class="dot" *ngIf="request.status == 'approved'" style="background-color: green;"></div>
+              <div class="dot" *ngIf="request.status == 'denied'" style="background-color: red;"></div>
+            </td>
+            <td>{{request.username}}</td>
+            <td *ngIf="request.type == 'Basic'">Student</td>
+            <td *ngIf="request.type != 'Basic'">{{request.type}}</td>
+            <td>{{request.requestType}}</td>
+            <td><button class="btn btn-outline-primary" (click)="requestService.openAccount(request)">Account</button></td>
+<!--            -->
+            <td>
+              <button class="btn btn-outline-success modify-btn" (click)="requestService.modifyRequest('approved', request)">✓</button> |
+              <button class="btn btn-outline-danger modify-btn" (click)="requestService.modifyRequest('denied', request)">X</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+
+      </div>
+
+      <div id="content-right">
+        <header>
+
+          <form [formGroup]="requestSearchForm" (ngSubmit)="onSubmit()">
+
+            <div class="input-group">
+
+              <input type="text" id="requestSearch" formControlName="requestSearchTerm" name="RequestSearch" placeholder="Search Username..." required>
+              <br/>
+              <button type="submit" class="btn btn-primary" id="requestSearchBtn" (click)="onSubmit()"> Search</button>
+
+            </div>
+          </form>
+
+        </header>
+
+        <div id="radio-div">
+
+          <div class="row">
+
+            <div class="col-auto">
+              <input type="radio" id="All" name="searchRequestRadio" value="All" (click)="requestService.radioFilter('all')">
+              <label for="All" (click)="requestService.radioFilter('all')"> All </label>
+            </div>
+
+            <div class="col-auto">
+              <input type="radio" id="Password" name="searchRequestRadio" value="Password" (click)="requestService.radioFilter('student')" >
+              <label for="Password"> Student </label>
+            </div>
+
+            <div class="col-auto">
+              <input type="radio" id="Account" name="searchRequestRadio" value="Account" (click)="requestService.radioFilter('instructor')">
+              <label for="Account"> Instructor </label>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="edit-all" >
+
+          <button class="btn btn-outline-success" (click)="requestService.approveAll()">Approve All</button>
+
+          <button class="btn btn-outline-danger" (click)="requestService.denyAll()">Deny All</button>
+
+        </div>
+
+
+        <footer>
+
+            <button class="btn btn-warning" (click)="requestService.reset()">Reset</button>
+
+            <button class="btn btn-success" (click)="requestService.saveModifiedRequests(user.userID)">Save</button>
+
+            <button class="btn btn-danger" (click)="requestService.closeModal()">Close</button>
+
+
+        </footer>
+
+      </div>
+    </div>
+
+
+
+</div>
