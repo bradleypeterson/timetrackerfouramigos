@@ -49,25 +49,31 @@ export class ResetPassComponent implements OnInit, AfterViewInit {
       if (_response["message"] === "incorrect")
       {
         this.requestMessage = "Incorrect Username";
-        this.sentClass = "text-danger"
+        this.sentClass = "text-danger";
       }
       //Request was sent
       else if (_response["message"] === "success")
       {
         this.requestMessage = "Request Sent";
-        this.sentClass = "text-success"
+        this.sentClass = "text-success";
       }
       //Request has already been sent but hasn't been approved yet
       else if (_response["message"] === "pending")
       {
         this.requestMessage = "Request Pending";
-        this.sentClass = "text-warning"
+        this.sentClass = "text-warning";
       }
       //Request was approved
       else if (_response["message"] == "accepted")
       {
         this.requestMessage = "Request Approved";
-        this.sentClass = "text-primary"
+        this.sentClass = "text-primary";
+      }
+      //Request was denied
+      else if (_response["message"] == "denied")
+      {
+        this.requestMessage = "Request Denied";
+        this.sentClass = "text-danger";
       }
       this.requestSent = true;
     });

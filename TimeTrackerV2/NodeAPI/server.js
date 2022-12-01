@@ -600,19 +600,23 @@ app.get("/requestPassword/:username", async (req, res, next) => {
                 }
                 if(checkrows)
                 {
-                    if (checkrows["status"] === "1")
+                    if (checkrows["status"] === "approved")
                     {
                         return res.status(200).json({message: 'accepted'});
                     }
-                    else if(checkrows["status"] === "0")
+                    else if (checkrows["status"] === "pending")
                     {
                         return res.status(200).json({message: 'pending'});
+                    }
+                    else if(checkrows["status"] === "denied")
+                    {
+                        return res.status(200).json({message: 'denied'});
                     }
                 }
                 else
                 {
                     let sql2 = `INSERT INTO AdminRequests (userID, requestType, status, isActive, reviewerID)
-                                    VALUES (?, 'password', false, true, null)`
+                                    VALUES (?, 'password', 'pending', true, null)`
                     let data = [];
                     data[0] = rows["userID"];
                     db.get(sql2, data, function(err, insertrows) {
