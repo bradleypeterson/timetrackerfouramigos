@@ -3,6 +3,8 @@ import { HttpService } from '../services/http.service';
 import { IUser } from '../interfaces/IUser';
 import { FormBuilder } from "@angular/forms";
 import { AdminModalService } from "../services/adminmodal.service";
+import { AdminRequestService} from "../services/adminrequest.service";
+import { IAdminRequest} from "../interfaces/IAdminRequest";
 
 @Component({
   selector: 'app-admin-dash',
@@ -14,15 +16,33 @@ export class AdminDashComponent implements OnInit {
 
   users: IUser[] = []
   filtered_users: IUser[] = []
+
+  requests: IAdminRequest[] = [];
+
   modal: boolean = false;
 
+  openedFromRequests: boolean = false;
+
+  openRequestModal = this.requestService.sharedAccountSource.subscribe((userID: number) => {
+
+    if (userID == -1){
+      return;
+    }
+
+    let user = this.users.find((user: IUser) => {
+      return user.userID == userID;
+    })
+
+    this.openedFromRequests = true;
+    this.showModal(user as IUser);
+  })
 
   constructor(
     private httpService: HttpService,
     private formBuilder: FormBuilder,
     public modalService: AdminModalService,
-  ) {
-  }
+    public requestService: AdminRequestService,
+  ) {}
 
   searchForm = this.formBuilder.group({
     searchTerm: '',
@@ -40,8 +60,6 @@ export class AdminDashComponent implements OnInit {
       this.users = _users;
       this.filtered_users = _users;
     });
-
-
   }
 
   //Fires when the search button is clicked
@@ -71,7 +89,8 @@ export class AdminDashComponent implements OnInit {
   showModal(user: IUser) {
 
     this.modalService.create(user);
-    this.modalService.showModal();
+    this.modalService.showModal(this.openedFromRequests);
+    this.openedFromRequests = false;
   }
 
   //filters users based on which radio button is selected
@@ -82,7 +101,13 @@ export class AdminDashComponent implements OnInit {
       if (filterType == 'all') {
         return user;
       } else {
-        return user.type == filterType;
+
+        if (user.type?.toLowerCase() == filterType.toLowerCase()) {
+          console.log("Returned:");
+          console.log(user);
+        }
+
+        return user.type?.toLowerCase() == filterType.toLowerCase();
       }
 
     })
@@ -108,7 +133,6 @@ export class AdminDashComponent implements OnInit {
     });
 
   }
-
 
 }
 
