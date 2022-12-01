@@ -107,7 +107,7 @@
 
             <button class="btn btn-warning" (click)="requestService.reset()">Reset</button>
 
-            <button class="btn btn-success" (click)="requestService.saveModifiedRequests()">Save</button>
+            <button class="btn btn-success" (click)="requestService.saveModifiedRequests(user.userID)">Save</button>
 
             <button class="btn btn-danger" (click)="requestService.closeModal()">Close</button>
 

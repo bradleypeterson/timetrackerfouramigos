@@ -101,12 +101,12 @@ export class AdminRequestService {
   }
 
   //Saves any request that has been altered and sends them to the database to be saved
-  saveModifiedRequests(){
+  saveModifiedRequests(userID: number){
 
     this.requests.forEach((request) => {
       if (request.status != "pending"){
         request.isActive = false;
-        request.reviewerID = 4; //Change this to session variable of the current admin user !!!!!!!!!!!!!!!!!!!!!!!!!!!
+        request.reviewerID = userID;
         this.modifiedRequests.push(request);
       }
     });

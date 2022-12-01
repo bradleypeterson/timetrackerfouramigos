@@ -18,7 +18,7 @@ export class AdminRequestsModalComponent implements OnInit {
     requestSearchTerm: '',
   });
 
-
+  user: any = null;
 
 
   constructor(
@@ -33,6 +33,10 @@ export class AdminRequestsModalComponent implements OnInit {
   ngOnInit(): void {
     this.refreshListener = this.requestService.sharedRequests.subscribe((requests) => {
       this.requests = requests;
+    })
+
+    this.httpService.getCookie().subscribe((_user: any) => {
+      this.user = _user;
     })
   }
 
