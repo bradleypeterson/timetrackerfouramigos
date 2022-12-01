@@ -1,9 +1,9 @@
 
 <div class="container">
-  <h1 class="mt-8 dashboard-titles">Admin Dashboard</h1>
+  <h1>Admin Dashboard</h1>
   <div class="row">
     <div class="col-lg-8">
-        <div class="container container-black-outline">
+        <div style="height: fit-content;" class="container container-black-outline">
           <div class="row">
             <header>
               <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
@@ -29,8 +29,6 @@
                 </div>
               </form>
 
-
-
             </header>
           </div>
 
@@ -45,7 +43,6 @@
               </tr>
               </thead>
               <tbody>
-              <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
               <tr *ngFor="let user of filtered_users" (click)="showModal(user)">
                 <td >{{user.username}}</td>
                 <td >{{user.lastName}}, {{user.firstName}}</td>
@@ -63,9 +60,30 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="container container-black-outline">
+        <div class="container container-black-outline" id="right-container">
+
+          <header>
+
+<!--            Shows the number of requests the admin currently has-->
+            <div class="row">
+              <div class="col-auto text-center">
+                <h2 style="font-size: 22pt;"><b>Requests</b></h2>
+              </div>
+
+            </div>
+
+          </header>
+
+            <div class="col-auto text-center grey-background requestModalNotification" (click)="requestService.showModal()">
+              <p id="amount-of-requests">{{requestService.requests.length}}</p>
+              <br/>
+              <p id="requests-text">Pending Requests</p>
+            </div>
+
 
         </div>
+
+
     </div>
 
   </div>
@@ -74,6 +92,10 @@
     <app-admin-modal *ngIf="modalService.modalDisplay" (refresh)="getUsers()"></app-admin-modal>
   </div>
 
+  <div>
+    <app-admin-requests-modal *ngIf="requestService.modalDisplay"></app-admin-requests-modal>
+<!--    <app-admin-requests-modal></app-admin-requests-modal>-->
+  </div>
 
 
 </div>

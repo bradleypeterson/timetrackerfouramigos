@@ -8,6 +8,8 @@ import {IProject } from '../interfaces/IProject';
 import {IGroup} from "../interfaces/IGroup";
 import {IGroupAssignment} from "../interfaces/IGroupAssignment";
 import {animate} from "@angular/animations";
+import {IAdminRequest} from "../interfaces/IAdminRequest";
+import {ICourseAndGroupInfo} from "../interfaces/ICourseAndGroupInfo";
 
 
 
@@ -107,7 +109,7 @@ export class HttpService {
     return this.http.get<any>(this.apiUrl + 'getcoursesonly');
   }
 
-    //Request login authorization from the server
+  //Request login authorization from the server
   login(payload: any): Observable<any> {
 
     return this.http.post<any>(this.apiUrl + 'login', payload, this.httpOptions);
@@ -118,6 +120,19 @@ export class HttpService {
   register(payload: any): Observable<any> {
 
     return this.http.post<any>(this.apiUrl + 'register', payload, this.httpOptions);
+
+  }
+
+  // changes password
+  changePass(payload: any): Observable<any> {
+    console.log(payload);
+    return this.http.post<any>(this.apiUrl + 'changepass', payload, this.httpOptions);
+
+  }
+
+  changeActive(payload: any): Observable<any> {
+    console.log(payload);
+    return this.http.post<any>(this.apiUrl + 'changeactive', payload, this.httpOptions);
 
   }
 
@@ -242,5 +257,31 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + 'leavecourse', payload, this.httpOptions);
   }
 
+  //get user cookie data
+  getCookie(): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + 'getCookie');
+  }
+
+  getAdminRequests(): Observable<IAdminRequest[]>{
+    return this.http.get<IAdminRequest[]>(this.apiUrl + 'getAdminRequests', this.httpOptions);
+  }
+
+  updateAdminRequests(requests: IAdminRequest[]): Observable<any>{
+    return this.http.post<IAdminRequest[]>(this.apiUrl + 'updateAdminRequests', requests, this.httpOptions);
+  }
+
+  updatePassword(payload: any): Observable<any>{
+    return this.http.post<any>(this.apiUrl + `updatePassword`, payload, this.httpOptions);
+  }
+
+  //Gets information about a users courses, projects, and groups.
+  getCourseAndGroupInfoByID(userID: number): Observable<any>{
+    return this.http.get<any>(this.apiUrl + `getcourseandgroupinfobyid/${userID}`, this.httpOptions);
+  }
+
+  requestToBeInstructor(payload: any): Observable<any>{
+    return this.http.post<any>(this.apiUrl + `requestToBeInstructor`, payload, this.httpOptions);
+  }
 
 }
