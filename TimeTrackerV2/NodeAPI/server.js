@@ -635,6 +635,31 @@ app.post(`/requestToBeInstructor`, async (req, res) => {
 
 })
 
+//Gets the course, projects, and group information for the admin modal tables
+app.get(`/getcourseandgroupinfobyid/:userid`, (req, res) => {
+
+    let userID = req.params.userid;
+
+    let sql = `SELECT GA.userID, G.groupID, G.groupName, P.projectID, P.projectName, P.courseID, C.courseName, C.instructorID, U2.firstName, U2.lastName  FROM GroupAssignment GA
+    LEFT JOIN Groups G on GA.groupID = G.groupID
+    LEFT JOIN Users U on GA.userID = U.userID
+    LEFT JOIN Projects P on G.projectID = P.projectID
+    LEFT JOIN Courses C on P.courseID = C.courseID
+    LEFT JOIN Users U2 ON C.instructorID = U2.userID
+    WHERE GA.userID = ${userID};`
+
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            res.status(400).json({ "error": err.message });
+        } else {
+            res.send(JSON.stringify(rows));
+        }
+
+    });
+
+})
+
 //-------------------------------------------------------
 
 app.post('/register', async (req, res, next) => {
