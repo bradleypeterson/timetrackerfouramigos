@@ -17,7 +17,7 @@ export class AppComponent implements OnInit
   public title = 'TimeTrackerV2';
   public userName: string = "";
   public login: string = "Login";
-  public user: IUser;
+  public user: any;
   public isInstructor: boolean = false;
 
 
@@ -27,39 +27,30 @@ export class AppComponent implements OnInit
     this.data.currentUserName.subscribe(userName => this.userName = userName);
     this.data.currentLogin.subscribe(login => this.login = login);
     this.data.currentInstructor.subscribe(isInstructor => this.isInstructor = isInstructor);
-    this.user = new class implements IUser
-    {
-      firstName?: string;
-      id?: number;
-      isActive?: boolean;
-      lastName?: string;
-      password?: string;
-      salt?: string;
-      type?: string;
-      username?: string;
-    }
   }
 
   ngOnInit(): void
   {
-
+    this.getUser();
   }
 
-  // getUser(): void
-  // {
-  //   this.httpService.getCookie().subscribe((_users: any) => {
-  //     this.user = _users;
-  //     //Allow user to create courses if they are an instructor
-  //     if(_users.type == "Instructor")
-  //     {
-  //       this.isInstructor = true;
-  //     }
-  //     else
-  //     {
-  //       this.isInstructor = false;
-  //     }
-  //   });
-  // }
+  getUser(): void
+  {
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      this.userName = _users.username;
+      this.login = "Logout";
+      //Allow user to create courses if they are an instructor
+      if(_users.type == "Instructor")
+      {
+        this.isInstructor = true;
+      }
+      else
+      {
+        this.isInstructor = false;
+      }
+    });
+  }
 
   onLogin(): void
   {
@@ -69,7 +60,6 @@ export class AppComponent implements OnInit
       this.data.changeLogin("Login");
       this.data.changeUserName("");
       this.data.changeInstructor(false);
-      localStorage.setItem("currentUser", JSON.stringify(new User));
       this.router.navigate(['']);
     }
   }
