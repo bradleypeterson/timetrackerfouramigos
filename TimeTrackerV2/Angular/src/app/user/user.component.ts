@@ -15,9 +15,8 @@ export class UserComponent implements OnInit {
 
   public errMsg = '';
 
-  user: IUser[] = [];
-  user2: IUser[] = [];
-  
+  user: IUser = JSON.parse(localStorage.getItem('currentUser') as string);
+
   public userTypeHolder: IUser;
 
   public isActive = 0;
@@ -34,7 +33,7 @@ export class UserComponent implements OnInit {
     private router: Router,
     private httpService: HttpService,
     public modalService: AdminModalService,
-  ) { 
+  ) {
     this.userTypeHolder = new class implements IUser
     {
       firstName?: string;
@@ -49,21 +48,27 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    //this.getUser();
+    //this.setActive();
 
-    //get user cookie data
-    this.httpService.getCookie().subscribe((_users: any) => {
-      this.user = _users;
-      this.isActive = _users.isActive;
-      this. uID = _users.userID;
-      this.fname = _users.firstName;
-      this.lname = _users.lastName;
-      this.uname = _users.username;
-      this.uType = _users.type;
-      this.uActive = _users.isActive
-      console.log(this.user);
-      //redirect user if they are already logged in
-      if (this.user) {
-        this.router.navigate(['./dashboard']);
+  }
+
+  /*getUser() {
+    let payload = {
+      username: this.user.username,
+    }
+    //Gets user from database
+    this.httpService.getUser(payload).subscribe((_user: any) =>
+    {
+      this.userTypeHolder = _user;
+      //Allow user to create courses if they are an instructor
+      if(this.userTypeHolder.type == "Instructor")
+      {
+        this.isInstructor = true;
+      }
+      else
+      {
+        this.isInstructor = false;
       }
     });
     
@@ -120,7 +125,7 @@ export class UserComponent implements OnInit {
   onSubmit() {
 
     let payload = {
-      
+
       currentpassword: this.passwordForm.value['currentpassword'],
       newpassword: this.passwordForm.value['newpassword'],
       repeatpassword: this.passwordForm.value['repeatpassword'],
@@ -166,6 +171,19 @@ export class UserComponent implements OnInit {
     });
 
 
+  }
+
+  requestToBeInstructor(){
+    this.httpService.requestToBeInstructor({userID: this.user.userID, userName: this.user.username}).subscribe( {
+        next: data => {
+          alert('Request Submitted!');
+        },
+      error: error => {
+          if (error['error']['error'] == "Request already awaiting approval!"){
+            alert(error['error']['error']);
+          }
+      }
+    });
   }
 
 

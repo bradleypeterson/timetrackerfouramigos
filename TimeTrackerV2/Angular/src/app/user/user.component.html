@@ -41,7 +41,7 @@
           <!-- ng-model="viewUser.lastName" ng-model-options="{debounce: 750}" ng-change="saveUser()" -->
           <input class="mb-1" type="text" name="lastName" id="lastname" placeholder="{{user['lastName']}}"/>
         </div>
-        
+
         <div class="row mt-2 mx-auto">
           <!-- ng-click="changePassword()" -->
           <button type="button" (click)="changeName()" class="btn btn-primary col mr-1">Save Name</button>
@@ -56,22 +56,22 @@
           <div>
             <p style="color: red;">{{ errMsg }}</p>
           </div>
-          <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">   
+          <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">
             <label class="mb-2 mt-2" for="currentpassword">Current Password </label>
             <input class="mb-2" ng-model="password" formControlName="currentpassword" type="password" id="currentpassword" name="currentpassword" />
           </div>
 
-          <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">   
+          <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">
             <label class="mb-2 mt-2" for="newpassword">New Password </label>
             <input class="mb-2" ng-model="password" formControlName="newpassword" type="password" id="newpassword" name="newpassword" />
           </div>
 
-          <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">   
+          <div class="input-group col-5 text-right pr-1 pl-0" style="margin-top: 1px;">
             <label class="mb-2 mt-2" for="repeatpassword">Repeat Password </label>
             <input class="mb-2" ng-model="password" formControlName="repeatpassword" type="password" id="repeatpassword" name="repeatpassword" />
           </div>
 
-         
+
         </div>
 
         <div class="row mt-2 mx-auto">
@@ -79,6 +79,8 @@
         </div>
 
         </form>
+
+        <button id="instructorBtn" class="btn btn-outline-primary" (click)="requestToBeInstructor()"> Request To Be Instructor</button>
 
 
 
