@@ -21,8 +21,8 @@ export class UserComponent implements OnInit {
   public fname = "";
   public lname = "";
   public username = "";
+  public isActive: any;
 
-  public isActive = false;
   public isInstructor: boolean = false;
 
   constructor(
@@ -33,8 +33,6 @@ export class UserComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUser();
-    //this.setActive();
-
   }
 
   getUser()
@@ -45,6 +43,8 @@ export class UserComponent implements OnInit {
       this.fname = _users.firstName;
       this.lname = _users.lastName;
       this.username = _users.username;
+      this.isActive = _users.isActive;
+      console.log("user.isActive: " + this.user.isActive);
       //Allow user to create courses if they are an instructor
       if (_users.type == "Instructor")
       {
@@ -54,22 +54,8 @@ export class UserComponent implements OnInit {
       {
         this.isInstructor = false;
       }
-      this.isActive = _users.isActive;
     });
   }
-
-
-  /*setActive() {
-    if (this.userTypeHolder.isActive == true) {
-      this.isActive = true;
-      this.userActive = "active";
-    }
-    else {
-      this.isActive = false;
-      this.userActive = "inactive";
-    }
-    console.log(this.isActive);
-  }*/
 
   passwordForm = this.formBuilder.group({
     currentpassword: '',
@@ -96,10 +82,15 @@ export class UserComponent implements OnInit {
     if (userName != "") {
       this.user.username = userName;
     }
-    this.modalService.updateUser(this.user);
+    this.httpService.updateCurrentUser(this.user).subscribe({
+      next: data => {
+        this.getUser()
+        this.showChangedName = true;
+      },
+        error: error => {
 
-    this.showChangedName = true;
-
+      }
+    });
   }
 
   onSubmit() {
@@ -130,7 +121,7 @@ export class UserComponent implements OnInit {
 
   changeActive() {
     let payload = {
-      activeStat: !this.isActive,
+      activeStat: !this.user.isActive,
       userID: this.user.userID,
     }
 
@@ -140,7 +131,6 @@ export class UserComponent implements OnInit {
       next: data => {
         this.errMsg = "";
         this.getUser();
-        //this.setActive();
       },
       error: error => {
         this.errMsg = error['error']['message'];

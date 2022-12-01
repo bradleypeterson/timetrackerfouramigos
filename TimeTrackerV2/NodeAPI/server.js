@@ -402,6 +402,50 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
 });
 
 //Updates the user in the database with the passed in information
+app.post('/updatecurrentuserbyid/:userid', async (req, res) => {
+    let data = [];
+    data[0] = req.body['username'];
+    data[1] = req.body['firstName'];
+    data[2] = req.body['lastName'];
+    data[3] = req.body['type'];
+    data[4] = req.body['isActive'];
+
+    if (data[0] === 'Admin' && data[1] === 'Sudo' && data[2] === 'Admin') {
+        return res.status(500).json({ error: 'Cannot modify Admin account!' });
+    }
+
+    let sql = `UPDATE
+                  users
+              SET
+                  username = ?,
+                  firstName = ?,
+                  lastName = ?,
+                  type = ?,
+                  isActive = ?
+              WHERE
+                  userID = ${req.params.userid}`;
+
+    db.run(sql, data, (err) => {
+        if (err)
+        {
+            return res.status(500).json({ error: err.message });
+        }
+        else
+        {
+            req.session.user.loggedIn.username = req.body['username'];
+            req.session.user.loggedIn.firstName = req.body['firstName'];
+            req.session.user.loggedIn.lastName = req.body['lastName'];
+            req.session.user.loggedIn.type = req.body['type'];
+            req.session.user.loggedIn.isActive = req.body['isActive'];
+            return res
+                .status(200)
+                .json({ message: 'User updated successfully' });
+        }
+    });
+});
+
+
+//Updates the user in the database with the passed in information
 app.post('/updateuserbyid/:userid', async (req, res) => {
     let data = [];
     data[0] = req.body['username'];
@@ -426,9 +470,12 @@ app.post('/updateuserbyid/:userid', async (req, res) => {
                   userID = ${req.params.userid}`;
 
     db.run(sql, data, (err) => {
-        if (err) {
+        if (err)
+        {
             return res.status(500).json({ error: err.message });
-        } else {
+        }
+        else
+        {
             return res
                 .status(200)
                 .json({ message: 'User updated successfully' });
@@ -841,6 +888,8 @@ app.post('/changeactive', async (req, res, next) => {
         }
         else
         {
+            console.log(req.session.user.loggedIn)
+            req.session.user.loggedIn.isActive = req.body['activeStat'];
             return res.status(200).json({message: "User active status is changed"});
         }
     });
@@ -906,7 +955,7 @@ app.get("/requestPassword/:username", async (req, res, next) => {
         if (rows)
         {
             //Check AdminRequest table for a pending or approved request
-            let checkSql = `SELECT * FROM AdminRequests WHERE userID = ? AND isActive = 1`;
+            let checkSql = `SELECT * FROM AdminRequests WHERE userID = ? AND isActive = 1 AND requestType = 'password'`;
             let checkData = [];
             checkData[0] = rows["userID"];
 

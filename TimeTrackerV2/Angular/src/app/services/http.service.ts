@@ -44,6 +44,10 @@ export class HttpService {
   updateUser(user: IUser): Observable<any>{
     return this.http.post<IUser>(this.apiUrl + `updateuserbyid/${user.userID}`, user, this.httpOptions);
   }
+  //Updates the current user data on the database
+  updateCurrentUser(user: IUser): Observable<any>{
+    return this.http.post<IUser>(this.apiUrl + `updatecurrentuserbyid/${user.userID}`, user, this.httpOptions);
+  }
 
   //Deletes the passed in user from the database
   deleteUser(user: IUser): Observable<any>{
