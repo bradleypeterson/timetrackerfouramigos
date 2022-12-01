@@ -46,6 +46,7 @@ export class GroupComponent implements OnInit, AfterViewInit {
   public isClocked: any;
   public isNegative: any;
   public isInstructor: boolean = false;
+  public emptyCharts: boolean = false;
 
   public membersDisplay = ["username", "firstName", "lastName"];
   public timeDisplay = ["timeIn", "timeOut", "hours", "description"];

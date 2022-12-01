@@ -46,7 +46,7 @@
     <tbody>
       <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
       <tr *ngFor="let course of courses" style="cursor: default">
-        <td [class]="!course.display === true && !course.pending === true ? pointer : nothing" (click)="!course.display === true && !course.pending === true ? setCourseAndMove(course) : false">{{course.courseName}}</td>
+        <td [class]="(!course.display === true && !course.pending) || isInstructor === true ? pointer : nothing" (click)="(!course.display === true && !course.pending === true) || isInstructor ? setCourseAndMove(course) : false">{{course.courseName}}</td>
         <td>{{course.firstName}} {{course.lastName}}</td>
           <td [hidden]="isInstructor == true">
             <button [disabled]="!course.display" id="joinbtn" (click)="joinCourse(course, $event)" [hidden]="!course.display" class="btn btn-primary mr-1">Join Course</button>
