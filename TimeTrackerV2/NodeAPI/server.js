@@ -436,6 +436,63 @@ app.post('/updateuserbyid/:userid', async (req, res) => {
     });
 });
 
+
+//Updates the user in the database with the passed in payload
+app.post('/updateuserpayload', async (req, res) => {
+    let data = [];
+    data[0] = req.body['username'];
+    data[1] = req.body['firstName'];
+    data[2] = req.body['lastName'];
+    data[3] = req.body['type'];
+    data[4] = req.body['isActive'];
+    data[5] = req.body['userID'];
+
+    if (data[0] === 'Admin' && data[1] === 'Sudo' && data[2] === 'Admin') {
+        return res.status(500).json({ error: 'Cannot modify Admin account!' });
+    }
+
+    // Validate user doesn't already exist
+    let sql2 = `SELECT * FROM Users WHERE username = ?`;
+    db.get(sql2, [req.body['username']], (err, rows) => {
+        if (err) {
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
+        }
+
+        if (rows) {
+            return res
+                .status(400)
+                .json({ message: 'A user of this name already exists' });
+        }
+
+        let sql = `UPDATE
+                  users
+              SET
+                  username = ?,
+                  firstName = ?,
+                  lastName = ?,
+                  type = ?,
+                  isActive = ?
+              WHERE
+                  userID = ?`;
+
+    db.run(sql, data, (err) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        } else {
+            return res
+                .status(200)
+                .json({ message: 'User updated successfully' });
+        }
+    });
+
+    });
+
+    
+});
+
+
 //Deletes the user based on a passed in user id, checks if the passed in user is the admin account
 app.post('/deleteuserbyid/:userid', async (req, res) => {
     let data = [];

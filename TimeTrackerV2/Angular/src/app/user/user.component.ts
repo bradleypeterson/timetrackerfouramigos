@@ -15,7 +15,7 @@ export class UserComponent implements OnInit {
 
   public errMsg = '';
 
-  user: IUser = JSON.parse(localStorage.getItem('currentUser') as string);
+  user: IUser[] = [];
 
   public userTypeHolder: IUser;
 
@@ -48,14 +48,26 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    //this.getUser();
-    //this.setActive();
+    //get user cookie data
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      this.isActive = _users.isActive;
+      this. uID = _users.userID;
+      this.fname = _users.firstName;
+      this.lname = _users.lastName;
+      this.uname = _users.username;
+      this.uType = _users.type;
+      this.uActive = _users.isActive
+      console.log(this.user);
+      //redirect user if they are already logged in
+
+    });
 
   }
 
-  /*getUser() {
+  getUser() {
     let payload = {
-      username: this.user.username,
+      username: this.uname,
     }
     //Gets user from database
     this.httpService.getUser(payload).subscribe((_user: any) =>
@@ -110,7 +122,7 @@ export class UserComponent implements OnInit {
       userID: this.uID,
     }
 
-    /*this.httpService.updateUserPayload(payload).subscribe({
+    this.httpService.updateUserPayload(payload).subscribe({
       next: data => {
         this.errMsg = "";
         //location.reload();
@@ -118,7 +130,7 @@ export class UserComponent implements OnInit {
       error: error => {
         this.errMsg = error['error']['message'];
       }
-    });*/
+    });
 
   }
 
@@ -174,7 +186,7 @@ export class UserComponent implements OnInit {
   }
 
   requestToBeInstructor(){
-    this.httpService.requestToBeInstructor({userID: this.user.userID, userName: this.user.username}).subscribe( {
+    this.httpService.requestToBeInstructor({userID: this.uID, userName: this.uname}).subscribe( {
         next: data => {
           alert('Request Submitted!');
         },

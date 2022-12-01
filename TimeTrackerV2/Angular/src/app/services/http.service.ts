@@ -45,6 +45,11 @@ export class HttpService {
     return this.http.post<IUser>(this.apiUrl + `updateuserbyid/${user.userID}`, user, this.httpOptions);
   }
 
+  //Updates the user data on the database with payload
+  updateUserPayload(payload: any): Observable<any>{
+    return this.http.post<any>(this.apiUrl + 'updateuserpayload', payload, this.httpOptions);
+  }
+
   //Deletes the passed in user from the database
   deleteUser(user: IUser): Observable<any>{
     return this.http.post<IUser>(this.apiUrl + `deleteuserbyid/${user.userID}`, user, this.httpOptions);
