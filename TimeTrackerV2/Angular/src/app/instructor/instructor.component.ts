@@ -27,8 +27,7 @@ export class InstructorComponent implements OnInit {
   //region Class Variables
 
   public errMsg = '';
-  public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
-  public currUser?: IUser;
+  public user: any;
 
   public coursesDisplay = ["students", "courseName", "description"];
   public projectDisplay = ["groups", "projectName", "courseName", "description"];
@@ -41,67 +40,51 @@ export class InstructorComponent implements OnInit {
   public expandedElementCourse?: CourseDataSource | null;
   public dataSourceCourses: MatTableDataSource<any> = new MatTableDataSource<any>();
   public studentsData: CourseDataSource[] = [];
-  public tempCourse: ICourse;
+  public tempCourse: any;
 
   public projects: IProject[] = [];
   public expandedElementProject?: ProjectDataSource | null;
   public dataSourceProject: MatTableDataSource<any> = new MatTableDataSource<any>();
   public groupsData: ProjectDataSource[] = [];
-  public tempProject: IProject;
+  public tempProject: any;
   //endregion
 
   //region Initial Functions
 
-  constructor(private httpService: HttpService, private router: Router,)
-  {
-    this.tempCourse = new class implements ICourse {
-      courseID?: number;
-      courseName?: string;
-      description?: string;
-      firstName?: string;
-      instructorID?: number;
-      isActive?: boolean;
-      lastName?: string;
-    }
-    this.tempProject = new class implements IProject {
-      courseID?: number;
-      courseName?: string;
-      description?: string;
-      isActive?: boolean;
-      projectID?: number;
-      projectName?: string;
-    }
-  }
+  constructor(private httpService: HttpService, private router: Router,) {}
 
   ngOnInit(): void
   {
-    this.getCourseRequestList();
-    let payload = {
-      username: this.user.username,
-    }
+    this.getUser()
+
+  }
+
+  getUser(): void
+  {
     //Gets user from database
-    this.httpService.getUser(payload).subscribe((_user: any) => {
-      this.currUser = _user
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      this.getCourseRequestList();
       this.getCourses();
       this.getProjects();
     });
-
   }
-  //endregion Func
+
+  //endregion
 
   //region CourseRequest List
 
   //Gets a list of all Course Requests
   getCourseRequestList(): void
   {
-    this.httpService.getCourseRequests().subscribe((_courseRequests: any) => { this.courseRequests = _courseRequests });
+    this.httpService.getCourseRequests(this.user.userID as number).subscribe((_courseRequests: any) => { this.courseRequests = _courseRequests });
   }
   //Updates the passed course request either accept/decline
   acceptRequest(courseRequest: ICourseRequest): void
   {
     //Change status
     let status = true;
-    let reviewer = this.user.userID;
+    let reviewer: any = this.user.userID;
     if(courseRequest.status)
     {
       status = false;
@@ -161,7 +144,7 @@ export class InstructorComponent implements OnInit {
   //Gets a list of all courses for an instructor
   getCourses(): void
   {
-    this.httpService.getInstructorCourses(this.currUser?.userID as number).subscribe((_courses: any) => {
+    this.httpService.getInstructorCourses(this.user?.userID as number).subscribe((_courses: any) => {
       this.courses = _courses
       this.studentsData = [];
       this.courses.forEach(course => {
@@ -203,7 +186,7 @@ export class InstructorComponent implements OnInit {
   //Gets the list of projects for an instructor
   getProjects(): void
   {
-    this.httpService.getInstructorProjects(this.currUser?.userID as number).subscribe((_projects: any) => {
+    this.httpService.getInstructorProjects(this.user?.userID as number).subscribe((_projects: any) => {
       this.projects = _projects
       this.groupsData = [];
       this.projects.forEach(project => {

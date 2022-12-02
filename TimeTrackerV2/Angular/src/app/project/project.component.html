@@ -55,8 +55,8 @@
       </tr>
       </thead>
       <tbody>
-      <tr class="pointer" *ngFor="let group of groups" (click)="group.display === true ? setGroupAndMove(group) : false">
-        <td>{{group.groupName}}</td>
+      <tr *ngFor="let group of groups">
+        <td [class]="group.display === true || isInstructor ? pointer : nothing" (click)="group.display === true || isInstructor ? setGroupAndMove(group) : false" >{{group.groupName}}</td>
         <td>
           <button [disabled]="group.display" (click)="joinGroup(group, $event)"
                   [hidden]="isInstructor == true || group.display" class="btn btn-primary mr-1">Join Group

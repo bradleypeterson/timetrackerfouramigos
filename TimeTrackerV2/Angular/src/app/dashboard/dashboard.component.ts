@@ -18,10 +18,9 @@ import { IProject } from '../interfaces/IProject';
 
 export class DashboardComponent implements  OnInit
 {
-  public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
   public courseRequests: ICourseRequest[] = [];
-  public userTypeHolder: IUser;
+  public user: any;
   public groups: IGroup[] = [];
   public projects: IProject[] = [];
   public gSize = 0;
@@ -35,26 +34,12 @@ export class DashboardComponent implements  OnInit
     private http: HttpClient,
     private formBuilder: FormBuilder,
     private router: Router,
-    private httpService: HttpService,)
-  {
-    this.userTypeHolder = new class implements IUser
-    {
-      firstName?: string;
-      userID?: number;
-      isActive?: boolean;
-      lastName?: string;
-      password?: string;
-      salt?: string;
-      type?: string;
-      username?: string;
-    }
-  }
+    private httpService: HttpService,) {}
 
-  ngOnInit(): void 
+  ngOnInit(): void
   {
-    this.getUserCourses();
-    
-    
+    this.getUser()
+
     // get user groups
     //this.getUserGroups(this.userTypeHolder.userID as number);
   }
@@ -65,17 +50,13 @@ export class DashboardComponent implements  OnInit
   // and where status = 1, and active = 0
   // and where course request course ID = Course course ID
 
-  getUserCourses(): void {
-
-    let payload = {
-      username: this.user.username,
-    }
+  getUser(): void
+  {
     //Gets user from database
-    this.httpService.getUser(payload).subscribe((_user: any) =>
-    {
-      this.userTypeHolder = _user;
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
       //Allow user to create courses if they are an instructor
-      if(this.userTypeHolder.type == "Instructor")
+      if(_users.type == "Instructor")
       {
         this.isInstructor = true;
       }
@@ -84,16 +65,12 @@ export class DashboardComponent implements  OnInit
         this.isInstructor = false;
       }
       //Get the groups the user is in
-      this.getUserGroups(this.userTypeHolder.userID as number);
+      this.getUserGroups(this.user.userID as number);
 
-      this.getUserProjects(this.userTypeHolder.userID as number);
+      this.getUserProjects(this.user.userID as number);
+
+      this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.courses = _courses; this.cSize = this.courses.length; console.log(this.courses); });
     });
-
-    
-    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.courses = _courses; this.cSize = this.courses.length; console.log(this.courses); });
-
-
-
   }
 
 
@@ -130,7 +107,7 @@ export class DashboardComponent implements  OnInit
 
 
 
-  
+
   public pageTitle = 'TimeTrackerV2 | Dashboard'
 
 }

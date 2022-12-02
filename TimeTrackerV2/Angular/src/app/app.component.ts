@@ -14,10 +14,11 @@ import {IUser} from "./interfaces/IUser";
 })
 export class AppComponent implements OnInit
 {
-  title = 'TimeTrackerV2';
-  userName: string = "";
-  login: string = "Login";
-  isInstructor: boolean = false;
+  public title = 'TimeTrackerV2';
+  public userName: string = "";
+  public login: string = "Login";
+  public user: any;
+  public isInstructor: boolean = false;
 
 
   constructor(private data: CommsService, private router: Router, private httpService: HttpService)
@@ -30,7 +31,25 @@ export class AppComponent implements OnInit
 
   ngOnInit(): void
   {
+    this.getUser();
+  }
 
+  getUser(): void
+  {
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      this.userName = _users.username;
+      this.login = "Logout";
+      //Allow user to create courses if they are an instructor
+      if(_users.type == "Instructor")
+      {
+        this.isInstructor = true;
+      }
+      else
+      {
+        this.isInstructor = false;
+      }
+    });
   }
 
   onLogin(): void
@@ -41,7 +60,6 @@ export class AppComponent implements OnInit
       this.data.changeLogin("Login");
       this.data.changeUserName("");
       this.data.changeInstructor(false);
-      localStorage.setItem("currentUser", JSON.stringify(new User));
       this.router.navigate(['']);
     }
   }
