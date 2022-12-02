@@ -123,7 +123,7 @@ app.post('/getuser', async (req, res, next) => {
     });
 });
 //Retrieves a list of all course requests
-app.get('/getcourserequests/:userid', authUser, async (req, res, next) => {
+app.get('/getcourserequests/:userid', authUser, authRole('Instructor'), async (req, res, next) => {
     let sql = `SELECT
                    CR.requestID,
                    C.courseName,
