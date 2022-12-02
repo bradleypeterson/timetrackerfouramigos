@@ -62,8 +62,9 @@ app.get('/getCookie', (req, res) => {
     }
 });
 
+
 //Joins a group based on user id and group id
-app.post('/joingroup', async (req, res, next) => {
+app.post('/joingroup', authUser, async (req, res, next) => {
     let sql = `INSERT INTO GroupAssignment (userID, groupID)
                 VALUES (?, ?)`;
 
@@ -81,7 +82,7 @@ app.post('/joingroup', async (req, res, next) => {
     });
 });
 //Leaves a group based on user id and group id
-app.post('/leavegroup', async (req, res, next) => {
+app.post('/leavegroup', authUser, async (req, res, next) => {
     let sql = `DELETE   
                 FROM
                     GroupAssignment AS GA
@@ -115,7 +116,7 @@ app.post('/getuser', async (req, res, next) => {
     });
 });
 //Retrieves a list of all course requests
-app.get('/getcourserequests', async (req, res, next) => {
+app.get('/getcourserequests', authUser, async (req, res, next) => {
     let sql = `SELECT
                    CR.requestID,
                    C.courseName,
@@ -139,7 +140,7 @@ app.get('/getcourserequests', async (req, res, next) => {
 });
 
 // get all course requests for a student, which are active
-app.get('/getactivecourserequests', async (req, res, next) => {
+app.get('/getactivecourserequests', authUser, async (req, res, next) => {
     let sql = `SELECT
                  CR.requestID,
                  U.firstName || ' ' || U.lastName as studentName,
@@ -157,7 +158,7 @@ app.get('/getactivecourserequests', async (req, res, next) => {
 });
 
 // get all course requests for a student, which are accepted
-app.get('/getusercourserequests/:userid', async (req, res, next) => {
+app.get('/getusercourserequests/:userid', authUser, async (req, res, next) => {
     // let sql = `SELECT CourseRequest.*
     //           FROM CourseRequest
     //           LEFT JOIN Users U on U.userID = CourseRequest.userID
@@ -175,7 +176,7 @@ app.get('/getusercourserequests/:userid', async (req, res, next) => {
 
 //Lets a user leave a course
 
-app.post('/leavecourse', async (req, res, next) => {
+app.post('/leavecourse', authUser, async (req, res, next) => {
     let sql = `UPDATE CourseRequest
                SET
                    status = false,
@@ -200,7 +201,7 @@ app.post('/leavecourse', async (req, res, next) => {
 });
 
 //Updates passed course request
-app.post('/updatecourserequest', async (req, res, next) => {
+app.post('/updatecourserequest', authUser, async (req, res, next) => {
     console.log('Running update course request');
 
     let sql = `UPDATE CourseRequest
@@ -243,7 +244,7 @@ app.get('/getusers', authUser, authRole('Admin'), async (req, res, next) => {
 });
 
 //Gets all courses from the database and sends them to the caller
-app.get('/getcourses', async (req, res) => {
+app.get('/getcourses', authUser, async (req, res) => {
     let sql = `SELECT Courses.*, Users.firstName, Users.lastName
     FROM Courses
     LEFT JOIN Users ON Courses.instructorID = Users.userID`;
@@ -261,7 +262,7 @@ app.get('/getcourses', async (req, res) => {
 // where current user = user id in course request
 
 //Gets all courses where the user id is the current user and status is accepted
-app.get('/getusercourses/:userid', async (req, res) => {
+app.get('/getusercourses/:userid', authUser, async (req, res) => {
     let sql = `SELECT Courses.*
   FROM Courses
     LEFT JOIN CourseRequest CR ON CR.courseID = Courses.courseID
@@ -279,7 +280,7 @@ app.get('/getusercourses/:userid', async (req, res) => {
 });
 
 //Gets all courses and course requests where the user id is the current user and status is accepted
-app.get('/getcoursesandrequests', async (req, res) => {
+app.get('/getcoursesandrequests', authUser, async (req, res) => {
     let sql = `SELECT Courses.*, CR.*, Users.firstName, Users.lastName
   FROM Courses, CourseRequest as CR
     LEFT JOIN Users U ON Courses.instructorID = U.userID
@@ -296,7 +297,7 @@ app.get('/getcoursesandrequests', async (req, res) => {
 });
 
 // get courses without user data
-app.get('/getcoursesonly', async (req, res) => {
+app.get('/getcoursesonly', authUser, async (req, res) => {
     let sql = `SELECT *
   FROM Courses`;
 
@@ -310,7 +311,7 @@ app.get('/getcoursesonly', async (req, res) => {
 });
 
 // get a course from the course table using the course ID
-app.get('/getcourse', async (req, res) => {
+app.get('/getcourse', authUser, async (req, res) => {
     let sql = `SELECT *
   FROM Courses
   WHERE courseId = ?`;
@@ -327,7 +328,7 @@ app.get('/getcourse', async (req, res) => {
     });
 });
 
-app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
+app.get('/getprojectsbycourseid/:courseid', authUser, async (req, res) => {
     //let sql = `SELECT * FROM Projects WHERE courseID = ${req.params.courseid}`;
 
     let sql = `SELECT Projects.*, Courses.courseName
@@ -344,7 +345,7 @@ app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
     });
 });
 
-app.get('/getuserprojects/:userid', async (req, res) => {
+app.get('/getuserprojects/:userid', authUser, async (req, res) => {
     let sql = `SELECT DISTINCT Projects.*, Courses.courseName
     FROM Projects
     INNER JOIN Courses on Courses.courseID = Projects.courseID
@@ -362,7 +363,7 @@ app.get('/getuserprojects/:userid', async (req, res) => {
 });
 
 // insert course request into table
-app.post('/insertcourserequest', async (req, res, next) => {
+app.post('/insertcourserequest', authUser, async (req, res, next) => {
     let sql = `INSERT INTO
   CourseRequest (userID, courseID, instructorID, isActive, reviewerID, status) VALUES (?, ?, ?, ?, ?, ?)`;
 
@@ -383,7 +384,7 @@ app.post('/insertcourserequest', async (req, res, next) => {
     });
 });
 
-app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
+app.get('/getgroupsbyprojectid/:projectid', authUser, async (req, res) => {
     //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
 
     let sql = `SELECT Groups.*, Projects.projectName
@@ -401,7 +402,7 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
 });
 
 //Updates the user in the database with the passed in information
-app.post('/updateuserbyid/:userid', async (req, res) => {
+app.post('/updateuserbyid/:userid', authUser, async (req, res) => {
     let data = [];
     data[0] = req.body['username'];
     data[1] = req.body['firstName'];
@@ -436,7 +437,7 @@ app.post('/updateuserbyid/:userid', async (req, res) => {
 });
 
 //Deletes the user based on a passed in user id, checks if the passed in user is the admin account
-app.post('/deleteuserbyid/:userid', async (req, res) => {
+app.post('/deleteuserbyid/:userid', authUser, async (req, res) => {
     let data = [];
     data[0] = req.body['username'];
     data[1] = req.body['firstName'];
@@ -653,7 +654,7 @@ app.post('/createGroup', async (req, res, next) => {
     );
 });
 
-app.post('/createCourse', async (req, res, next) => {
+app.post('/createCourse', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -685,7 +686,7 @@ app.post('/createCourse', async (req, res, next) => {
     );
 });
 
-app.post('/createProject', async (req, res, next) => {
+app.post('/createProject', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -718,7 +719,7 @@ app.post('/createProject', async (req, res, next) => {
     );
 });
 
-app.post('/clock', async (req, res, next) => {
+app.post('/clock', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -820,7 +821,7 @@ app.post('/clock', async (req, res, next) => {
     });
 });
 
-app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
+app.get('/getgroupsbyprojectid/:projectid', authUser, async (req, res) => {
     //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
 
     let sql = `SELECT Groups.*, Projects.projectName
@@ -839,7 +840,7 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
 });
 
 //Gets a list of all group assignments for a user
-app.get('/getgroupassignments/:userID', async (req, res) => {
+app.get('/getgroupassignments/:userID', authUser, async (req, res) => {
     let sql = `SELECT 
                    userID, groupID
                FROM 
@@ -857,7 +858,7 @@ app.get('/getgroupassignments/:userID', async (req, res) => {
 });
 
 //Gets a list of all groups a user is in
-app.get('/getusergroups/:userID', async (req, res) => {
+app.get('/getusergroups/:userID', authUser, async (req, res) => {
     //     let sql = `SELECT DISTINCT
     //                    G.groupID,
     //                    G.groupName,
@@ -899,7 +900,7 @@ app.get('/getusergroups/:userID', async (req, res) => {
 });
 
 //Gets a list of all users in a group
-app.get('/getgroupusers/:groupID', async (req, res) => {
+app.get('/getgroupusers/:groupID', authUser, async (req, res) => {
     let sql = `SELECT
                    U.userID,
                    U.username,
@@ -924,7 +925,7 @@ app.get('/getgroupusers/:groupID', async (req, res) => {
 });
 
 //Gets a list of all time cards for a users group
-app.post('/getusergrouptimecards', async (req, res) => {
+app.post('/getusergrouptimecards', authUser, async (req, res) => {
     console.log(
         'groupID: ' + req.body['groupID'] + ' userID: ' + req.body['userID']
     );
@@ -951,7 +952,7 @@ app.post('/getusergrouptimecards', async (req, res) => {
 });
 
 //Creates a new time card
-app.post('/createtimecard', async (req, res, next) => {
+app.post('/createtimecard', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -984,7 +985,7 @@ app.post('/createtimecard', async (req, res, next) => {
 });
 
 //Delete specified time card
-app.post('/deletetimecard', async (req, res, next) => {
+app.post('/deletetimecard', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -1009,7 +1010,7 @@ app.post('/deletetimecard', async (req, res, next) => {
 });
 
 //Returns a list of all courses for an instructor
-app.get('/getinstructorcourses/:userID', async (req, res) => {
+app.get('/getinstructorcourses/:userID', authUser, async (req, res) => {
     let sql = `SELECT 
                   courseID, courseName, instructorID, description
               FROM
@@ -1030,7 +1031,7 @@ app.get('/getinstructorcourses/:userID', async (req, res) => {
     });
 });
 //Returns a list of all course requests for a course that have been accepted
-app.get('/getcoursestudents/:courseID', async (req, res) => {
+app.get('/getcoursestudents/:courseID', authUser, async (req, res) => {
     let sql = `SELECT DISTINCT CR.requestID,
                       C.courseName,
                       U.firstName || ' ' || U.lastName as studentName,
@@ -1055,7 +1056,7 @@ app.get('/getcoursestudents/:courseID', async (req, res) => {
 });
 
 //Returns a list of projects for an instructor
-app.get('/getinstructorprojects/:userID', async (req, res) => {
+app.get('/getinstructorprojects/:userID', authUser, async (req, res) => {
     let sql = `SELECT
                    P.projectName,
                    C.courseName,
@@ -1082,7 +1083,7 @@ app.get('/getinstructorprojects/:userID', async (req, res) => {
 });
 
 //Updates a timecard
-app.post('/updatetimecard', async (req, res, next) => {
+app.post('/updatetimecard', authUser, async (req, res, next) => {
     let sql = `UPDATE TimeCard
                SET
 
