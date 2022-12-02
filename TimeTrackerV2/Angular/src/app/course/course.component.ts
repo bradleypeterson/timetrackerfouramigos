@@ -46,6 +46,12 @@ export class CourseComponent implements OnInit {
   getUser(): void
   {
     this.httpService.getCookie().subscribe((_users: any) => {
+
+        if(!this.user){
+            console.log('redirecting')
+            this.router.navigate(['./']);
+        }
+
       this.user = _users;
       //Allow user to create courses if they are an instructor
       if(_users.type == "Instructor")

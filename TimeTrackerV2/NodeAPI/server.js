@@ -66,7 +66,7 @@ app.get('/getCookie', (req, res) => {
 
 app.get('/logout', (req, res) => {
    req.session.destroy()
-   return res.send('User Logged Out');
+   return res.status('User Logged Out');
 });
 
 
