@@ -32,10 +32,9 @@ export class GroupComponent implements OnInit, AfterViewInit {
 
   public pageTitle = 'TimeTrackerV2 | Group'
   public errMsg = '';
-  public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   private item;
   public groupName;
-  public currUser: IUser;
+  public user: any;
   public group: any = history.state.data;
   public users: IUser[] = [];
   public times: ITimeCard[] = [];
@@ -47,6 +46,7 @@ export class GroupComponent implements OnInit, AfterViewInit {
   public isClocked: any;
   public isNegative: any;
   public isInstructor: boolean = false;
+  public emptyCharts: boolean = false;
 
   public membersDisplay = ["username", "firstName", "lastName"];
   public timeDisplay = ["timeIn", "timeOut", "hours", "description"];
@@ -54,7 +54,7 @@ export class GroupComponent implements OnInit, AfterViewInit {
   public expandedElementMember?: GroupTimeDataSource | null;
   public dataSourceMembers: MatTableDataSource<any> = new MatTableDataSource<any>();
   public timeCardData: GroupTimeDataSource[] = [];
-  public tempUser: IUser;
+  public tempUser: any;
 
   constructor(
     private http: HttpClient,
@@ -64,16 +64,6 @@ export class GroupComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog
   )
   {
-    this.tempUser = new class implements IUser {
-      firstName?: string;
-      isActive?: boolean;
-      lastName?: string;
-      password?: string;
-      salt?: string;
-      type?: string;
-      userID?: number;
-      username?: string;
-    }
     this.isClocked = false;
     this.isNegative = true;
     this.item = localStorage.getItem('currentGroup');
@@ -81,18 +71,6 @@ export class GroupComponent implements OnInit, AfterViewInit {
     {
       this.item = JSON.parse(this.item);
       this.groupName = this.item[0];
-    }
-
-    this.currUser = new class implements IUser
-    {
-      firstName?: string;
-      id?: number;
-      isActive?: boolean;
-      lastName?: string;
-      password?: string;
-      salt?: string;
-      type?: string;
-      username?: string;
     }
   }
 
@@ -103,16 +81,13 @@ export class GroupComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {}
 
-  //Get all users info based on local storage username
   getUser(): void
   {
-    let payload = {
-      username: this.user.username,
-    }
-    this.httpService.getUser(payload).subscribe((_user: any) =>
-    {
-      this.currUser = _user;
-      if(_user.type == "Instructor")
+    //Gets user from database
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      //Allow user to create courses if they are an instructor
+      if(_users.type == "Instructor")
       {
         this.isInstructor = true;
       }
@@ -222,7 +197,7 @@ export class GroupComponent implements OnInit, AfterViewInit {
   leaveGroup(): void
   {
     let payload = {
-      userID: this.currUser.userID,
+      userID: this.user.userID,
       groupID: this.group.groupID,
     }
     this.httpService.leaveGroup(payload).subscribe({
@@ -256,7 +231,9 @@ export class GroupComponent implements OnInit, AfterViewInit {
   //Pops up a modal for the user to edit
   editTime(date: any): void
   {
-    let dialog = this.dialog.open(EditTimeDialogComponent, {data: {timeIn: this.parseDate(date.timeIn), timeOut: this.parseDate(date.timeOut), description: date.description}});
+    let dialog = this.dialog.open(EditTimeDialogComponent, {
+      data: {timeIn: this.parseDate(date.timeIn), timeOut: this.parseDate(date.timeOut), description: date.description},
+    disableClose: true});
     dialog.afterClosed().subscribe(result => {
       //Check if the dialog was closed or saved
       if(result != "false" && result != undefined)
@@ -320,7 +297,7 @@ export class GroupComponent implements OnInit, AfterViewInit {
         timeIn: tempStart.getTime(),
         timeOut: tempEnd.getTime(),
         createdOn: Date.now(),
-        userID: this.currUser.userID,
+        userID: this.user.userID,
         description: this.description,
         groupID: this.group.groupID
       }
@@ -375,14 +352,14 @@ export class GroupComponent implements OnInit, AfterViewInit {
     var item = localStorage.getItem('currentUser');
     this.isClocked = true;
 
-    if (this.currUser !== null)
+    if (this.user !== null)
     {
       console.log("groupID: " + this.group.groupID);
         let req = {
           timeIn: Date.now(), /// pull date from the HTML
           timeOut: null,
           createdOn: Date.now(),
-          userID: this.currUser.userID,
+          userID: this.user.userID,
           description: null,
           groupID: this.group.groupID
         };
@@ -406,13 +383,13 @@ export class GroupComponent implements OnInit, AfterViewInit {
     var item = localStorage.getItem('currentUser');
     this.isClocked = false;
 
-    if (this.currUser !== null )
+    if (this.user !== null )
     {
         let req = {
           timeIn: null,
           timeOut: Date.now(), /// pull date from the HTML
           createdOn: null,
-          userID: this.currUser.userID,
+          userID: this.user.userID,
           description: this.descriptionAuto
         };
 

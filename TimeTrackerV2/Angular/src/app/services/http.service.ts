@@ -44,6 +44,10 @@ export class HttpService {
   updateUser(user: IUser): Observable<any>{
     return this.http.post<IUser>(this.apiUrl + `updateuserbyid/${user.userID}`, user, this.httpOptions);
   }
+  //Updates the current user data on the database
+  updateCurrentUser(user: IUser): Observable<any>{
+    return this.http.post<IUser>(this.apiUrl + `updatecurrentuserbyid/${user.userID}`, user, this.httpOptions);
+  }
 
   //Deletes the passed in user from the database
   deleteUser(user: IUser): Observable<any>{
@@ -51,9 +55,9 @@ export class HttpService {
   }
 
   //Returns all course requests
-  getCourseRequests(): Observable<ICourseRequest[]>
+  getCourseRequests(userID: number): Observable<ICourseRequest[]>
   {
-    return this.http.get<ICourseRequest[]>(this.apiUrl + 'getcourserequests');
+    return this.http.get<ICourseRequest[]>(this.apiUrl + `getcourserequests/${userID}`);
   }
 
   // returns all course requests, given a user ID, which are still active
@@ -240,9 +244,9 @@ export class HttpService {
   }
 
   //Request a password reset
-  requestPassword(payload: any): Observable<any>
+  requestPassword(username: string): Observable<any>
   {
-    return this.http.post<any>(this.apiUrl + `requestPassword`, payload, this.httpOptions);
+    return this.http.get<any>(this.apiUrl + `requestPassword/${username}`, this.httpOptions);
   }
 
   //Updates the given timecard

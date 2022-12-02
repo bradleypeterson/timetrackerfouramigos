@@ -5,6 +5,7 @@ export interface IGroup {
   projectID?: number;
   projectName?: string;
   display?: boolean;
+  courseName?: string;
 }
 
 //Interface for groups

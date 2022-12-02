@@ -13,11 +13,12 @@ export class ResetPassComponent implements OnInit, AfterViewInit {
 
   constructor(private formBuilder: FormBuilder, private login: LoginComponent, private httpService: HttpService,) { }
 
+  public requestMessage = "";
   public requestSent = false;
   public errMsg = '';
-  public sentClass = "text-success";
+  public sentClass = "";
 
-  checkoutForm = this.formBuilder.group({
+  passwordForm = this.formBuilder.group({
     usernameReset: '',
   });
 
@@ -30,6 +31,7 @@ export class ResetPassComponent implements OnInit, AfterViewInit {
   //Changes the login to reset and back
   changeDisplay()
   {
+    this.requestMessage = "";
     this.login.showReset();
   }
 
@@ -39,20 +41,42 @@ export class ResetPassComponent implements OnInit, AfterViewInit {
   //Shows Request Sent if there isn't an active request
   onSubmit()
   {
-    if (!this.requestSent) {
-      let payload = {
-        username: this.checkoutForm.value['username']
+    this.requestMessage = "";
+    this.requestSent = false;
+    this.httpService.requestPassword(this.passwordForm.value['usernameReset']).subscribe((_response: any) => {
+      //No user with that username
+      if (_response["message"] === "incorrect")
+      {
+        this.requestMessage = "Incorrect Username";
+        this.sentClass = "text-danger";
       }
-      this.httpService.requestPassword(payload).subscribe({
-        next: data => {
-          this.requestSent = true;
-          this.errMsg = "";
-        },
-        error: error => {
-          this.errMsg = error['error']['message'];
-        }
-      });
-    }
+      //Request was sent
+      else if (_response["message"] === "success")
+      {
+        this.requestMessage = "Request Sent";
+        this.sentClass = "text-success";
+      }
+      //Request has already been sent but hasn't been approved yet
+      else if (_response["message"] === "pending")
+      {
+        this.requestMessage = "Request Pending";
+        this.sentClass = "text-warning";
+      }
+      //Request was approved
+      else if (_response["message"] == "accepted")
+      {
+        this.requestMessage = "Request Approved";
+        this.sentClass = "text-primary";
+      }
+      //Request was denied
+      else if (_response["message"] == "denied")
+      {
+        this.requestMessage = "Request Denied";
+        this.sentClass = "text-danger";
+      }
+      this.requestSent = true;
+    });
+
   }
 
 }

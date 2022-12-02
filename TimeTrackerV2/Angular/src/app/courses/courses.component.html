@@ -37,7 +37,7 @@
   <h2 class="mt-3 float-left">All Courses</h2>
   <table class="table table-responsive-lg table-hover">
     <thead>
-      <tr style="cursor: default">
+      <tr style="cursor: default;">
         <th class="fw-light h6">Course Name</th>
         <th class="fw-light h6">Instructor</th>
         <th></th>
@@ -45,12 +45,12 @@
     </thead>
     <tbody>
       <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
-      <tr *ngFor="let course of courses">
-        <td (click)="setCourseAndMove(course)">{{course.courseName}}</td>
+      <tr *ngFor="let course of courses" style="cursor: default">
+        <td [class]="(!course.display === true && !course.pending) || isInstructor === true ? pointer : nothing" (click)="(!course.display === true && !course.pending === true) || isInstructor ? setCourseAndMove(course) : false">{{course.courseName}}</td>
         <td>{{course.firstName}} {{course.lastName}}</td>
           <td [hidden]="isInstructor == true">
             <button [disabled]="!course.display" id="joinbtn" (click)="joinCourse(course, $event)" [hidden]="!course.display" class="btn btn-primary mr-1">Join Course</button>
-            <button [disabled]="!course.pending" id="pendingbtn" [hidden]="!course.pending" class="btn btn-warning mr-1">Pending</button>
+            <button style="cursor: default" [disabled]="!course.pending" id="pendingbtn" [hidden]="!course.pending" class="btn btn-warning mr-1 ">Pending</button>
             <button [disabled]="!course.leave" id="leavebtn" (click)="leaveCourse(course, $event)" [hidden]="!course.leave" class="btn btn-danger mr-1">Leave Course</button>
         </td>
 

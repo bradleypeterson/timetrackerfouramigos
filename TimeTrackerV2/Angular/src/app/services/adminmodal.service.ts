@@ -70,7 +70,6 @@ export class AdminModalService {
       },
       error: error => {
         this.msg = error['error']['message'];
-
       }
     });
 
