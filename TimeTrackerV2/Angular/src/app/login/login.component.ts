@@ -60,11 +60,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
             }
             this.data.changeUserName(this.user.username);
             this.data.changeLogin('Logout');
-            console.log(this.user);
-            
-            console.log(!this.user)
+
       //redirect user if they are already logged in
-      if (this.user) {
+      if (this.user.username) {
         this.router.navigate(['./dashboard']);
       }
     });
