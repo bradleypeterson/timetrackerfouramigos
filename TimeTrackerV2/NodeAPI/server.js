@@ -117,7 +117,7 @@ app.post('/getuser', async (req, res, next) => {
     });
 });
 //Retrieves a list of all course requests
-app.get('/getcourserequests', async (req, res, next) => {
+app.get('/getcourserequests/:userid', async (req, res, next) => {
     let sql = `SELECT
                    CR.requestID,
                    C.courseName,
@@ -131,7 +131,16 @@ app.get('/getcourserequests', async (req, res, next) => {
                         LEFT JOIN Users U on CR.userID = U.userID
                         LEFT JOIN Users UI on CR.instructorID = UI.userID
                         LEFT JOIN Users UR on CR.reviewerID = UR.userID
-               WHERE CR.isActive = 1`;
+               WHERE 
+                   CR.isActive = 1
+                   AND    
+                   UI.userID = ${req.params.userid}
+               ORDER BY 
+                   C.courseName
+                   AND
+                   U.lastName
+                   AND
+                   U.firstName`;
     db.all(sql, [], (err, rows) => {
         if (err) {
             res.status(400).json({ error: err.message });

@@ -55,9 +55,9 @@ export class HttpService {
   }
 
   //Returns all course requests
-  getCourseRequests(): Observable<ICourseRequest[]>
+  getCourseRequests(userID: number): Observable<ICourseRequest[]>
   {
-    return this.http.get<ICourseRequest[]>(this.apiUrl + 'getcourserequests');
+    return this.http.get<ICourseRequest[]>(this.apiUrl + `getcourserequests/${userID}`);
   }
 
   // returns all course requests, given a user ID, which are still active

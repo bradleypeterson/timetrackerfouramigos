@@ -55,7 +55,6 @@ export class InstructorComponent implements OnInit {
 
   ngOnInit(): void
   {
-    this.getCourseRequestList();
     this.getUser()
 
   }
@@ -65,6 +64,7 @@ export class InstructorComponent implements OnInit {
     //Gets user from database
     this.httpService.getCookie().subscribe((_users: any) => {
       this.user = _users;
+      this.getCourseRequestList();
       this.getCourses();
       this.getProjects();
     });
@@ -77,7 +77,7 @@ export class InstructorComponent implements OnInit {
   //Gets a list of all Course Requests
   getCourseRequestList(): void
   {
-    this.httpService.getCourseRequests().subscribe((_courseRequests: any) => { this.courseRequests = _courseRequests });
+    this.httpService.getCourseRequests(this.user.userID as number).subscribe((_courseRequests: any) => { this.courseRequests = _courseRequests });
   }
   //Updates the passed course request either accept/decline
   acceptRequest(courseRequest: ICourseRequest): void
