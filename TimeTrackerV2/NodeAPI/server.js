@@ -929,6 +929,41 @@ app.post('/login', async (req, res, next) => {
         }
 
         if (rows) {
+
+            //Check if the user has an outstanding password request
+            let checkSql = `SELECT
+                                *
+                            FROM
+                                AdminRequests
+                            WHERE
+                                userID = ${rows['userID']}
+                              AND
+                                requestType = 'password'
+                              AND
+                                status != 'completed'
+                            ORDER BY
+                                requestID DESC
+                                LIMIT 1`;
+
+
+            db.get(checkSql, [], (err, passrows) => {
+                if(passrows)
+                {
+                    //Change the latest password request to completed
+                    let updateSql = `UPDATE AdminRequests SET status = 'completed' WHERE requestID = ${passrows['requestID']}`
+                    db.run(updateSql, [], function (err, updaterows) {
+                            if (err)
+                            {
+                                console.log(err);
+                                return res.status(500).json({
+                                    message:
+                                        'Something went wrong. Please try again later.',
+                                });
+                            }
+                    });
+                }
+            });
+            console.log("Got to salt")
             salt = rows['salt'];
 
             let hash = crypto
@@ -964,7 +999,19 @@ app.get("/requestPassword/:username", async (req, res, next) => {
         if (rows)
         {
             //Check AdminRequest table for a pending or approved request
-            let checkSql = `SELECT * FROM AdminRequests WHERE userID = ? AND isActive = 1 AND requestType = 'password'`;
+            let checkSql = `SELECT
+                                *
+                            FROM
+                                AdminRequests
+                            WHERE
+                                userID = ?
+                              AND
+                                requestType = 'password'
+                              AND
+                                status != 'completed'
+                            ORDER BY
+                                requestID DESC
+                                LIMIT 1`;
             let checkData = [];
             checkData[0] = rows["userID"];
 
