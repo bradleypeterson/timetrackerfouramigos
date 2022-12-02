@@ -1,5 +1,5 @@
-<div style="height: 30rem">
-  <ngx-charts-pie-chart
+<div [ngStyle]="{'height': chartHeight}">
+  <ngx-charts-pie-chart [hidden]="empty"
     [legendTitle]="pieTitle"
     [legend]="true"
     [labels]="true"
@@ -8,20 +8,8 @@
     [results]="pieData"></ngx-charts-pie-chart>
 </div>
 
-<div style="height: 30rem">
-<!--  <ngx-charts-area-chart-->
-<!--    [legendTitle]="lineTitle"-->
-<!--    [legend]="true"-->
-<!--    [showXAxisLabel]="true"-->
-<!--    [showYAxisLabel]="true"-->
-<!--    [xAxis]="true"-->
-<!--    [yAxis]="true"-->
-<!--    [xAxisLabel]="xAxisLabel"-->
-<!--    [yAxisLabel]="yAxisLabel"-->
-<!--    [timeline]="true"-->
-<!--    [results]="lineData">-->
-<!--  </ngx-charts-area-chart>-->
-  <ngx-charts-bar-vertical-2d
+<div [ngStyle]="{'height': chartHeight}">
+  <ngx-charts-bar-vertical-2d [hidden]="empty"
     [legendTitle]="lineTitle"
     [legend]="true"
     [showXAxisLabel]="true"

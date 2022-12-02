@@ -16,29 +16,14 @@ export class GroupsComponent implements OnInit {
 
   groups: IGroup[] = [];
   private project: IProject = history.state.data;
-  public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
-  public userTypeHolder: IUser;
+  public user: any;
   public isInstructor: boolean = false;
   public dataSource : any;
   public columnsToDisplay = ["groupID", "groupName", "isActive", "projectName"];
 
   constructor(
     private httpService:HttpService,
-    private router: Router,
-    )
-  {
-    this.userTypeHolder = new class implements IUser
-    {
-      firstName?: string;
-      id?: number;
-      isActive?: boolean;
-      lastName?: string;
-      password?: string;
-      salt?: string;
-      type?: string;
-      username?: string;
-    }
-  }
+    private router: Router,) {}
 
   ngOnInit(): void
   {
@@ -47,15 +32,12 @@ export class GroupsComponent implements OnInit {
 
   getUser()
   {
-    let payload = {
-      username: this.user.username,
-    }
+
     //Gets user from database
-    this.httpService.getUser(payload).subscribe((_user: any) =>
-    {
-      this.userTypeHolder = _user;
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
       //Allow user to create courses if they are an instructor
-      if(this.userTypeHolder.type == "Instructor")
+      if(_users.type == "Instructor")
       {
         this.isInstructor = true;
       }
@@ -63,9 +45,7 @@ export class GroupsComponent implements OnInit {
       {
         this.isInstructor = false;
       }
-      //Get the groups the user is in
-      console.log("userID: " + this.userTypeHolder.userID);
-      this.getUserGroups(this.userTypeHolder.userID as number);
+      this.getUserGroups(this.user.userID as number);
     });
   }
 
