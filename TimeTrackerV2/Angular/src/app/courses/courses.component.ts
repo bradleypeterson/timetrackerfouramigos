@@ -47,7 +47,7 @@ export class CoursesComponent implements OnInit {
     this.getCourses();
     this.httpService.getCookie().subscribe((_user: any) => {
         this.user = _user;
-        if(!this.user){
+        if(!this.user.username){
             console.log('redirecting')
             this.router.navigate(['./']);
         }
@@ -68,7 +68,7 @@ export class CoursesComponent implements OnInit {
   {
     this.httpService.getCookie().subscribe((_users: any) => {
       this.user = _users;
-      if(!this.user){
+      if(!this.user.username){
         console.log('redirecting')
         this.router.navigate(['./']);
     }

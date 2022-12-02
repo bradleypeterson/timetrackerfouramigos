@@ -49,7 +49,7 @@ export class CourseComponent implements OnInit {
 
         
         this.user = _users;
-        if(!this.user){
+        if(!this.user.username){
             console.log('redirecting')
             this.router.navigate(['./']);
         }

@@ -42,7 +42,7 @@ export class DashboardComponent implements  OnInit
 
     this.httpService.getCookie().subscribe((_user: any) => {
         this.user = _user;
-        if(!this.user){
+        if(!this.user.username){
             console.log('redirecting')
             this.router.navigate(['./']);
         }
