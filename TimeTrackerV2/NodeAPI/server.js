@@ -64,6 +64,11 @@ app.get('/getCookie', (req, res) => {
     }
 });
 
+app.get('/logout', (req, res) => {
+   req.session.destroy()
+   return res.send('User Logged Out');
+});
+
 
 //Joins a group based on user id and group id
 app.post('/joingroup', authUser, async (req, res, next) => {

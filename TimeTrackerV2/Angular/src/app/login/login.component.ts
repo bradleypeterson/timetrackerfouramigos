@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     //Subscribes to the CommsService for username updates
     this.getUser()
 
+
   }
 
   ngAfterViewInit(): void {}
@@ -46,19 +47,22 @@ export class LoginComponent implements OnInit, AfterViewInit {
     //get user cookie data
     this.httpService.getCookie().subscribe((_users: any) => {
       this.user = _users;
-      if (this.user.type == 'Instructor')
-      {
-        this.data.changeInstructor(true);
-      }
-      else
-      {
-        this.data.changeInstructor(false);
-      }
-      this.data.changeUserName(this.user.username);
-      //this.userName = this.user.username;
-      this.data.changeLogin('Logout');
-      console.log(this.user);
-
+      if(this.user == null){
+        return
+    }
+          if (this.user.type == 'Instructor')
+          {
+              this.data.changeInstructor(true);
+            }
+            else
+            {
+                this.data.changeInstructor(false);
+            }
+            this.data.changeUserName(this.user.username);
+            this.data.changeLogin('Logout');
+            console.log(this.user);
+            
+            console.log(!this.user)
       //redirect user if they are already logged in
       if (this.user) {
         this.router.navigate(['./dashboard']);

@@ -40,6 +40,14 @@ export class DashboardComponent implements  OnInit
   {
     this.getUser()
 
+    this.httpService.getCookie().subscribe((_user: any) => {
+        this.user = _user;
+        if(!this.user){
+            console.log('redirecting')
+            this.router.navigate(['./']);
+        }
+    });
+
     // get user groups
     //this.getUserGroups(this.userTypeHolder.userID as number);
   }

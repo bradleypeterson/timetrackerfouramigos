@@ -45,6 +45,13 @@ export class CoursesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCourses();
+    this.httpService.getCookie().subscribe((_user: any) => {
+        this.user = _user;
+        if(!this.user){
+            console.log('redirecting')
+            this.router.navigate(['./']);
+        }
+    });
 
   }
 
@@ -61,6 +68,10 @@ export class CoursesComponent implements OnInit {
   {
     this.httpService.getCookie().subscribe((_users: any) => {
       this.user = _users;
+      if(!this.user){
+        console.log('redirecting')
+        this.router.navigate(['./']);
+    }
       //Allow user to create courses if they are an instructor
       if(_users.type == "Instructor")
       {
