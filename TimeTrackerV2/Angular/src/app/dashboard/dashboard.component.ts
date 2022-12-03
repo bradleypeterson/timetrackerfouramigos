@@ -109,7 +109,7 @@ export class DashboardComponent implements  OnInit
 
 
   setProjectAndMove(project: IProject) {
-    this.router.navigate(['./projcet'], {state:{data: project}});
+    this.router.navigate(['./project'], {state:{data: project}});
   }
 
 
