@@ -72,7 +72,6 @@ export class AdminDashComponent implements OnInit {
         this.users.forEach((names) => {
           this.listOfUsernames.push(names.username as string);
         });
-        console.log(this.listOfUsernames);
       }
     });
   }
