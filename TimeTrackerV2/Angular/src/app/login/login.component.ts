@@ -31,15 +31,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     //Subscribes to the CommsService for username updates
     this.getUser()
-    this.httpService.getCookie().subscribe((_user: any) => {
-        this.user = _user;
-        console.log(this.user.username)
-
-        if(!this.user.username){
-            console.log('redirecting from login')
-            this.router.navigate(['./']);
-        }
-    });
 
   }
 
@@ -50,12 +41,24 @@ export class LoginComponent implements OnInit, AfterViewInit {
     password: '',
   });
 
+  redirect(_user: any): void {
+    console.log(_user.username)
+    if (_user.username !== null) {
+      console.log('redirecting from login because you are logged in')
+      this.router.navigate(['./dashboard']);
+    }
+
+  }
+
+
   getUser(): void
   {
     //get user cookie data
     this.httpService.getCookie().subscribe((_users: any) => {
       this.user = _users;
+      console.log(this.user)
      
+      //redirect user if they are already logged in
           if (this.user.type == 'Instructor')
           {
               this.data.changeInstructor(true);
@@ -66,11 +69,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
             }
             this.data.changeUserName(this.user.username);
             this.data.changeLogin('Logout');
+            this.redirect(this.user)
+
         
-      //redirect user if they are already logged in
-    //   if (this.user.username) {
-    //     this.router.navigate(['./dashboard']);
-    //   }
     });
   }
 

@@ -56,7 +56,6 @@ app.get('/', (req, res) => {
 
 app.get('/getCookie', (req, res) => {
     if (req.session.user) {
-        console.log(req.session.user);
         return res.send(req.session.user.loggedIn);
     } else {
         return res.send({
@@ -74,7 +73,8 @@ app.get('/getCookie', (req, res) => {
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
-    return res.status('User Logged Out');
+    console.log('session destroyed')
+    return res.status(200).json({message:'user logged out'});
 });
 
 //Joins a group based on user id and group id
@@ -808,7 +808,6 @@ app.post('/changepass', async (req, res, next) => {
     // make sure the current password is correct
     db.get(sql1, [req.body['userID']], (err, rows) => {
         if (err) {
-            console.log(rows);
             return res.status(500).json({
                 message: 'Something went wrong. Please try again later.',
             });
@@ -852,7 +851,6 @@ app.post('/changepass', async (req, res, next) => {
                 data[1] = salt2;
                 data[2] = req.body['userID'];
 
-                console.log(data);
                 // set the new password
                 db.run(
                     `UPDATE Users SET password = ?, salt = ? WHERE userID = ?`,
@@ -905,7 +903,6 @@ app.post('/changeactive', async (req, res, next) => {
                     message: 'Something went wrong. Please try again later.',
                 });
             } else {
-                console.log(req.session.user.loggedIn);
                 req.session.user.loggedIn.isActive = req.body['activeStat'];
                 return res
                     .status(200)
@@ -1062,7 +1059,6 @@ app.post('/createGroup', async (req, res, next) => {
     data[1] = req.body['isActive'];
     data[2] = req.body['projectID'];
 
-    console.log(data);
 
     db.run(
         `INSERT INTO Groups(groupName, isActive, projectID) VALUES(?, ?, ?)`,

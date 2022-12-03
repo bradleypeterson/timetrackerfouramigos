@@ -49,14 +49,18 @@ export class AppComponent implements OnInit {
         this.isInstructor = false;
       }
     });
-  }
+}
+destroyCookie(): void {
+     this.httpService.logOut().subscribe((_user: any) => {
+          console.log('logged-out')
+        });
+}
 
   onLogin(): void {
     //Logout if someone is already logged in
     if (this.login == 'Logout') {
-        this.httpService.logOut().subscribe((_user: any) => {
-          console.log('logged-out')
-        });
+        this.destroyCookie()
+       
       this.data.changeLogin('Login');
       this.data.changeUserName('');
       this.data.changeInstructor(false);
@@ -66,3 +70,4 @@ export class AppComponent implements OnInit {
     }
   }
 }
+
