@@ -76,6 +76,8 @@ export class AdminModalComponent implements OnInit {
   //When the save button is pressed, saves the users data to the database
   editSave() {
 
+    let tempUser = this.user;
+
     let firstName = ((document.getElementById("edit_firstname") as HTMLInputElement).value);
     let lastName = ((document.getElementById("edit_lastname") as HTMLInputElement).value);
     let username = ((document.getElementById("edit_username") as HTMLInputElement).value);
@@ -87,32 +89,32 @@ export class AdminModalComponent implements OnInit {
 
 
     if (firstName != "") {
-      this.user.firstName = firstName;
+      tempUser.firstName = firstName;
     }
 
     if (lastName != "") {
-      this.user.lastName = lastName;
+      tempUser.lastName = lastName;
     }
 
     if (username != "") {
-      this.user.username = username;
+      tempUser.username = username;
     }
 
     //Add in email and phone here
 
     if (type != "") {
-      this.user.type = type;
+      tempUser.type = type;
     }
 
     if (active == 'true') {
-      this.user.isActive = true;
+      tempUser.isActive = true;
     } else if (active == 'false') {
-      this.user.isActive = false;
+      tempUser.isActive = false;
     }
 
-    if (this.isNotAdminCheck()) {
-      this.modalService.updateUser(this.user);
 
+    if (this.isNotAdminCheck()) {
+      this.modalService.updateUser(tempUser);
     }
 
   }

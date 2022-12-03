@@ -22,6 +22,8 @@ export class AdminModalService {
   projectInfo: object[]  = []
   groupInfo: object[] = []
 
+  listOfUserNames: string[] = [];
+
 
   private _refreshSource = new BehaviorSubject<boolean>(false)
   _refresh = this._refreshSource.asObservable();
@@ -43,6 +45,7 @@ export class AdminModalService {
   showModal(_openedFromRequests: boolean){
     this.modalDisplay = true;
     this.openedFromRequests = _openedFromRequests;
+
   }
 
   closeModal(){
@@ -53,25 +56,31 @@ export class AdminModalService {
     }
   }
 
-  create(user: IUser){
+  create(user: IUser, _listOfUserNames: string[]){
     this.user = user;
+    this.listOfUserNames = _listOfUserNames;
     this.getTableData()
-
   }
 
   //Calls the httpService to update the user's data on the database
   //Emits a true event if update was successful
   updateUser(user: IUser){
 
-    this.httpService.updateUser(user).subscribe(  {
-      next: data => {
-        this.closeModal();
-        this.invokeRefresh();
-      },
-      error: error => {
-        this.msg = error['error']['message'];
-      }
-    });
+    if(!this.listOfUserNames.includes(user.username as string)) {
+
+      this.httpService.updateUser(user).subscribe(  {
+        next: data => {
+          this.closeModal();
+          this.invokeRefresh();
+        },
+        error: error => {
+          this.msg = error['error']['message'];
+        }
+      });
+
+    } else {
+      alert("Username already exists!");
+    }
 
 
   }
@@ -111,7 +120,8 @@ export class AdminModalService {
   getTableData(){
     this.httpService.getCourseAndGroupInfoByID(this.user.userID).subscribe((info) => {
 
-      //console.log(info);
+      console.log("Info");
+      console.log(info);
 
       this.separateCoursesInfo(info);
       this.separateProjectInfo(info);
