@@ -50,6 +50,8 @@ export class AdminDashComponent implements OnInit {
 
   ngOnInit(): void {
 
+    
+
     this.getUsers();
 
   }

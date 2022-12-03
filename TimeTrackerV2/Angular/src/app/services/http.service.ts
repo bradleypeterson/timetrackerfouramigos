@@ -267,6 +267,11 @@ export class HttpService {
     return this.http.get<any>(this.apiUrl + 'getCookie');
   }
 
+  logOut(): Observable<any>
+  {
+    return this.http.get<any>(this.apiUrl + 'logout');
+  }
+
   getAdminRequests(): Observable<IAdminRequest[]>{
     return this.http.get<IAdminRequest[]>(this.apiUrl + 'getAdminRequests', this.httpOptions);
   }
