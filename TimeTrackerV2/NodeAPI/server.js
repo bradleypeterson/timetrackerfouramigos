@@ -1472,7 +1472,8 @@ app.get('/getinstructorprojects/:userID', authUser, async (req, res) => {
                    P.projectName,
                    C.courseName,
                    P.description,
-                   P.projectID
+                   P.projectID,
+                   C.courseID
                FROM Projects P
                         LEFT JOIN Courses C on P.courseID = C.courseID
                WHERE

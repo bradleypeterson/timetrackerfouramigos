@@ -40,18 +40,40 @@ export class InstructorComponent implements OnInit {
   public expandedElementCourse?: CourseDataSource | null;
   public dataSourceCourses: MatTableDataSource<any> = new MatTableDataSource<any>();
   public studentsData: CourseDataSource[] = [];
-  public tempCourse: any;
+  public tempCourse: ICourse;
 
   public projects: IProject[] = [];
   public expandedElementProject?: ProjectDataSource | null;
   public dataSourceProject: MatTableDataSource<any> = new MatTableDataSource<any>();
   public groupsData: ProjectDataSource[] = [];
-  public tempProject: any;
+  public tempProject: IProject;
   //endregion
 
   //region Initial Functions
 
-  constructor(private httpService: HttpService, private router: Router,) {}
+  constructor(private httpService: HttpService, private router: Router,)
+  {
+    this.tempCourse = new class implements ICourse {
+      courseID?: number;
+      courseName?: string;
+      description?: string;
+      display?: boolean;
+      firstName?: string;
+      instructorID?: number;
+      isActive?: boolean;
+      lastName?: string;
+      leave?: boolean;
+      pending?: boolean;
+    }
+    this.tempProject = new class implements IProject {
+      courseID?: number;
+      courseName?: string;
+      description?: string;
+      isActive?: boolean;
+      projectID?: number;
+      projectName?: string;
+    }
+  }
 
   ngOnInit(): void
   {
@@ -202,11 +224,11 @@ export class InstructorComponent implements OnInit {
       groups = _groups;
       if(groups && Array.isArray(groups) && groups.length)
       {
-        this.groupsData = [...this.groupsData, {projectName: project.projectName, courseName: project.courseName, description: project.description, projectID: project.projectID, groups: new MatTableDataSource(groups)}];
+        this.groupsData = [...this.groupsData, {projectName: project.projectName, courseName: project.courseName, description: project.description, projectID: project.projectID, courseID: project.courseID, groups: new MatTableDataSource(groups)}];
       }
       else
       {
-        this.groupsData = [...this.groupsData, {projectName: project.projectName, courseName: project.courseName, description: project.description, projectID: project.projectID}];
+        this.groupsData = [...this.groupsData, {projectName: project.projectName, courseName: project.courseName, description: project.description, projectID: project.projectID, courseID: project.courseID}];
       }
       this.dataSourceProject = new MatTableDataSource(this.groupsData);
     });
@@ -215,10 +237,12 @@ export class InstructorComponent implements OnInit {
   //Navigates to the given project page
   gotoProject(project: any): void
   {
+    console.log(project.courseID);
     this.tempProject.projectID = project.projectID;
     this.tempProject.projectName = project.projectName;
     this.tempProject.description = project.description;
     this.tempProject.courseName = project.courseName;
+    this.tempProject.courseID = project.courseID;
     this.router.navigate(['./project'], {state:{data: this.tempProject}});
   }
   gotoGroup(group: any): void
@@ -244,6 +268,7 @@ export interface ProjectDataSource
   courseName?: string;
   description?: string;
   projectID?: number;
+  courseID?: number;
   groups?: IGroup[] | MatTableDataSource<IGroup>
 }
 
