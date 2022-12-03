@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
         if(!this.user.username){
             console.log('redirecting from login')
-            this.router.navigate(['./']);
+            this.router.navigate(['./dashboard']);
         }
     });
 
