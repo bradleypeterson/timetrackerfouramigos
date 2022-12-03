@@ -42,10 +42,21 @@ export class LoginComponent implements OnInit, AfterViewInit {
   });
 
   redirect(_user: any): void {
-    console.log(_user.username)
     if (_user.username !== null) {
       console.log('redirecting from login because you are logged in')
-      this.router.navigate(['./dashboard']);
+      if(_user.type == "Instructor")
+      {
+        this.router.navigate(['./instructor']);
+      }
+      else if(_user.type == "Admin")
+      {
+        this.router.navigate(['./admin-dash']);
+      }
+      else
+      {
+        this.router.navigate(['./dashboard']);
+      }
+
     }
 
   }
@@ -57,21 +68,29 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.httpService.getCookie().subscribe((_users: any) => {
       this.user = _users;
       console.log(this.user)
-     
-      //redirect user if they are already logged in
-          if (this.user.type == 'Instructor')
-          {
-              this.data.changeInstructor(true);
-            }
-            else
-            {
-                this.data.changeInstructor(false);
-            }
-            this.data.changeUserName(this.user.username);
-            this.data.changeLogin('Logout');
-            this.redirect(this.user)
 
-        
+      //redirect user if they are already logged in
+      if (this.user.type == 'Instructor')
+      {
+        this.data.changeInstructor(true);
+      }
+      else
+      {
+        this.data.changeInstructor(false);
+      }
+      if (this.user.type == 'Admin')
+      {
+        this.data.changeAdmin(true);
+      }
+      else
+      {
+        this.data.changeAdmin(false);
+      }
+      this.data.changeUserName(this.user.username);
+      this.data.changeLogin('Logout');
+      this.redirect(this.user)
+
+
     });
   }
 
