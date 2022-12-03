@@ -10,6 +10,8 @@ import {IUser} from "../../interfaces/IUser";
 export class ChartsComponent implements OnInit {
 
   //region Class Variables
+  public empty = true;
+  public chartHeight = "0rem"
 
   public pieData: PieChartData[] = [];
   public pieTitle = "Hours Per Member"
@@ -35,7 +37,7 @@ export class ChartsComponent implements OnInit {
 
   //region Charts
 
-//each group is a data if the date already exists add the name and hours to it otherwise create a new date and add
+  //each group is a data if the date already exists add the name and hours to it otherwise create a new date and add
   //Gets the total time for each user and sets the pie chart
   getTotalTimes(timeCards: ITimeCard[], user: IUser): void
   {
@@ -78,8 +80,18 @@ export class ChartsComponent implements OnInit {
       return new Date(a.name).getTime() - new Date(b.name).getTime()
     });
     this.lineData = [...this.lineData];
-    this.pieData = [...this.pieData, {name: name, value: totalTime}];
 
+    this.pieData = [...this.pieData, {name: name, value: totalTime}];
+    if(this.lineData.length === 0 || this.pieData.length === 0)
+    {
+      this.empty = true;
+      this.chartHeight = "0rem"
+    }
+    else
+    {
+      this.empty = false;
+      this.chartHeight = "30rem"
+    }
   }
   //endregion
 }

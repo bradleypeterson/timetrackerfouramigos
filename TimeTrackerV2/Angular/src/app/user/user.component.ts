@@ -14,49 +14,39 @@ import { HttpService } from '../services/http.service';
 export class UserComponent implements OnInit {
 
   public errMsg = '';
+  public errColor = "";
+  public showChangedName = false;
 
-  user: IUser = JSON.parse(localStorage.getItem('currentUser') as string);
+  public user: any;
+  public fname = "";
+  public lname = "";
+  public username = "";
+  public isActive: any;
 
-  public userTypeHolder: IUser;
-
-  public isActive = this.user.isActive;
   public isInstructor: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private httpService: HttpService,
-    public modalService: AdminModalService,
-  ) {
-    this.userTypeHolder = new class implements IUser
-    {
-      firstName?: string;
-      userID?: number;
-      isActive?: boolean;
-      lastName?: string;
-      password?: string;
-      salt?: string;
-      type?: string;
-      username?: string;
-    }
-  }
+    public modalService: AdminModalService,){}
 
   ngOnInit(): void {
-    //this.getUser();
-    //this.setActive();
-
+    this.getUser();
   }
 
-  /*getUser() {
-    let payload = {
-      username: this.user.username,
-    }
+  getUser()
+  {
     //Gets user from database
-    this.httpService.getUser(payload).subscribe((_user: any) =>
-    {
-      this.userTypeHolder = _user;
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      this.fname = _users.firstName;
+      this.lname = _users.lastName;
+      this.username = _users.username;
+      this.isActive = _users.isActive;
+      console.log("user.isActive: " + this.user.isActive);
       //Allow user to create courses if they are an instructor
-      if(this.userTypeHolder.type == "Instructor")
+      if (_users.type == "Instructor")
       {
         this.isInstructor = true;
       }
@@ -65,19 +55,7 @@ export class UserComponent implements OnInit {
         this.isInstructor = false;
       }
     });
-  }*/
-
-  /*setActive() {
-    if (this.userTypeHolder.isActive == true) {
-      this.isActive = true;
-      this.userActive = "active";
-    }
-    else {
-      this.isActive = false;
-      this.userActive = "inactive";
-    }
-    console.log(this.isActive);
-  }*/
+  }
 
   passwordForm = this.formBuilder.group({
     currentpassword: '',
@@ -104,9 +82,15 @@ export class UserComponent implements OnInit {
     if (userName != "") {
       this.user.username = userName;
     }
+    this.httpService.updateCurrentUser(this.user).subscribe({
+      next: data => {
+        this.getUser()
+        this.showChangedName = true;
+      },
+        error: error => {
 
-    this.modalService.updateUser(this.user);
-
+      }
+    });
   }
 
   onSubmit() {
@@ -121,11 +105,13 @@ export class UserComponent implements OnInit {
 
     this.httpService.changePass(payload).subscribe({
       next: data => {
-        this.errMsg = "";
-        //location.reload();
+        //this.errMsg = "";
         this.passwordForm.reset(); //Clears the form data after submitting the data.
+        this.errColor = "text-success"
+        this.errMsg = "Changed Password"
       },
       error: error => {
+        this.errColor = "text-danger"
         this.errMsg = error['error']['message'];
       }
     });
@@ -133,10 +119,9 @@ export class UserComponent implements OnInit {
 
   }
 
-
   changeActive() {
     let payload = {
-      activeStat: !this.isActive,
+      activeStat: !this.user.isActive,
       userID: this.user.userID,
     }
 
@@ -145,12 +130,7 @@ export class UserComponent implements OnInit {
     this.httpService.changeActive(payload).subscribe({
       next: data => {
         this.errMsg = "";
-
-        this.user = JSON.parse(localStorage.getItem('currentUser') as string);
-        this.isActive = this.user.isActive;
-        //location.reload();
-        //this.getUser();
-        //this.setActive();
+        this.getUser();
       },
       error: error => {
         this.errMsg = error['error']['message'];

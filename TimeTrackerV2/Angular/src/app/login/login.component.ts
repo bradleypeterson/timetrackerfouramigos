@@ -15,10 +15,9 @@ import { ResetPassComponent } from './reset-pass/reset-pass.component';
 export class LoginComponent implements OnInit, AfterViewInit {
   @ViewChild(ResetPassComponent) resetComp: any;
 
-  user: IUser[] = [];
+  //user: IUser[] = [];
   public errMsg = '';
-  userName!: string;
-  userTypeHolder?: IUser;
+  public user: any;
   public display = false;
 
   constructor(
@@ -31,19 +30,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     //Subscribes to the CommsService for username updates
-    this.data.currentUserName.subscribe(
-      (userName) => (this.userName = userName)
-    );
+    this.getUser()
 
-    //get user cookie data
-    this.httpService.getCookie().subscribe((_users: any) => {
-      this.user = _users;
-      console.log(this.user);
-      //redirect user if they are already logged in
-      if (this.user) {
-        this.router.navigate(['./dashboard']);
-      }
-    });
   }
 
   ngAfterViewInit(): void {}
@@ -52,6 +40,40 @@ export class LoginComponent implements OnInit, AfterViewInit {
     username: '',
     password: '',
   });
+
+  redirect(_user: any): void {
+    console.log(_user.username)
+    if (_user.username !== null) {
+      console.log('redirecting from login because you are logged in')
+      this.router.navigate(['./dashboard']);
+    }
+
+  }
+
+
+  getUser(): void
+  {
+    //get user cookie data
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      console.log(this.user)
+     
+      //redirect user if they are already logged in
+          if (this.user.type == 'Instructor')
+          {
+              this.data.changeInstructor(true);
+            }
+            else
+            {
+                this.data.changeInstructor(false);
+            }
+            this.data.changeUserName(this.user.username);
+            this.data.changeLogin('Logout');
+            this.redirect(this.user)
+
+        
+    });
+  }
 
   //Actives when the user clicks on the login button on the form
   onSubmit(): void {
@@ -67,29 +89,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.httpService.login(payload).subscribe({
       next: (data) => {
         this.errMsg = '';
-        localStorage.setItem('currentUser', JSON.stringify(data['user']));
-
-        //Updates the current username/login on the nav bar
-        this.data.changeUserName(
-          JSON.parse(localStorage.getItem('currentUser') || '{}').username
-        );
-        this.data.changeLogin('Logout');
-
-        let payload = {
-          username: this.userName,
-        };
-        //Gets user from database
-        this.httpService.getUser(payload).subscribe((_user: any) => {
-          this.userTypeHolder = _user;
-          //Allow user to create courses if they are an instructor
-          // @ts-ignore
-          if (this.userTypeHolder.type == 'Instructor') {
-            this.data.changeInstructor(true);
-          } else {
-            this.data.changeInstructor(false);
-          }
-        });
-
+        //localStorage.setItem('currentUser', JSON.stringify(data['user']));
+        this.getUser()
         this.router.navigate(['./dashboard']);
       },
       error: (error) => {

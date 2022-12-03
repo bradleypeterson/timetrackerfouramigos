@@ -18,13 +18,13 @@ import { ICourseRequest } from '../interfaces/ICourseRequest';
 export class CoursesComponent implements OnInit {
   public pageTitle = 'TimeTrackerV2 | Courses'
   public errMsg = '';
-  public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
   public courses: ICourse[] = [];
   public userCourses: ICourse[] = [];
-  public activeCR: ICourseRequest[] = [];
   public courseRequests: ICourseRequest[] = [];
-  public userTypeHolder: IUser;
+  public user: any;
   public default = 0;
+  public pointer = "pointer";
+  public nothing = "";
 
   // for getting the course that was clicked on
   public currCourse?: ICourse;
@@ -41,24 +41,17 @@ export class CoursesComponent implements OnInit {
     private http: HttpClient,
     private formBuilder: FormBuilder,
     private router: Router,
-    private httpService: HttpService,)
-  {
-    this.userTypeHolder = new class implements IUser
-    {
-      firstName?: string;
-      userID?: number;
-      isActive?: boolean;
-      lastName?: string;
-      password?: string;
-      salt?: string;
-      type?: string;
-      username?: string;
-    }
-  }
+    private httpService: HttpService,) {}
 
   ngOnInit(): void {
     this.getCourses();
-    this.getUserCourses();
+    this.httpService.getCookie().subscribe((_user: any) => {
+        this.user = _user;
+        if(!this.user.username){
+            console.log('redirecting')
+            this.router.navigate(['./']);
+        }
+    });
 
   }
 
@@ -67,18 +60,20 @@ export class CoursesComponent implements OnInit {
     this.httpService.getCourses().subscribe((_courses: any) =>
     {
       this.courses = _courses;
-      this.getUserRequests();
+      this.getUser()
     });
+  }
 
-    let payload = {
-      username: this.user.username,
+  getUser(): void
+  {
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+      if(!this.user.username){
+        console.log('redirecting')
+        this.router.navigate(['./']);
     }
-    //Gets user from database
-    this.httpService.getUser(payload).subscribe((_user: any) =>
-    {
-      this.userTypeHolder = _user
       //Allow user to create courses if they are an instructor
-      if(this.userTypeHolder.type == "Instructor")
+      if(_users.type == "Instructor")
       {
         this.isInstructor = true;
       }
@@ -86,13 +81,15 @@ export class CoursesComponent implements OnInit {
       {
         this.isInstructor = false;
       }
+      this.getUserCourses();
+      this.getUserRequests();
     });
   }
 
 
   getUserCourses(): void
   {
-    this.httpService.getUserCourses(this.user.userID).subscribe((_courses: any) => { this.userCourses = _courses; });
+    this.httpService.getUserCourses(this.user.userID as number).subscribe((_courses: any) => { this.userCourses = _courses; });
   }
 
 
@@ -100,7 +97,7 @@ export class CoursesComponent implements OnInit {
 
   getUserRequests() {
     //Gets a list of all group assignments the user has and sets the visibility
-    this.httpService.getUserCourseRequests(this.user.userID).subscribe((_courseRequests: ICourseRequest[]) =>
+    this.httpService.getUserCourseRequests(this.user.userID as number).subscribe((_courseRequests: ICourseRequest[]) =>
     {
 
       this.courseRequests = _courseRequests;
@@ -189,7 +186,7 @@ export class CoursesComponent implements OnInit {
     if(this.isInstructor == false) {
       // create payload to hold courseRequest data
       let payload2 = {
-        userID: this.user['userID'],
+        userID: this.user.userID,
         courseID: cId.courseID,
         instructorID: cId.instructorID,
         isActive: true,
@@ -218,7 +215,7 @@ export class CoursesComponent implements OnInit {
   {
     event.target.disable = true;
     let payload = {
-      userID: this.userTypeHolder.userID,
+      userID: this.user.userID,
       courseID: course.courseID
     }
     console.log("userID: " + payload.userID + " courseID: " + payload.courseID);
@@ -248,7 +245,7 @@ export class CoursesComponent implements OnInit {
     let payload = {
       courseName: this.courseForm.value['courseName'],
       isActive: true,
-      instructorID: this.user['userID'],
+      instructorID: this.user.userID,
       description: this.courseForm.value['description'],
     }
 

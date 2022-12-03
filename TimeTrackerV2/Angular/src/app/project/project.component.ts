@@ -21,16 +21,15 @@ export class ProjectComponent implements OnInit {
   private item;
   public projectName;
   public projectDescription;
-  public userTypeHolder: IUser;
+  public user: any;
   public groups: IGroup[] = [];
   public allProjects: IProject[] = [];
   public joinedGroups: IGroupAssignment[] = [];
-  public isJoinable: boolean = true;
-  public selectedOption: any
+  public selectedOption: any;
+  public pointer = "pointer";
+  public nothing = "";
 
   public project: IProject = history.state.data; // holds the current project data
-
-  public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
 
   // reveals the create group form
   public bvis = false;
@@ -46,27 +45,13 @@ export class ProjectComponent implements OnInit {
   )
   {
     this.item = localStorage.getItem('currentProject');
-    console.log("The current project is: " + this.item);
     if(this.item) {
       this.item = JSON.parse(this.item);
       this.projectName = this.item[0];
       this.projectDescription = this.item[3];
     }
 
-    this.userTypeHolder = new class implements IUser
-    {
-      firstName?: string;
-      id?: number;
-      isActive?: boolean;
-      lastName?: string;
-      password?: string;
-      salt?: string;
-      type?: string;
-      username?: string;
-    }
   }
-
-
 
   //Forms for creating a new group
   groupForm = this.formBuilder.group({
@@ -83,15 +68,12 @@ export class ProjectComponent implements OnInit {
 
   getUser()
   {
-    let payload = {
-      username: this.user.username,
-    }
+
     //Gets user from database
-    this.httpService.getUser(payload).subscribe((_user: any) =>
-    {
-      this.userTypeHolder = _user;
-      //Allow user to create courses if they are an instructor
-      if(this.userTypeHolder.type == "Instructor")
+    this.httpService.getCookie().subscribe((_users: any) => {
+      this.user = _users;
+    //Allow user to create courses if they are an instructor
+      if(_users.type == "Instructor")
       {
         this.isInstructor = true;
       }
@@ -110,7 +92,7 @@ export class ProjectComponent implements OnInit {
       this.groups = _groups
 
       //Gets a list of all group assignments the user has and sets the visibility
-      this.httpService.getGroupAssignments(this.userTypeHolder.userID as number).subscribe((_groupAssignment: IGroupAssignment[]) =>
+      this.httpService.getGroupAssignments(this.user.userID as number).subscribe((_groupAssignment: IGroupAssignment[]) =>
       {
         this.joinedGroups = _groupAssignment;
         this.groups.forEach(value =>
@@ -191,7 +173,7 @@ export class ProjectComponent implements OnInit {
   {
     event.target.disabled = true;
     let payload = {
-      userID: this.userTypeHolder.userID,
+      userID: this.user.userID,
       groupID: group.groupID,
     }
     this.httpService.joinGroup(payload).subscribe({
@@ -210,7 +192,7 @@ export class ProjectComponent implements OnInit {
     //Set the button to disable so that they can't click more than once
     event.target.disabled = true;
     let payload = {
-      userID: this.userTypeHolder.userID,
+      userID: this.user.userID,
       groupID: group.groupID,
     }
     this.httpService.leaveGroup(payload).subscribe({

@@ -24,19 +24,19 @@
   <table class="table table-responsive-lg table-hover">
     <thead>
     <tr style="cursor: default">
-      <th class="fw-light h6">Group ID</th>
+      <th class="fw-light h6">Course Name</th>
       <th class="fw-light h6">Group Name</th>
-      <th class="fw-light h6">Is Active</th>
+<!--      <th class="fw-light h6">Is Active</th>-->
       <th class="fw-light h6">Project</th>
     </tr>
     </thead>
     <tbody>
     <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
     <tr class="pointer" *ngFor="let group of groups"  (click)="setGroupAndMove(group)" >
-      <td>{{group.groupID}}</td>
+      <td>{{group.courseName}}</td>
       <td >{{group.groupName}}</td>
-      <td *ngIf="group.isActive">Active</td>
-      <td *ngIf="!group.isActive">Not Active</td>
+<!--      <td *ngIf="group.isActive">Active</td>-->
+<!--      <td *ngIf="!group.isActive">Not Active</td>-->
       <td >{{group.projectName}}</td>
     </tr>
     </tbody>

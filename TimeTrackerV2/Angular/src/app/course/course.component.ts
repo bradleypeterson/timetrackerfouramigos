@@ -16,7 +16,7 @@ import {ICourseRequest} from "../interfaces/ICourseRequest";
 export class CourseComponent implements OnInit {
   public pageTitle = 'TimeTrackerV2 | Course'
   public errMsg = '';
-  public user: any = JSON.parse(localStorage.getItem('currentUser') as string);
+  public user: any;
 
   public course: any = history.state.data;
   public projects: IProject[] = [];
@@ -38,20 +38,23 @@ export class CourseComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.getProjects();
-    this.getUser();
-    this.getStudents();
+    this.getUser()
   }
+
+
 
   getUser(): void
   {
-    let payload = {
-      username: this.user.username,
-    }
-    this.httpService.getUser(payload).subscribe((_user: any) =>
-    {
+    this.httpService.getCookie().subscribe((_users: any) => {
+
+        
+        this.user = _users;
+        if(!this.user.username){
+            console.log('redirecting')
+            this.router.navigate(['./']);
+        }
       //Allow user to create courses if they are an instructor
-      if(_user.type == "Instructor")
+      if(_users.type == "Instructor")
       {
         this.isInstructor = true;
       }
@@ -59,6 +62,8 @@ export class CourseComponent implements OnInit {
       {
         this.isInstructor = false;
       }
+      this.getProjects();
+      this.getStudents();
     });
   }
 
