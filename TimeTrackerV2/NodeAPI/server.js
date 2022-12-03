@@ -760,6 +760,8 @@ app.post('/changepass', async (req, res, next) => {
     // get the current password from database
     let sql1 = `SELECT * FROM Users WHERE userID = ?`;
 
+
+
     // make sure the current password is correct
     db.get(sql1, [req.body["userID"]], (err, rows) => {
         if (err) {
@@ -776,6 +778,8 @@ app.post('/changepass', async (req, res, next) => {
             if(rows['password'] != hash) {
                 return res.status(400).json({message: 'Current password is incorrect.'});
                 //return res.status(200).json({user: rows});
+            } else {
+                passed = true;
             }
         }
         else {
@@ -784,34 +788,33 @@ app.post('/changepass', async (req, res, next) => {
     });
 
 
-    // salt the password
-    let salt2 = crypto.randomBytes(16).toString('hex');
 
-    // hash is what will be in the database for the password
-    let hash2 = crypto.pbkdf2Sync(req.body["newpassword"], salt2,
-      1000, 64, `sha512`).toString(`hex`);
+        // salt the password
+        let salt2 = crypto.randomBytes(16).toString('hex');
+
+        // hash is what will be in the database for the password
+        let hash2 = crypto.pbkdf2Sync(req.body["newpassword"], salt2,
+            1000, 64, `sha512`).toString(`hex`);
 
 
-    let data = [];
-    data[0] = hash2;
-    data[1] = salt2;
-    data[2] = req.body["userID"];
+        let data = [];
+        data[0] = hash2;
+        data[1] = salt2;
+        data[2] = req.body["userID"];
 
-    console.log(data);
+        console.log(data);
 
-    // set the new password
-    db.run(`UPDATE Users SET password = ?, salt = ? WHERE userID = ?`, data, function(err, rows)
-    {
-        if (err)
-        {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
-        }
-        else
-        {
-            return res.status(200).json({message: "Password updated"});
-        }
-    });
-
+        // set the new password
+        db.run(`UPDATE Users
+                SET password = ?,
+                    salt     = ?
+                WHERE userID = ?`, data, function (err, rows) {
+            if (err) {
+                return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            } else {
+                return res.status(200).json({message: "Password updated"});
+            }
+        });
 
 
 });
