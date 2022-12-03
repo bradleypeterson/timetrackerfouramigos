@@ -37,6 +37,12 @@ export class AdminDashComponent implements OnInit {
     this.showModal(user as IUser);
   })
 
+  updateTable = this.requestService.updateUserTable.subscribe((update) => {
+    if (update){
+      this.getUsers();
+    }
+  })
+
   listOfUsernames: string[] = [];
 
   constructor(

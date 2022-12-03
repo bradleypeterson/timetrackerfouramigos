@@ -24,6 +24,9 @@ export class AdminRequestService {
   userAccountSource = new BehaviorSubject<number>(-1);
   sharedAccountSource = this.userAccountSource.asObservable();
 
+  updateUserTable = new BehaviorSubject<boolean>(false);
+  _updateUserTable = this.updateUserTable.asObservable();
+
   constructor(private httpService: HttpService) {
     this.getRequests();
   }
@@ -43,6 +46,7 @@ export class AdminRequestService {
   //closes the modal
   closeModal() {
     this.modalDisplay = false;
+    this.updateUserTable.next(true);
   }
 
   //Changes the status of the request to approved, denied, or back to pending
