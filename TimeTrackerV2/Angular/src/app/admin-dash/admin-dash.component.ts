@@ -37,6 +37,14 @@ export class AdminDashComponent implements OnInit {
     this.showModal(user as IUser);
   })
 
+  updateTable = this.requestService.updateUserTable.subscribe((update) => {
+    if (update){
+      this.getUsers();
+    }
+  })
+
+  listOfUsernames: string[] = [];
+
   constructor(
     private httpService: HttpService,
     private formBuilder: FormBuilder,
@@ -50,8 +58,6 @@ export class AdminDashComponent implements OnInit {
 
   ngOnInit(): void {
 
-    
-
     this.getUsers();
 
   }
@@ -61,6 +67,12 @@ export class AdminDashComponent implements OnInit {
     this.httpService.getUsers().subscribe((_users: any) => {
       this.users = _users;
       this.filtered_users = _users;
+
+      if (this.users.length > 0) {
+        this.users.forEach((names) => {
+          this.listOfUsernames.push(names.username as string);
+        });
+      }
     });
   }
 
@@ -90,7 +102,7 @@ export class AdminDashComponent implements OnInit {
   //Opens the modal and passes in the selected user
   showModal(user: IUser) {
 
-    this.modalService.create(user);
+    this.modalService.create(user, this.listOfUsernames);
     this.modalService.showModal(this.openedFromRequests);
     this.openedFromRequests = false;
   }

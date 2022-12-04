@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
   public login: string = 'Login';
   public user: any;
   public isInstructor: boolean = false;
+  public isAdmin: boolean = false;
 
   constructor(
     private data: CommsService,
@@ -24,13 +25,10 @@ export class AppComponent implements OnInit {
     private httpService: HttpService
   ) {
     //Subscribes to the CommsService for username/login/instructor updates
-    this.data.currentUserName.subscribe(
-      (userName) => (this.userName = userName)
-    );
+    this.data.currentUserName.subscribe((userName) => (this.userName = userName));
     this.data.currentLogin.subscribe((login) => (this.login = login));
-    this.data.currentInstructor.subscribe(
-      (isInstructor) => (this.isInstructor = isInstructor)
-    );
+    this.data.currentInstructor.subscribe((isInstructor) => (this.isInstructor = isInstructor));
+    this.data.currentAdmin.subscribe((isAdmin) => (this.isAdmin = isAdmin));
   }
 
   ngOnInit(): void {
@@ -42,12 +40,9 @@ export class AppComponent implements OnInit {
       this.user = _users;
       this.userName = _users.username;
       this.login = 'Logout';
-      //Allow user to create courses if they are an instructor
-      if (_users.type == 'Instructor') {
-        this.isInstructor = true;
-      } else {
-        this.isInstructor = false;
-      }
+
+      this.isInstructor = _users.type == 'Instructor';
+      this.isAdmin = _users.type == 'Admin';
     });
 }
 destroyCookie(): void {
@@ -60,10 +55,11 @@ destroyCookie(): void {
     //Logout if someone is already logged in
     if (this.login == 'Logout') {
         this.destroyCookie()
-       
+
       this.data.changeLogin('Login');
       this.data.changeUserName('');
       this.data.changeInstructor(false);
+      this.data.changeAdmin(false);
       this.router.navigate(['']);
     } else {
       this.router.navigate(['']);

@@ -685,7 +685,7 @@ app.post(`/requestToBeInstructor`, async (req, res) => {
 app.get(`/getcourseandgroupinfobyid/:userid`, (req, res) => {
     let userID = req.params.userid;
 
-    let sql = `SELECT GA.userID, G.groupID, G.groupName, P.projectID, P.projectName, P.courseID, C.courseName, C.instructorID, U2.firstName, U2.lastName  FROM GroupAssignment GA
+    let sql = `SELECT GA.userID, G.groupID, G.groupName, P.projectID, P.projectName, P.courseID, C.courseName, C.instructorID, U2.firstName, U2.lastName FROM GroupAssignment GA
     LEFT JOIN Groups G on GA.groupID = G.groupID
     LEFT JOIN Users U on GA.userID = U.userID
     LEFT JOIN Projects P on G.projectID = P.projectID
@@ -1472,7 +1472,8 @@ app.get('/getinstructorprojects/:userID', authUser, async (req, res) => {
                    P.projectName,
                    C.courseName,
                    P.description,
-                   P.projectID
+                   P.projectID,
+                   C.courseID
                FROM Projects P
                         LEFT JOIN Courses C on P.courseID = C.courseID
                WHERE
