@@ -37,6 +37,7 @@ app.use(function (req, res, next) {
     next();
 });
 
+//Default session template for a new session
 app.use(
     session({
         name: 'sid',
@@ -50,10 +51,12 @@ app.use(
     })
 );
 
+//Used to test if the server is working or not.
 app.get('/', (req, res) => {
     return res.send('Hello World');
 });
 
+//Sends the users account information and cookie when they log in or any time this function is called
 app.get('/getCookie', (req, res) => {
     if (req.session.user) {
         return res.send(req.session.user.loggedIn);
@@ -71,6 +74,7 @@ app.get('/getCookie', (req, res) => {
     }
 });
 
+//Logs out a user and destroys their session/cookie on the server
 app.get('/logout', (req, res) => {
     req.session.destroy();
     console.log('session destroyed')
@@ -129,6 +133,7 @@ app.post('/getuser', async (req, res, next) => {
         res.send(JSON.stringify(rows));
     });
 });
+
 //Retrieves a list of all course requests
 app.get(
     '/getcourserequests/:userid',
@@ -202,6 +207,7 @@ app.get('/getusercourserequests/:userid', authUser, async (req, res, next) => {
     });
 });
 
+//User to leave a course
 app.post('/leavecourse', authUser, async (req, res, next) => {
     let sql = `UPDATE CourseRequest
                SET
@@ -284,9 +290,6 @@ app.get('/getcourses', authUser, async (req, res) => {
     });
 });
 
-// where instructor ID = user id
-// where current user = user id in course request
-
 //Gets all courses where the user id is the current user and status is accepted
 app.get('/getusercourses/:userid', authUser, async (req, res) => {
     let sql = `SELECT Courses.*
@@ -354,6 +357,7 @@ app.get('/getcourse', authUser, async (req, res) => {
     });
 });
 
+//Gets all projects within a passed in course
 app.get('/getprojectsbycourseid/:courseid', authUser, async (req, res) => {
     //let sql = `SELECT * FROM Projects WHERE courseID = ${req.params.courseid}`;
 
@@ -371,6 +375,7 @@ app.get('/getprojectsbycourseid/:courseid', authUser, async (req, res) => {
     });
 });
 
+//Returns all projects a user is enrolled in
 app.get('/getuserprojects/:userid', authUser, async (req, res) => {
     let sql = `SELECT DISTINCT Projects.*, Courses.courseName
     FROM Projects
@@ -410,6 +415,7 @@ app.post('/insertcourserequest', authUser, async (req, res, next) => {
     });
 });
 
+//Returns all groups based on a passed in project id
 app.get('/getgroupsbyprojectid/:projectid', authUser, async (req, res) => {
     //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
 
@@ -619,6 +625,7 @@ app.post(`/updateAdminRequests`, async (req, res) => {
     });
 });
 
+//Updates password to the passed in password
 app.post(`/updatePassword`, async (req, res) => {
     let changePassword = req.body.newPass;
     let userID = req.body.user;
@@ -704,6 +711,7 @@ app.get(`/getcourseandgroupinfobyid/:userid`, (req, res) => {
 
 //-------------------------------------------------------
 
+//Function for registering a user to the database/site
 app.post('/register', async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
@@ -912,6 +920,7 @@ app.post('/changeactive', async (req, res, next) => {
     );
 });
 
+//Logs the user in/rejects the login if the account information is wrong
 app.post('/login', async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
@@ -1045,6 +1054,7 @@ app.get('/requestPassword/:username', async (req, res, next) => {
     });
 });
 
+//Creates a group in the database
 app.post('/createGroup', async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
@@ -1076,6 +1086,7 @@ app.post('/createGroup', async (req, res, next) => {
     );
 });
 
+//Creates a course in the databsae
 app.post('/createCourse', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
@@ -1108,6 +1119,7 @@ app.post('/createCourse', authUser, async (req, res, next) => {
     );
 });
 
+//Creates a project in the database
 app.post('/createProject', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
@@ -1141,6 +1153,7 @@ app.post('/createProject', authUser, async (req, res, next) => {
     );
 });
 
+//Clocks the user in or out in their group
 app.post('/clock', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
@@ -1243,6 +1256,7 @@ app.post('/clock', authUser, async (req, res, next) => {
     });
 });
 
+//Returns all groups within a passed in project
 app.get('/getgroupsbyprojectid/:projectid', authUser, async (req, res) => {
     //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
 
@@ -1441,6 +1455,7 @@ app.get('/getinstructorcourses/:userID', authUser, async (req, res) => {
         res.send(JSON.stringify(rows));
     });
 });
+
 //Returns a list of all course requests for a course that have been accepted
 app.get('/getcoursestudents/:courseID', authUser, async (req, res) => {
     let sql = `SELECT DISTINCT CR.requestID,
