@@ -249,19 +249,25 @@ export class CoursesComponent implements OnInit {
       description: this.courseForm.value['description'],
     }
 
-    this.httpService.createCourse(payload).subscribe({
-      next: data => {
-        this.errMsg = "";
-        //this.router.navigate(['./']);
-        //location.reload(); // refresh the page
-        this.courseForm.reset(); //Clears the form data after submitting the data.
-        this.bvis = false; // hide the form again
-        this.getCourses();
-      },
-      error: error => {
-        this.errMsg = error['error']['message'];
-      }
-    });
+    //Course name must be filled out.
+    if (payload.courseName == "" || payload.courseName == null){
+      alert("Course must have a name!")
+    } else {
+
+      this.httpService.createCourse(payload).subscribe({
+        next: data => {
+          this.errMsg = "";
+          //this.router.navigate(['./']);
+          //location.reload(); // refresh the page
+          this.courseForm.reset(); //Clears the form data after submitting the data.
+          this.bvis = false; // hide the form again
+          this.getCourses();
+        },
+        error: error => {
+          this.errMsg = error['error']['message'];
+        }
+      });
+    }
 
   }
 
