@@ -14,12 +14,13 @@ import {IAdminRequest} from "../../interfaces/IAdminRequest";
 })
 export class AdminRequestsModalComponent implements OnInit {
 
+  //Form for searching by username to find user requests
   requestSearchForm = this.formBuilder.group({
     requestSearchTerm: '',
   });
 
+  //The current admin who is editing requests
   user: any = null;
-
 
   constructor(
     private httpService: HttpService,
@@ -30,6 +31,8 @@ export class AdminRequestsModalComponent implements OnInit {
   requests: IAdminRequest[] = [];
   refreshListener: Subscription | undefined;
 
+  //Loads the requests from the database via the request service when the modal is loaded
+  //Also loads the cookie from the database to get the current admin who is editing requests.
   ngOnInit(): void {
     this.refreshListener = this.requestService.sharedRequests.subscribe((requests) => {
       this.requests = requests;
@@ -40,7 +43,8 @@ export class AdminRequestsModalComponent implements OnInit {
     })
   }
 
-
+ //Handles the search text input to find any users who match the search description
+ //uses regex to sanitize input and keep away pesky sql injection
   onSubmit() {
 
     let searchTerm: string = this.requestSearchForm.value['requestSearchTerm'];

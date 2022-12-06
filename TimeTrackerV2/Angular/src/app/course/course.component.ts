@@ -47,7 +47,7 @@ export class CourseComponent implements OnInit {
   {
     this.httpService.getCookie().subscribe((_users: any) => {
 
-        
+
         this.user = _users;
         if(!this.user.username){
             console.log('redirecting')
@@ -110,16 +110,21 @@ export class CourseComponent implements OnInit {
 
     this.bvis = false;
 
+    //Project must have a name
+    if (payload.projectName == "" || payload.projectName == null){
+      alert("Project must have a name!");
+    } else {
+      this.httpService.createProject(payload).subscribe({
+        next: data => {
+          this.errMsg = "";
+          this.projectForm.reset();
+          this.getProjects();
 
-    this.httpService.createProject(payload).subscribe( {
-      next: data => {
-        this.errMsg = "";
-        this.getProjects();
-
-      }, error: error => {
-        this.errMsg = error['error']['message'];
-      }
-    });
+        }, error: error => {
+          this.errMsg = error['error']['message'];
+        }
+      });
+    }
   }
 
   //Moves the page to the groups page and passes it the current project

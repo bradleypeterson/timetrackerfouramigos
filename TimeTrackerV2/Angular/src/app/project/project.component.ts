@@ -147,26 +147,27 @@ export class ProjectComponent implements OnInit {
       projectID: this.project['projectID'] as number,
     }
 
-    /*let payload = {
-      groupName: 'New Group',
-      isActive: true,
-    }
-    */
+    //Group must have a name
+    if(payload.groupName == "" || payload.groupName == null){
+      alert("Group must have a name!");
+    } else {
 
-    this.httpService.createGroup(payload).subscribe({
-      next: data => {
-        this.errMsg = "";
-        //this.router.navigate(['./']);
-        //location.reload(); // refresh the page
-        console.log("Creating a group");
-        this.groupForm.reset(); //Clears the form data after submitting the data.
-        this.bvis = false; // hide the form again
-        this.getGroups();
-      },
-      error: error => {
-        this.errMsg = error['error']['message'];
-      }
-    });
+      this.httpService.createGroup(payload).subscribe({
+        next: data => {
+          this.errMsg = "";
+          //this.router.navigate(['./']);
+          //location.reload(); // refresh the page
+          console.log("Creating a group");
+          this.groupForm.reset(); //Clears the form data after submitting the data.
+          this.bvis = false; // hide the form again
+          this.getGroups();
+        },
+        error: error => {
+          this.errMsg = error['error']['message'];
+        }
+      });
+
+    }
   }
   //Joins the selected group
   joinGroup(group: IGroup, event: any): void

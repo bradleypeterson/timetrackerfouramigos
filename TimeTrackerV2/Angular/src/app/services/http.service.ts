@@ -134,6 +134,7 @@ export class HttpService {
 
   }
 
+  //Changes an account to active or not
   changeActive(payload: any): Observable<any> {
     console.log(payload);
     return this.http.post<any>(this.apiUrl + 'changeactive', payload, this.httpOptions);
@@ -193,11 +194,13 @@ export class HttpService {
     return this.http.post<any>(this.apiUrl + 'createProject', payload, this.httpOptions);
   }
 
+  //Get all groups that are in a passed in project, project is passed in by project id
   getGroups(id: number){
     console.log(this.apiUrl + `getgroupsbyprojectid/${id}`);
     return this.http.get<IGroup[]>(this.apiUrl + `getgroupsbyprojectid/${id}`);
   }
 
+  //Creates a group based on the passed in payload information
   createGroup(payload: any): Observable<any> {
     return this.http.post<any>(this.apiUrl + `createGroup`, payload, this.httpOptions);
   }
@@ -267,19 +270,23 @@ export class HttpService {
     return this.http.get<any>(this.apiUrl + 'getCookie');
   }
 
+  //Logs the user out and destroys their cookie
   logOut(): Observable<any>
   {
     return this.http.get<any>(this.apiUrl + 'logout');
   }
 
+  //Get all active admin requests from the database
   getAdminRequests(): Observable<IAdminRequest[]>{
     return this.http.get<IAdminRequest[]>(this.apiUrl + 'getAdminRequests', this.httpOptions);
   }
 
+  //Posts any modifications of admin requests back to the database
   updateAdminRequests(requests: IAdminRequest[]): Observable<any>{
     return this.http.post<IAdminRequest[]>(this.apiUrl + 'updateAdminRequests', requests, this.httpOptions);
   }
 
+  //Updates the passed in users password to the passed in data
   updatePassword(payload: any): Observable<any>{
     return this.http.post<any>(this.apiUrl + `updatePassword`, payload, this.httpOptions);
   }
@@ -289,6 +296,7 @@ export class HttpService {
     return this.http.get<any>(this.apiUrl + `getcourseandgroupinfobyid/${userID}`, this.httpOptions);
   }
 
+  //Creates an admin request for an account to be changed to an instructor.
   requestToBeInstructor(payload: any): Observable<any>{
     return this.http.post<any>(this.apiUrl + `requestToBeInstructor`, payload, this.httpOptions);
   }
