@@ -14,17 +14,23 @@ import { IAdminRequest} from "../interfaces/IAdminRequest";
 
 export class AdminDashComponent implements OnInit {
 
+  //List of users and filtered users used to show the users on the main table on the admin dashboard
   users: IUser[] = []
   filtered_users: IUser[] = []
 
+  //Holds admin requests to display the number of requests on the html template
   requests: IAdminRequest[] = [];
 
+  //Changes based on if the user account modal is active or not
   modal: boolean = false;
 
+  //Used to know if the user account modal was opened from the request modal. If so
+  //the request modal will reopen when the account modal is closed
   openedFromRequests: boolean = false;
 
+  //A subscription used to open the user information modal if the admin clicks on the account
+  //button from the request modal page
   openRequestModal = this.requestService.sharedAccountSource.subscribe((userID: number) => {
-
     if (userID == -1){
       return;
     }
@@ -37,6 +43,18 @@ export class AdminDashComponent implements OnInit {
     this.showModal(user as IUser);
   })
 
+// A subscription used to update the table whenever an admin request is saved and changes the table
+// eg such as an account upgrade
+  updateTable = this.requestService.updateUserTable.subscribe((update) => {
+    if (update){
+      this.getUsers();
+    }
+  })
+
+  //A list of usernames to be passed to the modal service to check if a username already
+  //exists in the database so an admin cannot change a username of an account to one that already exists
+  listOfUsernames: string[] = [];
+
   constructor(
     private httpService: HttpService,
     private formBuilder: FormBuilder,
@@ -44,14 +62,14 @@ export class AdminDashComponent implements OnInit {
     public requestService: AdminRequestService,
   ) {}
 
+  //Form for searching for a username or first/last name in the user table on the admin dashboard.
   searchForm = this.formBuilder.group({
     searchTerm: '',
   });
 
+  //The users are called from the database when the component is first loaded
   ngOnInit(): void {
-
     this.getUsers();
-
   }
 
   //Gets users from the database
@@ -59,6 +77,12 @@ export class AdminDashComponent implements OnInit {
     this.httpService.getUsers().subscribe((_users: any) => {
       this.users = _users;
       this.filtered_users = _users;
+
+      if (this.users.length > 0) {
+        this.users.forEach((names) => {
+          this.listOfUsernames.push(names.username as string);
+        });
+      }
     });
   }
 
@@ -88,7 +112,7 @@ export class AdminDashComponent implements OnInit {
   //Opens the modal and passes in the selected user
   showModal(user: IUser) {
 
-    this.modalService.create(user);
+    this.modalService.create(user, this.listOfUsernames);
     this.modalService.showModal(this.openedFromRequests);
     this.openedFromRequests = false;
   }

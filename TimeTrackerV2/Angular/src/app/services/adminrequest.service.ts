@@ -16,13 +16,21 @@ export class AdminRequestService {
   //when the user clicks the reset button on the modal
   modifiedRequests: IAdminRequest[] = [];
 
+  //Filtered requests for when the admin searches for a particular user's requests
   filteredRequests: IAdminRequest[] = [];
 
+  //Emits the requests back to the requests modal
   requestSource = new BehaviorSubject<IAdminRequest[]>([]);
   sharedRequests = this.requestSource.asObservable();
 
+  //Emits the selected user when the admin clicks the account button on the request modal
+  //opens the user account modal of the selected user
   userAccountSource = new BehaviorSubject<number>(-1);
   sharedAccountSource = this.userAccountSource.asObservable();
+
+  //Tells the admin dash user table if a request was edited so the table can refresh
+  updateUserTable = new BehaviorSubject<boolean>(false);
+  _updateUserTable = this.updateUserTable.asObservable();
 
   constructor(private httpService: HttpService) {
     this.getRequests();
@@ -43,6 +51,7 @@ export class AdminRequestService {
   //closes the modal
   closeModal() {
     this.modalDisplay = false;
+    this.updateUserTable.next(true);
   }
 
   //Changes the status of the request to approved, denied, or back to pending
@@ -162,7 +171,7 @@ export class AdminRequestService {
   }
 
   //Opens modal for the user when the account button is clicked on the request modal
-  //Whole request has to be passed in otherwise the html wont compile for some reason
+  //Whole request has to be passed in otherwise the html won't compile for some reason
   openAccount(request: IAdminRequest){
     this.userAccountSource.next(request?.userID as number);
     this.closeModal();

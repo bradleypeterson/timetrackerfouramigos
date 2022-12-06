@@ -5,11 +5,11 @@
     <a class="navbar-left" >
       <img height="40" alt="Time Tracker Logo" src="../assets/Images/TimeTrackerLogo.png"/>
     </a></span>
-  <span><a [hidden]="isInstructor" class="nav-item nav-link active" routerLink="./dashboard">Dashboard</a></span>
-  <a [hidden]="isInstructor == false" class="nav-item nav-link active" routerLink="./instructor">Instructor Dashboard</a>
-  <span><a class="nav-item nav-link active" routerLink="./admin-dash">Admin Dashboard</a></span>
-  <span><a class="nav-item nav-link active" routerLink="./courses">Courses</a></span>
-  <span><a [hidden]="isInstructor" class="nav-item nav-link active" routerLink="./groups">Groups</a></span>
+  <span><a [hidden]="isInstructor || isAdmin" class="nav-item nav-link active" routerLink="./dashboard">Dashboard</a></span>
+  <a [hidden]="isInstructor == false || isAdmin" class="nav-item nav-link active" routerLink="./instructor">Instructor Dashboard</a>
+  <span><a [hidden]="isAdmin == false" class="nav-item nav-link active" routerLink="./admin-dash">Admin Dashboard</a></span>
+  <span><a [hidden]="isAdmin" class="nav-item nav-link active" routerLink="./courses">Courses</a></span>
+  <span><a [hidden]="isInstructor || isAdmin" class="nav-item nav-link active" routerLink="./groups">Groups</a></span>
   <span class="ml-auto"><a class="nav-item nav-link active" routerLink="./user">{{ userName }}</a></span>
   <span>
       <form class="form-inline ">

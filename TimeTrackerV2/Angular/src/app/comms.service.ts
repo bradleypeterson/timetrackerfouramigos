@@ -9,10 +9,12 @@ export class CommsService
   private userSource = new BehaviorSubject('');
   private loginSource = new BehaviorSubject('Login');
   private instructorSource = new BehaviorSubject(false);
+  private adminSource = new BehaviorSubject(false);
 
   currentUserName = this.userSource.asObservable();
   currentLogin = this.loginSource.asObservable();
   currentInstructor = this.instructorSource.asObservable();
+  currentAdmin = this.adminSource.asObservable();
 
   constructor() { }
 
@@ -27,5 +29,9 @@ export class CommsService
   changeInstructor(instructor : boolean)
   {
     this.instructorSource.next(instructor);
+  }
+  changeAdmin(admin : boolean)
+  {
+    this.adminSource.next(admin)
   }
 }

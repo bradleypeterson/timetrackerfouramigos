@@ -32,34 +32,42 @@
 
             <tr>
               <td >{{user.firstName}}</td>
-              <td> <input type="text" id="edit_firstname" [hidden]="isHidden" placeholder="First name"></td>
+              <td *ngIf="enableEditing == false">First Name</td>
+              <td *ngIf="enableEditing == true"> <input type="text" id="edit_firstname" [hidden]="isHidden" placeholder="First name"></td>
             </tr>
 
             <tr>
 
               <td>{{user.lastName}}</td>
-              <td> <input type="text" id="edit_lastname" [hidden]="isHidden" placeholder="Last name"></td>
+              <td *ngIf="enableEditing == false">Last Name</td>
+              <td *ngIf="enableEditing == true"> <input type="text" id="edit_lastname" [hidden]="isHidden" placeholder="Last name"></td>
             </tr>
 
             <tr>
               <td >{{user.username}}</td>
-              <td> <input type="text" id="edit_username" [hidden]="isHidden" placeholder="Username"></td>
+              <td *ngIf="enableEditing == false">Username</td>
+              <td *ngIf="enableEditing == true"> <input type="text" id="edit_username" [hidden]="isHidden" placeholder="Username"></td>
             </tr>
 
             <tr>
-              <td >Email</td>
-              <td> <input type="text" id="edit_email" [hidden]="isHidden" placeholder="Email"></td>
+              <td>Email</td>
+              <td *ngIf="enableEditing == false">Email</td>
+              <td *ngIf="enableEditing == true"> <input type="text" id="edit_email" [hidden]="isHidden" placeholder="Email"></td>
             </tr>
 
             <tr>
               <td >Phone</td>
-              <td> <input type="text" id="edit_phone" [hidden]="isHidden" placeholder="Phone number"></td>
+              <td *ngIf="enableEditing == false">Phone</td>
+              <td *ngIf="enableEditing == true"> <input type="text" id="edit_phone" [hidden]="isHidden" placeholder="Phone number"></td>
             </tr>
 
             <tr>
               <td *ngIf="user.type == 'Basic'" ><label for="accountType">Student</label></td>
               <td *ngIf="user.type != 'Basic'" ><label for="accountType">{{user.type}}</label></td>
-              <td>
+
+              <td *ngIf="enableEditing == false">Account Type</td>
+
+              <td *ngIf="enableEditing == true">
                 <select name="accountType" id="accountType" [hidden]="isHidden">
                   <option Value="Student">Student</option>
                   <option Value="Instructor">Instructor</option>
@@ -68,7 +76,7 @@
               </td>
             </tr>
 
-            <tr>
+            <tr *ngIf="enableEditing == true">
               <td *ngIf="user.isActive"><label for="activeChoice">Active</label></td>
               <td *ngIf="!user.isActive"><label for="activeChoice">Not Active</label></td>
               <td>

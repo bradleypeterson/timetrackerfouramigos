@@ -6,11 +6,9 @@ const sqlite3 = require('sqlite3').verbose();
 const session = require('express-session');
 const { authUser, authRole } = require('./basicAuth.js');
 
-
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
-
 
 // Database
 const db = new sqlite3.Database('./database/main.db');
@@ -39,6 +37,7 @@ app.use(function (req, res, next) {
     next();
 });
 
+//Default session template for a new session
 app.use(
     session({
         name: 'sid',
@@ -52,20 +51,38 @@ app.use(
     })
 );
 
+//Used to test if the server is working or not.
 app.get('/', (req, res) => {
     return res.send('Hello World');
 });
 
+//Sends the users account information and cookie when they log in or any time this function is called
 app.get('/getCookie', (req, res) => {
     if (req.session.user) {
         return res.send(req.session.user.loggedIn);
     } else {
-        return res.send(null);
+        return res.send({
+            userID: null,
+            username: null,
+            password: null,
+            firstName: null,
+            lastName: null,
+            type: null,
+            isActive: 1,
+            salt: null,
+        });
     }
 });
 
+//Logs out a user and destroys their session/cookie on the server
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    console.log('session destroyed')
+    return res.status(200).json({message:'user logged out'});
+});
+
 //Joins a group based on user id and group id
-app.post('/joingroup', async (req, res, next) => {
+app.post('/joingroup', authUser, async (req, res, next) => {
     let sql = `INSERT INTO GroupAssignment (userID, groupID)
                 VALUES (?, ?)`;
 
@@ -83,7 +100,7 @@ app.post('/joingroup', async (req, res, next) => {
     });
 });
 //Leaves a group based on user id and group id
-app.post('/leavegroup', async (req, res, next) => {
+app.post('/leavegroup', authUser, async (req, res, next) => {
     let sql = `DELETE   
                 FROM
                     GroupAssignment AS GA
@@ -116,9 +133,14 @@ app.post('/getuser', async (req, res, next) => {
         res.send(JSON.stringify(rows));
     });
 });
+
 //Retrieves a list of all course requests
-app.get('/getcourserequests/:userid', async (req, res, next) => {
-    let sql = `SELECT
+app.get(
+    '/getcourserequests/:userid',
+    authUser,
+    authRole('Instructor'),
+    async (req, res, next) => {
+        let sql = `SELECT
                    CR.requestID,
                    C.courseName,
                    U.firstName || ' ' || U.lastName as studentName,
@@ -141,16 +163,17 @@ app.get('/getcourserequests/:userid', async (req, res, next) => {
                    U.lastName
                    AND
                    U.firstName`;
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            res.status(400).json({ error: err.message });
-        }
-        res.send(JSON.stringify(rows));
-    });
-});
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                res.status(400).json({ error: err.message });
+            }
+            res.send(JSON.stringify(rows));
+        });
+    }
+);
 
 // get all course requests for a student, which are active
-app.get('/getactivecourserequests', async (req, res, next) => {
+app.get('/getactivecourserequests', authUser, async (req, res, next) => {
     let sql = `SELECT
                  CR.requestID,
                  U.firstName || ' ' || U.lastName as studentName,
@@ -168,7 +191,7 @@ app.get('/getactivecourserequests', async (req, res, next) => {
 });
 
 // get all course requests for a student, which are accepted
-app.get('/getusercourserequests/:userid', async (req, res, next) => {
+app.get('/getusercourserequests/:userid', authUser, async (req, res, next) => {
     // let sql = `SELECT CourseRequest.*
     //           FROM CourseRequest
     //           LEFT JOIN Users U on U.userID = CourseRequest.userID
@@ -184,8 +207,8 @@ app.get('/getusercourserequests/:userid', async (req, res, next) => {
     });
 });
 
-
-app.post('/leavecourse', async (req, res, next) => {
+//User to leave a course
+app.post('/leavecourse', authUser, async (req, res, next) => {
     let sql = `UPDATE CourseRequest
                SET
                    status = false,
@@ -210,7 +233,7 @@ app.post('/leavecourse', async (req, res, next) => {
 });
 
 //Updates passed course request
-app.post('/updatecourserequest', async (req, res, next) => {
+app.post('/updatecourserequest', authUser, async (req, res, next) => {
     console.log('Running update course request');
 
     let sql = `UPDATE CourseRequest
@@ -253,7 +276,7 @@ app.get('/getusers', authUser, authRole('Admin'), async (req, res, next) => {
 });
 
 //Gets all courses from the database and sends them to the caller
-app.get('/getcourses', async (req, res) => {
+app.get('/getcourses', authUser, async (req, res) => {
     let sql = `SELECT Courses.*, Users.firstName, Users.lastName
     FROM Courses
     LEFT JOIN Users ON Courses.instructorID = Users.userID`;
@@ -267,11 +290,8 @@ app.get('/getcourses', async (req, res) => {
     });
 });
 
-// where instructor ID = user id
-// where current user = user id in course request
-
 //Gets all courses where the user id is the current user and status is accepted
-app.get('/getusercourses/:userid', async (req, res) => {
+app.get('/getusercourses/:userid', authUser, async (req, res) => {
     let sql = `SELECT Courses.*
   FROM Courses
     LEFT JOIN CourseRequest CR ON CR.courseID = Courses.courseID
@@ -289,7 +309,7 @@ app.get('/getusercourses/:userid', async (req, res) => {
 });
 
 //Gets all courses and course requests where the user id is the current user and status is accepted
-app.get('/getcoursesandrequests', async (req, res) => {
+app.get('/getcoursesandrequests', authUser, async (req, res) => {
     let sql = `SELECT Courses.*, CR.*, Users.firstName, Users.lastName
   FROM Courses, CourseRequest as CR
     LEFT JOIN Users U ON Courses.instructorID = U.userID
@@ -306,7 +326,7 @@ app.get('/getcoursesandrequests', async (req, res) => {
 });
 
 // get courses without user data
-app.get('/getcoursesonly', async (req, res) => {
+app.get('/getcoursesonly', authUser, async (req, res) => {
     let sql = `SELECT *
   FROM Courses`;
 
@@ -320,7 +340,7 @@ app.get('/getcoursesonly', async (req, res) => {
 });
 
 // get a course from the course table using the course ID
-app.get('/getcourse', async (req, res) => {
+app.get('/getcourse', authUser, async (req, res) => {
     let sql = `SELECT *
   FROM Courses
   WHERE courseId = ?`;
@@ -337,7 +357,8 @@ app.get('/getcourse', async (req, res) => {
     });
 });
 
-app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
+//Gets all projects within a passed in course
+app.get('/getprojectsbycourseid/:courseid', authUser, async (req, res) => {
     //let sql = `SELECT * FROM Projects WHERE courseID = ${req.params.courseid}`;
 
     let sql = `SELECT Projects.*, Courses.courseName
@@ -354,7 +375,8 @@ app.get('/getprojectsbycourseid/:courseid', async (req, res) => {
     });
 });
 
-app.get('/getuserprojects/:userid', async (req, res) => {
+//Returns all projects a user is enrolled in
+app.get('/getuserprojects/:userid', authUser, async (req, res) => {
     let sql = `SELECT DISTINCT Projects.*, Courses.courseName
     FROM Projects
     INNER JOIN Courses on Courses.courseID = Projects.courseID
@@ -372,7 +394,7 @@ app.get('/getuserprojects/:userid', async (req, res) => {
 });
 
 // insert course request into table
-app.post('/insertcourserequest', async (req, res, next) => {
+app.post('/insertcourserequest', authUser, async (req, res, next) => {
     let sql = `INSERT INTO
   CourseRequest (userID, courseID, instructorID, isActive, reviewerID, status) VALUES (?, ?, ?, ?, ?, ?)`;
 
@@ -393,7 +415,8 @@ app.post('/insertcourserequest', async (req, res, next) => {
     });
 });
 
-app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
+//Returns all groups based on a passed in project id
+app.get('/getgroupsbyprojectid/:projectid', authUser, async (req, res) => {
     //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
 
     let sql = `SELECT Groups.*, Projects.projectName
@@ -435,12 +458,9 @@ app.post('/updatecurrentuserbyid/:userid', async (req, res) => {
                   userID = ${req.params.userid}`;
 
     db.run(sql, data, (err) => {
-        if (err)
-        {
+        if (err) {
             return res.status(500).json({ error: err.message });
-        }
-        else
-        {
+        } else {
             req.session.user.loggedIn.username = req.body['username'];
             req.session.user.loggedIn.firstName = req.body['firstName'];
             req.session.user.loggedIn.lastName = req.body['lastName'];
@@ -453,9 +473,8 @@ app.post('/updatecurrentuserbyid/:userid', async (req, res) => {
     });
 });
 
-
 //Updates the user in the database with the passed in information
-app.post('/updateuserbyid/:userid', async (req, res) => {
+app.post('/updateuserbyid/:userid', authUser, async (req, res) => {
     let data = [];
     data[0] = req.body['username'];
     data[1] = req.body['firstName'];
@@ -479,12 +498,9 @@ app.post('/updateuserbyid/:userid', async (req, res) => {
                   userID = ${req.params.userid}`;
 
     db.run(sql, data, (err) => {
-        if (err)
-        {
+        if (err) {
             return res.status(500).json({ error: err.message });
-        }
-        else
-        {
+        } else {
             return res
                 .status(200)
                 .json({ message: 'User updated successfully' });
@@ -493,7 +509,7 @@ app.post('/updateuserbyid/:userid', async (req, res) => {
 });
 
 //Deletes the user based on a passed in user id, checks if the passed in user is the admin account
-app.post('/deleteuserbyid/:userid', async (req, res) => {
+app.post('/deleteuserbyid/:userid', authUser, async (req, res) => {
     let data = [];
     data[0] = req.body['username'];
     data[1] = req.body['firstName'];
@@ -546,55 +562,42 @@ app.post('/resetpassword/:userid', async (req, res) => {
 
 //Gets a list of all active admin requests from the database and returns them
 app.get(`/getAdminRequests`, async (req, res) => {
-
     let sql = `SELECT AdminRequests.*, Users.username, Users.type
                FROM AdminRequests
                LEFT JOIN Users on Users.userID = AdminRequests.userID
                WHERE AdminRequests.isActive = true`;
 
     db.all(sql, [], (err, rows) => {
-
         if (err) {
-            res.status(400).json({ "error": err.message });
+            res.status(400).json({ error: err.message });
         } else {
-
             res.send(JSON.stringify(rows));
-
         }
-
     });
-
 });
 
 //Updates the admin request database with any requests that have been changed by an admin
 app.post(`/updateAdminRequests`, async (req, res) => {
-
-
     //Processes the account changes or password resets from the admin requests
     //Adds an error to the error array if there are any failures and returns early.
     req.body.forEach((request) => {
-
         if (request.status === 'approved') {
-
             if (request.requestType === 'password') {
                 resetPassword(request.userID);
             }
 
-            if (request.requestType === 'account'){
+            if (request.requestType === 'account') {
                 updateAccountType(request.userID, request.type);
             }
         }
     });
 
     let db_error = false;
-    let  error_msg = "";
+    let error_msg = '';
 
     //Updates the admin request table
-    req.body.forEach((request) =>{
-
+    req.body.forEach((request) => {
         if (!db_error) {
-
-
             let sql = `UPDATE AdminRequests
                        SET status     = '${request.status}',
                            isActive   = ${request.isActive},
@@ -607,27 +610,23 @@ app.post(`/updateAdminRequests`, async (req, res) => {
                     db_error = true;
                     error_msg = err.message;
                 } else {
-
                     if (request === req.body.at(-1)) {
-
-                        return res.status(200).json({message: "Data updated successfully"});
-
+                        return res
+                            .status(200)
+                            .json({ message: 'Data updated successfully' });
                     }
                 }
             });
 
             if (db_error) {
-                return res.status(500).json({error: error_msg});
+                return res.status(500).json({ error: error_msg });
             }
-
         }
-
     });
-
 });
 
+//Updates password to the passed in password
 app.post(`/updatePassword`, async (req, res) => {
-
     let changePassword = req.body.newPass;
     let userID = req.body.user;
 
@@ -636,25 +635,24 @@ app.post(`/updatePassword`, async (req, res) => {
 
     let salt = crypto.randomBytes(16).toString('hex');
 
-    let hash = crypto.pbkdf2Sync(changePassword, salt,
-        1000, 64, `sha512`).toString(`hex`);
+    let hash = crypto
+        .pbkdf2Sync(changePassword, salt, 1000, 64, `sha512`)
+        .toString(`hex`);
 
-    let data = []
+    let data = [];
 
     data.push(hash);
     data.push(salt);
 
     sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${userID}`;
 
-    db.run(sql, data,(err) => {
-        if(err){
-            return res.status(500).json({error: error_msg});
+    db.run(sql, data, (err) => {
+        if (err) {
+            return res.status(500).json({ error: error_msg });
         } else {
-            return res.status(200).json({message: "Password Reset!"});
-
+            return res.status(200).json({ message: 'Password Reset!' });
         }
     });
-
 });
 
 //Submits a request to the admin request table for a student
@@ -665,59 +663,55 @@ app.post(`/requestToBeInstructor`, async (req, res) => {
     let requestCheckSql = `SELECT * FROM AdminRequests WHERE userID = ${userID} AND status = 'pending' AND requestType = 'account';`;
 
     db.all(requestCheckSql, [], (err, rows) => {
-
         if (err) {
-            return res.status(400).json({ "error": err.message });
+            return res.status(400).json({ error: err.message });
         } else {
-
             if (rows.length < 1) {
-
                 let sql = `INSERT INTO AdminRequests (userID, requestType, status, isActive)
-                           values (${userID}, 'account', 'pending', true);`
+                           values (${userID}, 'account', 'pending', true);`;
 
                 db.run(sql, (err) => {
                     if (err) {
-                        return res.status(500).json({error: err.message});
+                        return res.status(500).json({ error: err.message });
                     } else {
-                        return res.status(200).json({message: "Request Sent!"});
+                        return res
+                            .status(200)
+                            .json({ message: 'Request Sent!' });
                     }
                 });
             } else {
-                return res.status(400).json({error: "Request already awaiting approval!"});
+                return res
+                    .status(400)
+                    .json({ error: 'Request already awaiting approval!' });
             }
         }
-
     });
-
-})
+});
 
 //Gets the course, projects, and group information for the admin modal tables
 app.get(`/getcourseandgroupinfobyid/:userid`, (req, res) => {
-
     let userID = req.params.userid;
 
-    let sql = `SELECT GA.userID, G.groupID, G.groupName, P.projectID, P.projectName, P.courseID, C.courseName, C.instructorID, U2.firstName, U2.lastName  FROM GroupAssignment GA
+    let sql = `SELECT GA.userID, G.groupID, G.groupName, P.projectID, P.projectName, P.courseID, C.courseName, C.instructorID, U2.firstName, U2.lastName FROM GroupAssignment GA
     LEFT JOIN Groups G on GA.groupID = G.groupID
     LEFT JOIN Users U on GA.userID = U.userID
     LEFT JOIN Projects P on G.projectID = P.projectID
     LEFT JOIN Courses C on P.courseID = C.courseID
     LEFT JOIN Users U2 ON C.instructorID = U2.userID
-    WHERE GA.userID = ${userID};`
+    WHERE GA.userID = ${userID};`;
 
     db.all(sql, [], (err, rows) => {
-
         if (err) {
-            res.status(400).json({ "error": err.message });
+            res.status(400).json({ error: err.message });
         } else {
             res.send(JSON.stringify(rows));
         }
-
     });
-
-})
+});
 
 //-------------------------------------------------------
 
+//Function for registering a user to the database/site
 app.post('/register', async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
@@ -794,86 +788,105 @@ app.post('/register', async (req, res, next) => {
 
 // change the password
 app.post('/changepass', async (req, res, next) => {
-
     function isEmpty(str) {
-        return (!str || str.length === 0 );
-      }
-
-    if(
-        isEmpty(req.body["currentpassword"]) ||
-        isEmpty(req.body["newpassword"]) ||
-        isEmpty(req.body["repeatpassword"]) ||
-        isEmpty(req.body["userID"])) {
-        return res.status(400).json({message: 'Missing one or more required arguments.'});
+        return !str || str.length === 0;
     }
 
+    if (
+        isEmpty(req.body['currentpassword']) ||
+        isEmpty(req.body['newpassword']) ||
+        isEmpty(req.body['repeatpassword']) ||
+        isEmpty(req.body['userID'])
+    ) {
+        return res
+            .status(400)
+            .json({ message: 'Missing one or more required arguments.' });
+    }
 
     // Validate passwords match
-    if(req.body["newpassword"] !== req.body["repeatpassword"]) {
-        return res.status(400).json({message: 'Given passwords do not match'});
+    if (req.body['newpassword'] !== req.body['repeatpassword']) {
+        return res
+            .status(400)
+            .json({ message: 'Given passwords do not match' });
     }
 
     // get the current password from database
     let sql1 = `SELECT * FROM Users WHERE userID = ?`;
 
     // make sure the current password is correct
-    db.get(sql1, [req.body["userID"]], (err, rows) => {
+    db.get(sql1, [req.body['userID']], (err, rows) => {
         if (err) {
-            console.log(rows);
-        return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+            return res.status(500).json({
+                message: 'Something went wrong. Please try again later.',
+            });
         }
 
-        if(rows) {
-            salt = rows['salt']
+        if (rows) {
+            salt = rows['salt'];
 
-            let hash = crypto.pbkdf2Sync(req.body["currentpassword"], salt,
-            1000, 64, `sha512`).toString(`hex`);
+            let hash = crypto
+                .pbkdf2Sync(
+                    req.body['currentpassword'],
+                    salt,
+                    1000,
+                    64,
+                    `sha512`
+                )
+                .toString(`hex`);
 
-            if(rows['password'] !== hash)
-            {
-                return res.status(400).json({message: 'Current password is incorrect.'});
+            if (rows['password'] !== hash) {
+                return res
+                    .status(400)
+                    .json({ message: 'Current password is incorrect.' });
                 //return res.status(200).json({user: rows});
-            }
-            else
-            {
+            } else {
                 // salt the password
                 let salt2 = crypto.randomBytes(16).toString('hex');
 
                 // hash is what will be in the database for the password
-                let hash2 = crypto.pbkdf2Sync(req.body["newpassword"], salt2,
-                    1000, 64, `sha512`).toString(`hex`);
-
+                let hash2 = crypto
+                    .pbkdf2Sync(
+                        req.body['newpassword'],
+                        salt2,
+                        1000,
+                        64,
+                        `sha512`
+                    )
+                    .toString(`hex`);
 
                 let data = [];
                 data[0] = hash2;
                 data[1] = salt2;
-                data[2] = req.body["userID"];
+                data[2] = req.body['userID'];
 
-                console.log(data);
                 // set the new password
-                db.run(`UPDATE Users SET password = ?, salt = ? WHERE userID = ?`, data, function(err, rows)
-                {
-                    if (err)
-                    {
-                        return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+                db.run(
+                    `UPDATE Users SET password = ?, salt = ? WHERE userID = ?`,
+                    data,
+                    function (err, rows) {
+                        if (err) {
+                            return res.status(500).json({
+                                message:
+                                    'Something went wrong. Please try again later.',
+                            });
+                        } else {
+                            return res
+                                .status(200)
+                                .json({ message: 'Password updated' });
+                        }
                     }
-                    else
-                    {
-                        return res.status(200).json({message: "Password updated"});
-                    }
-                });
+                );
             }
-        }
-        else {
-            return res.status(400).json({message: 'Current password is incorrect.'});
+        } else {
+            return res
+                .status(400)
+                .json({ message: 'Current password is incorrect.' });
         }
     });
 });
 
-
 // change active status
 app.post('/changeactive', async (req, res, next) => {
-
     /*function isEmpty(str) {
         return (!str || str.length === 0 );
     }
@@ -886,29 +899,28 @@ app.post('/changeactive', async (req, res, next) => {
 
     let data = [];
     data[0] = req.body['activeStat'];
-    data[1] = req.body["userID"];
+    data[1] = req.body['userID'];
 
     // change the user active status
-    db.run(`UPDATE Users SET isActive = ? WHERE userID = ?`, data, function(err, rows)
-    {
-        if (err)
-        {
-            return res.status(500).json({message: 'Something went wrong. Please try again later.'});
+    db.run(
+        `UPDATE Users SET isActive = ? WHERE userID = ?`,
+        data,
+        function (err, rows) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Something went wrong. Please try again later.',
+                });
+            } else {
+                req.session.user.loggedIn.isActive = req.body['activeStat'];
+                return res
+                    .status(200)
+                    .json({ message: 'User active status is changed' });
+            }
         }
-        else
-        {
-            console.log(req.session.user.loggedIn)
-            req.session.user.loggedIn.isActive = req.body['activeStat'];
-            return res.status(200).json({message: "User active status is changed"});
-        }
-    });
-
-
-
+    );
 });
 
-
-
+//Logs the user in/rejects the login if the account information is wrong
 app.post('/login', async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
@@ -929,7 +941,6 @@ app.post('/login', async (req, res, next) => {
         }
 
         if (rows) {
-
             //Check if the user has an outstanding password request
             let checkSql = `SELECT
                                 *
@@ -945,25 +956,22 @@ app.post('/login', async (req, res, next) => {
                                 requestID DESC
                                 LIMIT 1`;
 
-
             db.get(checkSql, [], (err, passrows) => {
-                if(passrows)
-                {
+                if (passrows) {
                     //Change the latest password request to completed
-                    let updateSql = `UPDATE AdminRequests SET status = 'completed' WHERE requestID = ${passrows['requestID']}`
+                    let updateSql = `UPDATE AdminRequests SET status = 'completed' WHERE requestID = ${passrows['requestID']}`;
                     db.run(updateSql, [], function (err, updaterows) {
-                            if (err)
-                            {
-                                console.log(err);
-                                return res.status(500).json({
-                                    message:
-                                        'Something went wrong. Please try again later.',
-                                });
-                            }
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).json({
+                                message:
+                                    'Something went wrong. Please try again later.',
+                            });
+                        }
                     });
                 }
             });
-            console.log("Got to salt")
+            console.log('Got to salt');
             salt = rows['salt'];
 
             let hash = crypto
@@ -993,11 +1001,10 @@ app.post('/login', async (req, res, next) => {
 });
 
 //Sends a request to change password
-app.get("/requestPassword/:username", async (req, res, next) => {
+app.get('/requestPassword/:username', async (req, res, next) => {
     let sql = `SELECT userID, username, firstName, lastName, type, isActive FROM Users WHERE username = "${req.params.username}"`;
     db.get(sql, (err, rows) => {
-        if (rows)
-        {
+        if (rows) {
             //Check AdminRequest table for a pending or approved request
             let checkSql = `SELECT
                                 *
@@ -1013,54 +1020,41 @@ app.get("/requestPassword/:username", async (req, res, next) => {
                                 requestID DESC
                                 LIMIT 1`;
             let checkData = [];
-            checkData[0] = rows["userID"];
+            checkData[0] = rows['userID'];
 
             //Check if the user has a pending or accepted password reset request
-            db.get(checkSql, checkData, (err, checkrows) =>
-            {
-                if (err)
-                {
-                    return res.status(400).json({"error": err.message});
+            db.get(checkSql, checkData, (err, checkrows) => {
+                if (err) {
+                    return res.status(400).json({ error: err.message });
                 }
-                if(checkrows)
-                {
-                    if (checkrows["status"] === "approved")
-                    {
-                        return res.status(200).json({message: 'accepted'});
+                if (checkrows) {
+                    if (checkrows['status'] === 'approved') {
+                        return res.status(200).json({ message: 'accepted' });
+                    } else if (checkrows['status'] === 'pending') {
+                        return res.status(200).json({ message: 'pending' });
+                    } else if (checkrows['status'] === 'denied') {
+                        return res.status(200).json({ message: 'denied' });
                     }
-                    else if (checkrows["status"] === "pending")
-                    {
-                        return res.status(200).json({message: 'pending'});
-                    }
-                    else if(checkrows["status"] === "denied")
-                    {
-                        return res.status(200).json({message: 'denied'});
-                    }
-                }
-                else
-                {
+                } else {
                     let sql2 = `INSERT INTO AdminRequests (userID, requestType, status, isActive, reviewerID)
-                                    VALUES (?, 'password', 'pending', true, null)`
+                                    VALUES (?, 'password', 'pending', true, null)`;
                     let data = [];
-                    data[0] = rows["userID"];
-                    db.get(sql2, data, function(err, insertrows) {
-                        if (err)
-                        {
-                            return res.status(400).json({"error": err.message });
+                    data[0] = rows['userID'];
+                    db.get(sql2, data, function (err, insertrows) {
+                        if (err) {
+                            return res.status(400).json({ error: err.message });
                         }
-                        return res.status(200).json({message: 'success'});
+                        return res.status(200).json({ message: 'success' });
                     });
                 }
-
             });
-        }
-        else
-        {
-            return res.status(200).json({message: 'incorrect'});
+        } else {
+            return res.status(200).json({ message: 'incorrect' });
         }
     });
 });
 
+//Creates a group in the database
 app.post('/createGroup', async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
@@ -1075,7 +1069,6 @@ app.post('/createGroup', async (req, res, next) => {
     data[1] = req.body['isActive'];
     data[2] = req.body['projectID'];
 
-    console.log(data);
 
     db.run(
         `INSERT INTO Groups(groupName, isActive, projectID) VALUES(?, ?, ?)`,
@@ -1093,7 +1086,8 @@ app.post('/createGroup', async (req, res, next) => {
     );
 });
 
-app.post('/createCourse', async (req, res, next) => {
+//Creates a course in the databsae
+app.post('/createCourse', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -1125,7 +1119,8 @@ app.post('/createCourse', async (req, res, next) => {
     );
 });
 
-app.post('/createProject', async (req, res, next) => {
+//Creates a project in the database
+app.post('/createProject', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -1158,7 +1153,8 @@ app.post('/createProject', async (req, res, next) => {
     );
 });
 
-app.post('/clock', async (req, res, next) => {
+//Clocks the user in or out in their group
+app.post('/clock', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -1260,7 +1256,8 @@ app.post('/clock', async (req, res, next) => {
     });
 });
 
-app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
+//Returns all groups within a passed in project
+app.get('/getgroupsbyprojectid/:projectid', authUser, async (req, res) => {
     //let sql = `SELECT * FROM Groups WHERE projectID = ${req.params.projectid}`;
 
     let sql = `SELECT Groups.*, Projects.projectName
@@ -1279,7 +1276,7 @@ app.get('/getgroupsbyprojectid/:projectid', async (req, res) => {
 });
 
 //Gets a list of all group assignments for a user
-app.get('/getgroupassignments/:userID', async (req, res) => {
+app.get('/getgroupassignments/:userID', authUser, async (req, res) => {
     let sql = `SELECT 
                    userID, groupID
                FROM 
@@ -1297,7 +1294,7 @@ app.get('/getgroupassignments/:userID', async (req, res) => {
 });
 
 //Gets a list of all groups a user is in
-app.get('/getusergroups/:userID', async (req, res) => {
+app.get('/getusergroups/:userID', authUser, async (req, res) => {
     let sql = `SELECT DISTINCT
                     G.groupID,
                     G.groupName,
@@ -1328,7 +1325,7 @@ app.get('/getusergroups/:userID', async (req, res) => {
 });
 
 //Gets a list of all users in a group
-app.get('/getgroupusers/:groupID', async (req, res) => {
+app.get('/getgroupusers/:groupID', authUser, async (req, res) => {
     let sql = `SELECT
                    U.userID,
                    U.username,
@@ -1353,7 +1350,7 @@ app.get('/getgroupusers/:groupID', async (req, res) => {
 });
 
 //Gets a list of all time cards for a users group
-app.post('/getusergrouptimecards', async (req, res) => {
+app.post('/getusergrouptimecards', authUser, async (req, res) => {
     console.log(
         'groupID: ' + req.body['groupID'] + ' userID: ' + req.body['userID']
     );
@@ -1380,7 +1377,7 @@ app.post('/getusergrouptimecards', async (req, res) => {
 });
 
 //Creates a new time card
-app.post('/createtimecard', async (req, res, next) => {
+app.post('/createtimecard', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -1413,7 +1410,7 @@ app.post('/createtimecard', async (req, res, next) => {
 });
 
 //Delete specified time card
-app.post('/deletetimecard', async (req, res, next) => {
+app.post('/deletetimecard', authUser, async (req, res, next) => {
     function isEmpty(str) {
         return !str || str.length === 0;
     }
@@ -1438,7 +1435,7 @@ app.post('/deletetimecard', async (req, res, next) => {
 });
 
 //Returns a list of all courses for an instructor
-app.get('/getinstructorcourses/:userID', async (req, res) => {
+app.get('/getinstructorcourses/:userID', authUser, async (req, res) => {
     let sql = `SELECT 
                   courseID, courseName, instructorID, description
               FROM
@@ -1458,8 +1455,9 @@ app.get('/getinstructorcourses/:userID', async (req, res) => {
         res.send(JSON.stringify(rows));
     });
 });
+
 //Returns a list of all course requests for a course that have been accepted
-app.get('/getcoursestudents/:courseID', async (req, res) => {
+app.get('/getcoursestudents/:courseID', authUser, async (req, res) => {
     let sql = `SELECT DISTINCT CR.requestID,
                       C.courseName,
                       U.firstName || ' ' || U.lastName as studentName,
@@ -1484,12 +1482,13 @@ app.get('/getcoursestudents/:courseID', async (req, res) => {
 });
 
 //Returns a list of projects for an instructor
-app.get('/getinstructorprojects/:userID', async (req, res) => {
+app.get('/getinstructorprojects/:userID', authUser, async (req, res) => {
     let sql = `SELECT
                    P.projectName,
                    C.courseName,
                    P.description,
-                   P.projectID
+                   P.projectID,
+                   C.courseID
                FROM Projects P
                         LEFT JOIN Courses C on P.courseID = C.courseID
                WHERE
@@ -1511,7 +1510,7 @@ app.get('/getinstructorprojects/:userID', async (req, res) => {
 });
 
 //Updates a timecard
-app.post('/updatetimecard', async (req, res, next) => {
+app.post('/updatetimecard', authUser, async (req, res, next) => {
     let sql = `UPDATE TimeCard
                SET
 
@@ -1538,11 +1537,10 @@ app.post('/updatetimecard', async (req, res, next) => {
 });
 
 //Resets the users password to a default password;
-const resetPassword = ((userID, newPass) => {
-
+const resetPassword = (userID, newPass) => {
     let changePassword = '';
 
-    if (newPass != null){
+    if (newPass != null) {
         changePassword = newPass;
     } else {
         changePassword = 'wildcat123';
@@ -1550,52 +1548,48 @@ const resetPassword = ((userID, newPass) => {
 
     let salt = crypto.randomBytes(16).toString('hex');
 
-    let hash = crypto.pbkdf2Sync(changePassword, salt,
-        1000, 64, `sha512`).toString(`hex`);
+    let hash = crypto
+        .pbkdf2Sync(changePassword, salt, 1000, 64, `sha512`)
+        .toString(`hex`);
 
-    let data = []
+    let data = [];
 
     data.push(hash);
     data.push(salt);
 
     sql = `UPDATE users SET password = ?, salt = ? WHERE userID = ${userID}`;
 
-    db.run(sql, data,(err) => {
-        if(err){
-            return {passed: false, msg: err.message}
+    db.run(sql, data, (err) => {
+        if (err) {
+            return { passed: false, msg: err.message };
         } else {
-            return  {passed: true, msg: "Password Reset!"}
+            return { passed: true, msg: 'Password Reset!' };
         }
     });
-
-
-});
+};
 
 //Updates the user type from a student to an instructor or vice versa
-const updateAccountType = ((userID, accountType) => {
-
+const updateAccountType = (userID, accountType) => {
     let updatedType = '';
 
     if (accountType === 'Basic') {
         updatedType = 'Instructor';
     }
 
-    if (accountType === 'Instructor'){
+    if (accountType === 'Instructor') {
         updatedType = 'Basic';
     }
 
-    let sql = `UPDATE Users SET type = '${updatedType}' WHERE userID = ${userID};`
+    let sql = `UPDATE Users SET type = '${updatedType}' WHERE userID = ${userID};`;
 
     db.run(sql, (err) => {
-        if(err){
-            return  {passed: false, msg: err.message}
+        if (err) {
+            return { passed: false, msg: err.message };
         } else {
-            return {passed: true, msg: "Account Updated!"}
+            return { passed: true, msg: 'Account Updated!' };
         }
     });
-
-});
-
+};
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

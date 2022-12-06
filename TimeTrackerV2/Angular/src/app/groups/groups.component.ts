@@ -28,6 +28,13 @@ export class GroupsComponent implements OnInit {
   ngOnInit(): void
   {
     this.getUser();
+    this.httpService.getCookie().subscribe((_user: any) => {
+        this.user = _user;
+        if(!this.user.username){
+            console.log('redirecting')
+            this.router.navigate(['./']);
+        }
+    });
   }
 
   getUser()

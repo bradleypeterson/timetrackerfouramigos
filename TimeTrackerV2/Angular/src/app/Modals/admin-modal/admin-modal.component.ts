@@ -10,17 +10,24 @@ import { Subscription} from "rxjs";
 })
 export class AdminModalComponent implements OnInit {
 
+  //Used by the admin dash to call a refresh to the users table
   @Output() refresh = new EventEmitter<boolean>();
 
-  user: IUser = this.modalService.user;
-
-  isHidden: boolean = true;
-  enableEditing: boolean = false;
-
+  //Listens to the modal service for reasons to update the main user table
   refreshListener: Subscription | undefined;
 
+  //Current user displayed in the modal
+  user: IUser = this.modalService.user;
 
+  //Hides text inputs that appear when the edit button is clicked
+  isHidden: boolean = true;
+
+  //Is true when the enable edit switch is flipped
+  enableEditing: boolean = false;
+
+  //Holds a list of courses that the current user is enrolled in to display on the user info modal
   courses: any[] = [];
+  //Subscription that pulls the users courses from the modal service.
   courseInfo = this.modalService._courseSource.subscribe((item) => {
 
     item.forEach((obj) => {
@@ -29,7 +36,10 @@ export class AdminModalComponent implements OnInit {
 
   });
 
+  //Holds a list of projects the user is enrolled in to display on the user info modal
   projects: any[] = [];
+
+  //Subscription that pulls the users projects from the modal service.
   projectInfo = this.modalService._projectSource.subscribe((item) =>{
 
       item.forEach((obj) => {
@@ -37,7 +47,10 @@ export class AdminModalComponent implements OnInit {
       });
   })
 
+  //Holds a list of groups the user is enrolled in to display on the user info modal
   groups: any[] = [];
+
+  //Subscription that pulls the users groups from the modal service.
   groupInfo = this.modalService._groupSource.subscribe((item) =>{
 
     item.forEach((obj) => {
@@ -48,6 +61,7 @@ export class AdminModalComponent implements OnInit {
   constructor(
     public modalService: AdminModalService,
   ) { }
+
 
   ngOnInit(): void {
 
@@ -74,7 +88,11 @@ export class AdminModalComponent implements OnInit {
   }
 
   //When the save button is pressed, saves the users data to the database
+  //Checks which fields were updated and updates them accordingly.
+  //Currently email and phone number are not implemented in the database.
   editSave() {
+
+    let tempUser = this.user;
 
     let firstName = ((document.getElementById("edit_firstname") as HTMLInputElement).value);
     let lastName = ((document.getElementById("edit_lastname") as HTMLInputElement).value);
@@ -87,32 +105,31 @@ export class AdminModalComponent implements OnInit {
 
 
     if (firstName != "") {
-      this.user.firstName = firstName;
+      tempUser.firstName = firstName;
     }
 
     if (lastName != "") {
-      this.user.lastName = lastName;
+      tempUser.lastName = lastName;
     }
 
     if (username != "") {
-      this.user.username = username;
+      tempUser.username = username;
     }
 
     //Add in email and phone here
 
     if (type != "") {
-      this.user.type = type;
+      tempUser.type = type;
     }
 
     if (active == 'true') {
-      this.user.isActive = true;
+      tempUser.isActive = true;
     } else if (active == 'false') {
-      this.user.isActive = false;
+      tempUser.isActive = false;
     }
 
     if (this.isNotAdminCheck()) {
-      this.modalService.updateUser(this.user);
-
+      this.modalService.updateUser(tempUser);
     }
 
   }
@@ -137,7 +154,7 @@ export class AdminModalComponent implements OnInit {
     return true;
   }
 
-
+ //Calls the modal service to reset the selected users account to have the default password.
   resetToDefaultPassword(){
     if (this.isNotAdminCheck()){
       this.modalService.setDefaultPassword(this.user);

@@ -54,7 +54,7 @@
 
       <div *ngFor="let project of projects" class="card border-dark m-3 pl-0 pr-0" style="max-width: 18rem;">
         <div class="card-header">{{project.courseName}}</div>
-        <div (click)="setGroupAndMove(project)" class="card-body pointer hover">
+        <div (click)="setProjectAndMove(project)" class="card-body pointer hover">
           <h5 class="card-title">{{project.projectName}}</h5>
           <p class="card-text"></p>
         </div>

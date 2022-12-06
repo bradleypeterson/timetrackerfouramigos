@@ -45,6 +45,13 @@ export class CoursesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCourses();
+    this.httpService.getCookie().subscribe((_user: any) => {
+        this.user = _user;
+        if(!this.user.username){
+            console.log('redirecting')
+            this.router.navigate(['./']);
+        }
+    });
 
   }
 
@@ -61,6 +68,10 @@ export class CoursesComponent implements OnInit {
   {
     this.httpService.getCookie().subscribe((_users: any) => {
       this.user = _users;
+      if(!this.user.username){
+        console.log('redirecting')
+        this.router.navigate(['./']);
+    }
       //Allow user to create courses if they are an instructor
       if(_users.type == "Instructor")
       {
@@ -238,19 +249,25 @@ export class CoursesComponent implements OnInit {
       description: this.courseForm.value['description'],
     }
 
-    this.httpService.createCourse(payload).subscribe({
-      next: data => {
-        this.errMsg = "";
-        //this.router.navigate(['./']);
-        //location.reload(); // refresh the page
-        this.courseForm.reset(); //Clears the form data after submitting the data.
-        this.bvis = false; // hide the form again
-        this.getCourses();
-      },
-      error: error => {
-        this.errMsg = error['error']['message'];
-      }
-    });
+    //Course name must be filled out.
+    if (payload.courseName == "" || payload.courseName == null){
+      alert("Course must have a name!")
+    } else {
+
+      this.httpService.createCourse(payload).subscribe({
+        next: data => {
+          this.errMsg = "";
+          //this.router.navigate(['./']);
+          //location.reload(); // refresh the page
+          this.courseForm.reset(); //Clears the form data after submitting the data.
+          this.bvis = false; // hide the form again
+          this.getCourses();
+        },
+        error: error => {
+          this.errMsg = error['error']['message'];
+        }
+      });
+    }
 
   }
 
