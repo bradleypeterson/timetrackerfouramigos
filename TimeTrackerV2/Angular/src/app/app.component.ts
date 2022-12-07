@@ -53,15 +53,16 @@ destroyCookie(): void {
 
   onLogin(): void {
     //Logout if someone is already logged in
-    if (this.login == 'Logout') {
+    if (this.login == 'Logout')
+    {
         this.destroyCookie()
-
+        this.data.changeUserName('');
       this.data.changeLogin('Login');
-      this.data.changeUserName('');
-      this.data.changeInstructor(false);
-      this.data.changeAdmin(false);
-      this.router.navigate(['']);
+        this.data.changeInstructor(false);
+        this.data.changeAdmin(false);
+        this.router.navigate(['']);
     } else {
+
       this.router.navigate(['']);
     }
   }

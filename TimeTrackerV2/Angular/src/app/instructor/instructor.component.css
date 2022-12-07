@@ -17,4 +17,14 @@ th
 {
   border-bottom: 2px solid black;
 }
+label
+{
+  display: inline-block;
+}
+input[type=checkbox]
+{
+  vertical-align: middle;
+  position: relative;
+  margin-right: 1rem;
+}
 

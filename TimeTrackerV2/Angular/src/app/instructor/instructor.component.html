@@ -7,59 +7,51 @@
     <table class="table table-responsive-lg" style="height: 1px;">
       <thead>
       <tr>
+        <th class="fw-light h6">Accept</th>
         <th class="fw-light h6">Course Name</th>
         <th class="fw-light h6">Student</th>
         <th class="fw-light h6">Instructor</th>
-        <th class="fw-light h6">Status</th>
-        <th class="fw-light h6">Reviewer</th>
-        <th class="fw-light h6">Accept</th>
+        <th class="fw-light h6">Acceptor</th>
         <th class="fw-light h6">Delete</th>
       </tr>
       </thead>
       <tbody>
       <tr *ngFor="let courseRequest of courseRequests;" style="height: 100%">
         <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
+          <div *ngSwitchCase="true" style="background-color: lightgreen; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
+            <input class="pointer" type="checkbox" (change)="acceptRequest(courseRequest)" checked/>
+            <label>Accepted</label>
+          </div>
+
+          <div *ngSwitchCase="false" style="background-color: #ffc107; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
+            <input type="checkbox" (change)="acceptRequest(courseRequest)"/>
+            <label>Pending</label>
+          </div>
+        </td>
+        <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
           <div *ngSwitchCase="true"
                style="background-color: lightgreen; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.courseName}}</div>
           <div *ngSwitchCase="false"
-               style="background-color: #FFCCCB; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.courseName}}</div>
+               style="background-color: #ffc107; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.courseName}}</div>
         </td>
         <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
           <div *ngSwitchCase="true"
                style="background-color: lightgreen; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.studentName}}</div>
           <div *ngSwitchCase="false"
-               style="background-color: #FFCCCB; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.studentName}}</div>
+               style="background-color: #ffc107; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.studentName}}</div>
         </td>
         <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
           <div *ngSwitchCase="true"
                style="background-color: lightgreen; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.instructorName}}</div>
           <div *ngSwitchCase="false"
-               style="background-color: #FFCCCB; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.instructorName}}</div>
-        </td>
-        <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
-          <div *ngSwitchCase="true"
-               style="background-color: lightgreen; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
-            Reviewed
-          </div>
-          <div *ngSwitchCase="false"
-               style="background-color: #FFCCCB; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
-            Pending
-          </div>
+               style="background-color: #ffc107; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.instructorName}}</div>
         </td>
         <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
           <div *ngSwitchCase="true"
                style="background-color: lightgreen; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">{{courseRequest.reviewerName}}</div>
           <div *ngSwitchCase="false"
-               style="background-color: #FFCCCB; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">N/A
+               style="background-color: #ffc107; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">N/A
           </div>
-        </td>
-        <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
-          <div *ngSwitchCase="true"
-               style="background-color: lightgreen; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
-            <input class="pointer" type="checkbox" (change)="acceptRequest(courseRequest)" checked/></div>
-          <div *ngSwitchCase="false"
-               style="background-color: #FFCCCB; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
-            <input class="pointer" type="checkbox" (change)="acceptRequest(courseRequest)"/></div>
         </td>
         <td [ngSwitch]="courseRequest.status" style="height: 100%; padding: 0;">
           <div *ngSwitchCase="true"
@@ -67,7 +59,7 @@
             <button (click)="deleteRequest(courseRequest)" class="btn-danger">Delete</button>
           </div>
           <div *ngSwitchCase="false"
-               style="background-color: #FFCCCB; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
+               style="background-color: #ffc107; width: 100%; height: 100%; padding-left: .5rem; padding-top: .5rem">
             <button (click)="deleteRequest(courseRequest)" class="btn-danger">Delete</button>
           </div>
         </td>

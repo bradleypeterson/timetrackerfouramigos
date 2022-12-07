@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.data.changeAdmin(false);
       }
       this.data.changeUserName(this.user.username);
-      this.data.changeLogin('Logout');
+      // this.data.changeLogin('Logout');
       this.redirect(this.user)
 
 
@@ -110,6 +110,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.errMsg = '';
         //localStorage.setItem('currentUser', JSON.stringify(data['user']));
         this.getUser()
+        this.data.changeLogin('Logout');
         this.router.navigate(['./dashboard']);
       },
       error: (error) => {
