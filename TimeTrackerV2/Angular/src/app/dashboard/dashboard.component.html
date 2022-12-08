@@ -2,6 +2,8 @@
 <div id="dashboard" class="container">
   <h1 class="mt-8 dashboard-titles">Dashboard</h1>
   <!-- if groups.length == 0 && loaded -->
+  
+  <h2 [hidden]="cSize != 0">Welcome {{ user.username }}! Register for a course on the courses page.</h2>
 
   <div class="panel panel-default border border-light rounded">
     <div class="panel-heading dashboard-titles">
