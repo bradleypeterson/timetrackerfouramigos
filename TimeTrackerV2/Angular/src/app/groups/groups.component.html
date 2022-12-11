@@ -28,16 +28,18 @@
       <th class="fw-light h6">Group Name</th>
 <!--      <th class="fw-light h6">Is Active</th>-->
       <th class="fw-light h6">Project</th>
+      <th></th>
     </tr>
     </thead>
     <tbody>
     <!--  ng-repeat="c in courses | filter: search" ng-if="c.isActive || config.showInactiveCourses" ng-class="{inactive: !c.isActive}" -->
-    <tr class="pointer" *ngFor="let group of groups"  (click)="setGroupAndMove(group)" >
+    <tr *ngFor="let group of groups" (click)="setGroupAndMove(group)">
       <td>{{group.courseName}}</td>
       <td >{{group.groupName}}</td>
 <!--      <td *ngIf="group.isActive">Active</td>-->
 <!--      <td *ngIf="!group.isActive">Not Active</td>-->
       <td >{{group.projectName}}</td>
+      <td class="btn btn-outline-secondary mr-1" (click)="setGroupAndMove(group)">View Group</td>
     </tr>
     </tbody>
   </table>

@@ -52,6 +52,7 @@
             <button [disabled]="!course.display" id="joinbtn" (click)="joinCourse(course, $event)" [hidden]="!course.display" class="btn btn-primary mr-1">Join Course</button>
             <button style="cursor: default" [disabled]="!course.pending" id="pendingbtn" [hidden]="!course.pending" class="btn btn-warning mr-1 ">Pending</button>
             <button [disabled]="!course.leave" id="leavebtn" (click)="leaveCourse(course, $event)" [hidden]="!course.leave" class="btn btn-danger mr-1">Leave Course</button>
+            <button class="btn btn-outline-secondary mr-1" [hidden]="!course.leave" [disabled]="!course.leave" (click)="setCourseAndMove(course)">View Course</button>
         </td>
 
     </tbody>
