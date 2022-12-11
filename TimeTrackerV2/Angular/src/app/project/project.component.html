@@ -64,6 +64,8 @@
           <button [disabled]="!group.display" (click)="leaveGroup(group, $event)"
                   [hidden]="isInstructor == true || !group.display" class="btn btn-danger mr-1">Leave Group
           </button>
+          <button class="btn btn-outline-secondary mr-1" [hidden]="isInstructor == true || !group.display" 
+                  [disabled]="!group.display" (click)="group.display === true || isInstructor ? setGroupAndMove(group) : false">View Group</button>
         </td>
       </tbody>
     </table>

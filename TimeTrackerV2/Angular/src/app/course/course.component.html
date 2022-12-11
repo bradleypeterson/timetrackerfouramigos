@@ -75,6 +75,7 @@
           <th class="fw-light h6">Project Description</th>
           <th class="fw-light h6">Course</th>
           <th class="fw-light h6">Active</th>
+          <th></th>
         </tr>
       </thead>
     <tbody>
@@ -85,6 +86,7 @@
       <td >{{project.courseName}}</td>
       <td *ngIf="project.isActive">Active</td>
       <td *ngIf="!project.isActive">Not Active</td>
+      <td ><button class="btn btn-outline-secondary" (click)="setProjectAndMove(project)">View Project</button></td>
     </tr>
     </tbody>
   </table>
