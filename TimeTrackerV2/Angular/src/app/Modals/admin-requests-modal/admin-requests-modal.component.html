@@ -18,105 +18,207 @@
 
     <div id="main-container">
 
-      <div id="content-left">
+      <div class="container-fluid">
+      <div class="row">
 
-        <table class="table table-hover table-striped" id="requestsTable">
-          <thead>
-          <tr>
-            <th> </th>
-            <th>Username</th>
-            <th>Type</th>
-            <th>Request</th>
-            <th>Account</th>
-            <th>Approve/Deny</th>
-          </tr>
-          </thead>
-          <tbody>
+        <div class="col-lg-11 h-100">
 
-          <tr *ngFor="let request of requests">
-            <td id="circle">
-              <div class="dot" *ngIf="request.status == 'pending'" style="background-color: lightgray;"></div>
-              <div class="dot" *ngIf="request.status == 'approved'" style="background-color: green;"></div>
-              <div class="dot" *ngIf="request.status == 'denied'" style="background-color: red;"></div>
-            </td>
-            <td>{{request.username}}</td>
-            <td *ngIf="request.type == 'Basic'">Student</td>
-            <td *ngIf="request.type != 'Basic'">{{request.type}}</td>
-            <td>{{request.requestType}}</td>
-            <td><button class="btn btn-outline-primary" (click)="requestService.openAccount(request)">Account</button></td>
-<!--            -->
-            <td>
-              <button class="btn btn-outline-success modify-btn" (click)="requestService.modifyRequest('approved', request)">✓</button> |
-              <button class="btn btn-outline-danger modify-btn" (click)="requestService.modifyRequest('denied', request)">X</button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+          <div id="content-left" >
 
+            <table class="table table-hover table-striped" id="requestsTable">
+              <thead>
+              <tr>
+                <th> </th>
+                <th>Username</th>
+                <th>Type</th>
+                <th>Request</th>
+                <th>Account</th>
+                <th>Approve/Deny</th>
+              </tr>
+              </thead>
+              <tbody>
 
-      </div>
+              <tr *ngFor="let request of requests">
+                <td id="circle">
+                  <div class="dot" *ngIf="request.status == 'pending'" style="background-color: lightgray;"></div>
+                  <div class="dot" *ngIf="request.status == 'approved'" style="background-color: green;"></div>
+                  <div class="dot" *ngIf="request.status == 'denied'" style="background-color: red;"></div>
+                </td>
+                <td>{{request.username}}</td>
+                <td *ngIf="request.type == 'Basic'">Student</td>
+                <td *ngIf="request.type != 'Basic'">{{request.type}}</td>
+                <td>{{request.requestType}}</td>
+                <td><button class="btn btn-outline-primary" (click)="requestService.openAccount(request)">Account</button></td>
+                <td>
+                  <button class="btn btn-outline-success modify-btn" (click)="requestService.modifyRequest('approved', request)">✓</button> |
+                  <button class="btn btn-outline-danger modify-btn" (click)="requestService.modifyRequest('denied', request)">X</button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
 
-      <div id="content-right">
-        <header>
-
-          <form [formGroup]="requestSearchForm" (ngSubmit)="onSubmit()">
-
-            <div class="input-group">
-
-              <input type="text" id="requestSearch" formControlName="requestSearchTerm" name="RequestSearch" placeholder="Search Username..." required>
-              <br/>
-              <button type="submit" class="btn btn-primary" id="requestSearchBtn" (click)="onSubmit()"> Search</button>
-
-            </div>
-          </form>
-
-        </header>
-
-        <div id="radio-div">
-
-          <div class="row">
-
-            <div class="col-auto">
-              <input type="radio" id="All" name="searchRequestRadio" value="All" (click)="requestService.radioFilter('all')">
-              <label for="All" (click)="requestService.radioFilter('all')"> All </label>
-            </div>
-
-            <div class="col-auto">
-              <input type="radio" id="Password" name="searchRequestRadio" value="Password" (click)="requestService.radioFilter('student')" >
-              <label for="Password"> Student </label>
-            </div>
-
-            <div class="col-auto">
-              <input type="radio" id="Account" name="searchRequestRadio" value="Account" (click)="requestService.radioFilter('instructor')">
-              <label for="Account"> Instructor </label>
-            </div>
 
           </div>
+
+<!--          col lg 11-->
         </div>
 
-        <div id="edit-all" >
+        <div class="col-lg-1 g-0">
 
-          <button class="btn btn-outline-success" (click)="requestService.approveAll()">Approve All</button>
+            <div id="content-right">
 
-          <button class="btn btn-outline-danger" (click)="requestService.denyAll()">Deny All</button>
+          <div id="search" class="actionButtons m-0 d-flex align-items-center justify-content-center"
+               (mouseover)="setSlider(searchSlideOut, searchField, true)" (mouseleave)="setSlider(searchSlideOut, searchField, false)">
+
+                <div id="searchSlideOut" #searchSlideOut class="slide-out" >
+
+
+                    <div id="searchField" #searchField>
+                      <input id="searchBox" #searchBox type="text" placeholder="Search Username...">
+                      <br/>
+                      <button id="searchButton" class=" btn btn-primary" (click)="onSubmit(searchBox)">Search</button>
+                    </div>
+
+                </div>
+
+                <mat-icon>search</mat-icon>
+
+              </div>
+
+
+              <div id="filter" class="actionButtons m-0 d-flex align-items-center justify-content-center"
+                   (mouseover)="setSlider(filterSlideOut, radioField, true)" (mouseleave)="setSlider(filterSlideOut, radioField, false)">
+
+                <div id="filterSlideOut" #filterSlideOut class="slide-out" >
+
+                  <div id="radioField" #radioField>
+
+                    <input type="radio" id="All" name="searchRequestRadio" value="All" (click)="requestService.radioFilter('all')">
+                    <label for="All" (click)="requestService.radioFilter('all')"> All </label>
+
+                    <br/>
+
+                    <input type="radio" id="Password" name="searchRequestRadio" value="Password" (click)="requestService.radioFilter('student')" >
+                    <label for="Password"> Student </label>
+
+                    <br/>
+
+                    <input type="radio" id="Account" name="searchRequestRadio" value="Account" (click)="requestService.radioFilter('instructor')">
+                    <label for="Account"> Instructor </label>
+
+
+                  </div>
+
+                </div>
+
+                <mat-icon>filter_list</mat-icon>
+
+              </div>
+
+
+              <div id="reset" class="actionButtons m-0 d-flex align-items-center justify-content-center"
+                   (mouseover)="setSlider(resetSlideOut, resetDiv, true)" (mouseleave)="setSlider(resetSlideOut, resetDiv, false)" (click)="requestService.reset()">
+
+                <div id="resetSlideOut" #resetSlideOut class="slide-out" >
+
+                    <div id="resetDiv" class="textDiv" #resetDiv>
+                      <p>Reset</p>
+                    </div>
+
+
+                </div>
+
+                <mat-icon>refresh</mat-icon>
+
+              </div>
+
+
+              <div id="save" class="actionButtons m-0 d-flex align-items-center justify-content-center"
+                   (mouseover)="setSlider(saveSlideOut, saveDiv, true)" (mouseleave)="setSlider(saveSlideOut, saveDiv, false)"
+                   (click)="requestService.saveModifiedRequests(user.userID)">
+
+                <div id="saveSlideOut" #saveSlideOut class="slide-out" >
+
+                  <div id="saveDiv" class="textDiv" #saveDiv>
+                    <p>Save</p>
+                  </div>
+
+
+                </div>
+                <mat-icon>save_alt</mat-icon>
+
+              </div>
+
+            </div>
+
 
         </div>
 
-
-        <footer>
-
-            <button class="btn btn-warning" (click)="requestService.reset()">Reset</button>
-
-            <button class="btn btn-success" (click)="requestService.saveModifiedRequests(user.userID)">Save</button>
-
-            <button class="btn btn-danger" (click)="requestService.closeModal()">Close</button>
-
-
-        </footer>
+<!--        main container row-->
+      </div>
 
       </div>
+
     </div>
 
 
 
 </div>
+
+
+<!--        <header>-->
+
+<!--          <form [formGroup]="requestSearchForm" (ngSubmit)="onSubmit()">-->
+
+<!--            <div class="input-group">-->
+
+<!--              <input type="text" id="requestSearch" formControlName="requestSearchTerm" name="RequestSearch" placeholder="Search Username..." required>-->
+<!--              <br/>-->
+<!--              <button type="submit" class="btn btn-primary" id="requestSearchBtn" (click)="onSubmit()"> Search</button>-->
+
+<!--            </div>-->
+<!--          </form>-->
+
+<!--        </header>-->
+
+<!--        <div id="radio-div">-->
+
+<!--          <div class="row">-->
+
+<!--            <div class="col-auto">-->
+<!--              <input type="radio" id="All" name="searchRequestRadio" value="All" (click)="requestService.radioFilter('all')">-->
+<!--              <label for="All" (click)="requestService.radioFilter('all')"> All </label>-->
+<!--            </div>-->
+
+<!--            <div class="col-auto">-->
+<!--              <input type="radio" id="Password" name="searchRequestRadio" value="Password" (click)="requestService.radioFilter('student')" >-->
+<!--              <label for="Password"> Student </label>-->
+<!--            </div>-->
+
+<!--            <div class="col-auto">-->
+<!--              <input type="radio" id="Account" name="searchRequestRadio" value="Account" (click)="requestService.radioFilter('instructor')">-->
+<!--              <label for="Account"> Instructor </label>-->
+<!--            </div>-->
+
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <div id="edit-all" >-->
+
+<!--          <button class="btn btn-outline-success" (click)="requestService.approveAll()">Approve All</button>-->
+
+<!--          <button class="btn btn-outline-danger" (click)="requestService.denyAll()">Deny All</button>-->
+
+<!--        </div>-->
+
+
+<!--        <footer>-->
+
+<!--            <button class="btn btn-warning" (click)="requestService.reset()">Reset</button>-->
+
+<!--            <button class="btn btn-success" (click)="requestService.saveModifiedRequests(user.userID)">Save</button>-->
+
+<!--            <button class="btn btn-danger" (click)="requestService.closeModal()">Close</button>-->
+
+
+<!--        </footer>-->

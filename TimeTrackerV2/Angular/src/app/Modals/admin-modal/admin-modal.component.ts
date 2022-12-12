@@ -30,7 +30,9 @@ export class AdminModalComponent implements OnInit {
   //Subscription that pulls the users courses from the modal service.
   courseInfo = this.modalService._courseSource.subscribe((item) => {
 
+    this.courses = [];
     item.forEach((obj) => {
+
       this.courses.push(obj);
     });
 
@@ -41,7 +43,7 @@ export class AdminModalComponent implements OnInit {
 
   //Subscription that pulls the users projects from the modal service.
   projectInfo = this.modalService._projectSource.subscribe((item) =>{
-
+      this.projects = [];
       item.forEach((obj) => {
         this.projects.push(obj);
       });
@@ -53,6 +55,7 @@ export class AdminModalComponent implements OnInit {
   //Subscription that pulls the users groups from the modal service.
   groupInfo = this.modalService._groupSource.subscribe((item) =>{
 
+    this.groups = [];
     item.forEach((obj) => {
       this.groups.push(obj);
     });

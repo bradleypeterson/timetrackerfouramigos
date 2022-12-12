@@ -22,11 +22,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { EditTimeDialogComponent } from './Modals/edit-time-dialog/edit-time-dialog.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import {MatIconModule} from "@angular/material/icon";
 import { ChartsComponent } from './group/charts/charts.component';
 import { ResetPassComponent } from './login/reset-pass/reset-pass.component';
 import { AdminRequestsModalComponent } from './Modals/admin-requests-modal/admin-requests-modal.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth.interceptor';
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -60,6 +62,8 @@ import { AuthInterceptor } from './services/auth.interceptor';
     MatDialogModule,
     MatInputModule,
     MatSelectModule,
+    MatIconModule,
+    MatTooltipModule,
   ],
   providers: [
     FormBuilder,

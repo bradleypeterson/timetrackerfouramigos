@@ -70,6 +70,9 @@ main {
   border-right: 1px solid black;
 }
 
+#user-data-table {
+
+}
 
 .user-info-table-container{
   padding-left: 20%;
@@ -89,14 +92,9 @@ main {
 
 #user-data-table td, #user-stats-table td{
   width: 50%;
+  font-size: 16pt;
 }
 
-
-#eval-info {
-  text-align: center;
-  margin-top: 3em;
-  font-size: 14pt;
-}
 
 #save-delete-info{
   position: absolute;
@@ -151,6 +149,7 @@ main {
 
 .content-right-table th, td {
   width: 10%;
+  font-size: 16pt;
 }
 
 
