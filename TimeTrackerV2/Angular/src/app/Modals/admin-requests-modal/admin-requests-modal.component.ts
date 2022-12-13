@@ -22,6 +22,9 @@ export class AdminRequestsModalComponent implements OnInit {
   //The current admin who is editing requests
   user: any = null;
 
+  //Checks if the search box menu is opened
+  searchOpened: boolean = false;
+
   constructor(
     private httpService: HttpService,
     private formBuilder: FormBuilder,
@@ -45,9 +48,9 @@ export class AdminRequestsModalComponent implements OnInit {
 
  //Handles the search text input to find any users who match the search description
  //uses regex to sanitize input and keep away pesky sql injection
-  onSubmit() {
+  onSubmit(element: HTMLInputElement) {
 
-    let searchTerm: string = this.requestSearchForm.value['requestSearchTerm'];
+    let searchTerm: string = (document.getElementById(element.id) as HTMLInputElement).value;
 
     if (searchTerm == null){
       return;
@@ -70,5 +73,32 @@ export class AdminRequestsModalComponent implements OnInit {
     this.requestSearchForm.reset();
 
   }
+
+  //Opens the slide out menus on the right of the modal
+  setSlider(elem: HTMLDivElement, elem2: HTMLDivElement,  state: boolean){
+    let element = document.getElementById(elem.id) as HTMLDivElement;
+    let element2 = document.getElementById(elem2.id) as HTMLDivElement;
+
+    let size: string = '';
+
+    if (state){
+      size = '320px';
+      element2.style.transition = "1s"
+      element2.style.visibility = "visible";
+    }
+
+    if (!state) {
+      size = '0px';
+      element2.style.transition = "0.1s"
+      element2.style.visibility = "hidden";
+
+    }
+
+    element.style.width = size;
+
+
+  }
+
+
 
 }

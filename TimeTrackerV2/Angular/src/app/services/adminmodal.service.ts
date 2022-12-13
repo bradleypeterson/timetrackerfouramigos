@@ -77,6 +77,9 @@ export class AdminModalService {
   create(user: IUser, _listOfUserNames: string[]){
     this.user = user;
     this.listOfUserNames = _listOfUserNames;
+    this.courseInfo = [];
+    this.projectInfo = [];
+    this.groupInfo = [];
     this.getTableData()
   }
 

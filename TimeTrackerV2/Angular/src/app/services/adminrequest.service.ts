@@ -36,6 +36,7 @@ export class AdminRequestService {
     this.getRequests();
   }
 
+  //Gets the requests from the database
   getRequests(){
     this.httpService.getAdminRequests().subscribe((_requests:IAdminRequest[]) => {
       this.requests = _requests;
